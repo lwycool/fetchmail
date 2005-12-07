@@ -10,6 +10,7 @@ change.  MA = Matthias Andree, ESR = Eric S. Raymond, RF = Rob Funk.)
 fetchmail 6.3.1 (not yet released):
 
 * Fix broken default port in POP2. Patch by Stanislav Brabec, SUSE [CZ]. (MA)
+* Fix manual page, some lines starting with ' were escaped by \&. (MA)
 
 fetchmail 6.3.0 (released 2005-11-30):
 
