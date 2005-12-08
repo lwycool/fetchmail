@@ -14,6 +14,9 @@ For later:
 
 IDN
 
+support for CAfile (also multiple)
+support multiple CApath directories
+
 Pipeline commands
 
 Allow to query multiple servers simultaneously.
