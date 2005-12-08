@@ -42,7 +42,7 @@ AC_TYPE_SIZE_T
 AC_TYPE_PID_T
 AC_TYPE_SIGNAL
 AC_CHECK_TYPE(u_int32_t,unsigned int)
-AC_CHECK_HEADERS([unistd.h termios.h termio.h sgtty.h stdarg.h \
+AC_CHECK_HEADERS([unistd.h termios.h termio.h sgtty.h \
 	sys/itimer.h fcntl.h sys/fcntl.h memory.h sys/wait.h \
 	arpa/inet.h arpa/nameser.h netinet/in.h net/socket.h \
 	sys/select.h sys/socket.h sys/time.h langinfo.h])

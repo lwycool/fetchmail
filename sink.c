@@ -24,11 +24,7 @@
 #if defined(HAVE_UNISTD_H)
 #include  <unistd.h>
 #endif
-#if defined(HAVE_STDARG_H)
 #include  <stdarg.h>
-#else
-#include  <varargs.h>
-#endif
 #include  <ctype.h>
 #include  <langinfo.h>
 
@@ -1517,31 +1513,19 @@ int open_warning_by_mail(struct query *ctl, struct msgblk *msg)
 /* if rfc2047charset is non-NULL, encode the line (that is assumed to be
  * a header line) as per RFC-2047 using rfc2047charset as the character
  * set field */
-#if defined(HAVE_STDARG_H)
-void stuff_warning(const char *rfc2047charset, struct query *ctl, const char *fmt, ... )
-#else
-void stuff_warning(rfc2047charset, ctl, fmt, va_alist)
-const char *charset;
-struct query *ctl;
-const char *fmt;	/* printf-style format */
-va_dcl
-#endif
+void stuff_warning(const char *rfc2047charset, struct query *ctl, const char *fmt, ...)
 {
     /* make huge -- i18n can bulk up error messages a lot */
-    char	buf[2*MSGBUFSIZE+4];
+    char	buf[6*MSGBUFSIZE+4];
     va_list ap;
 
     /*
      * stuffline() requires its input to be writeable (for CR stripping),
      * so we needed to copy the message to a writeable buffer anyway in
      * case it was a string constant.  We make a virtue of that necessity
-     * here by supporting stdargs/varargs.
+     * here by supporting stdargs.
      */
-#if defined(HAVE_STDARG_H)
     va_start(ap, fmt) ;
-#else
-    va_start(ap);
-#endif
     vsnprintf(buf, sizeof(buf) - 2, fmt, ap);
     va_end(ap);
 
@@ -1561,5 +1545,4 @@ void close_warning_by_mail(struct query *ctl, struct msgblk *msg)
     stuff_warning(NULL, ctl, GT_("-- \nThe Fetchmail Daemon"));
     close_sink(ctl, msg, TRUE);
 }
-
 /* sink.c ends here */

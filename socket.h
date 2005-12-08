@@ -36,16 +36,12 @@ Returns number of bytes successfully written.
 */
 int SockWrite(int sock, char *buf, int size);
 
-/* 
+/*
 Send formatted output to the socket (matches interface of fprintf).
 Returns number of bytes successfully written.
 */
-#if defined(HAVE_STDARG_H)
 int SockPrintf(int sock, const char *format, ...) ;
-#else
-int SockPrintf();
-#endif
- 
+
 /*
 Close a socket previously opened by SockOpen.  This allows for some
 additional clean-up if necessary.

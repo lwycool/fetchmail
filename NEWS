@@ -11,6 +11,8 @@ fetchmail 6.4.0 (not yet released):
 
 # MAJOR INCOMPATIBLE CHANGES
 * Support for POP2 was removed.  Matthias Andree.
+* Support for build environments without stdarg.h support was removed, varargs.h
+  support was effectively disabled since 6.0.0 or earlier.  Matthias Andree
 
 # OTHER CHANGES
 * RFC-2060 -> RFC-3501.  Sunil Shetye.

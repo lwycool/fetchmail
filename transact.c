@@ -1,5 +1,5 @@
-/*
- * transact.c -- transaction primitives for the fetchmail driver loop
+/**
+ * \file transact.c -- transaction primitives for the fetchmail driver loop
  *
  * Copyright 2001 by Eric S. Raymond
  * For license terms, see the file COPYING in this directory.
@@ -20,11 +20,7 @@
 #if defined(HAVE_UNISTD_H)
 #include <unistd.h>
 #endif
-#if defined(HAVE_STDARG_H)
 #include  <stdarg.h>
-#else
-#include  <varargs.h>
-#endif
 
 #ifdef HAVE_NET_SOCKET_H
 #include <net/socket.h>
@@ -1435,14 +1431,7 @@ static void enshroud(char *buf)
     }
 }
 
-#if defined(HAVE_STDARG_H)
 void gen_send(int sock, const char *fmt, ... )
-#else
-void gen_send(sock, fmt, va_alist)
-int sock;		/* socket to which server is connected */
-const char *fmt;	/* printf-style format */
-va_dcl
-#endif
 /* assemble command in printf(3) style and send to the server */
 {
     char buf [MSGBUFSIZE+1];
@@ -1453,11 +1442,7 @@ va_dcl
     else
 	buf[0] = '\0';
 
-#if defined(HAVE_STDARG_H)
     va_start(ap, fmt);
-#else
-    va_start(ap);
-#endif
     vsnprintf(buf + strlen(buf), sizeof(buf)-2-strlen(buf), fmt, ap);
     va_end(ap);
 
@@ -1472,11 +1457,10 @@ va_dcl
     }
 }
 
-int gen_recv(sock, buf, size)
-/* get one line of input from the server */
-int sock;	/* socket to which server is connected */
-char *buf;	/* buffer to receive input */
-int size;	/* length of buffer */
+/** get one line of input from the server */
+int gen_recv(int sock,	/**< socket to which server is connected */
+	     char *buf,	/**< buffer to receive input in */
+	     int size	/**  length of buffer */)
 {
     int oldphase = phase;	/* we don't have to be re-entrant */
 
@@ -1508,15 +1492,8 @@ int size;	/* length of buffer */
     }
 }
 
-#if defined(HAVE_STDARG_H)
+/** assemble command in printf(3) style, send to server, accept a response */
 int gen_transact(int sock, const char *fmt, ... )
-#else
-int gen_transact(int sock, fmt, va_alist)
-int sock;		/* socket to which server is connected */
-const char *fmt;	/* printf-style format */
-va_dcl
-#endif
-/* assemble command in printf(3) style, send to server, accept a response */
 {
     int ok;
     char buf [MSGBUFSIZE+1];
@@ -1530,11 +1507,7 @@ va_dcl
     else
 	buf[0] = '\0';
 
-#if defined(HAVE_STDARG_H)
     va_start(ap, fmt) ;
-#else
-    va_start(ap);
-#endif
     vsnprintf(buf + strlen(buf), sizeof(buf)-2-strlen(buf), fmt, ap);
     va_end(ap);
 
@@ -1557,5 +1530,4 @@ va_dcl
     phase = oldphase;
     return(ok);
 }
-
 /* transact.c ends here */

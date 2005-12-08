@@ -22,30 +22,15 @@
 #include "i18n.h"
 #include "fetchmail.h"
 
-#if defined(HAVE_VPRINTF) || defined(HAVE_DOPRNT) || defined(_LIBC) || defined(HAVE_STDARG_H)
-# if HAVE_STDARG_H
-#  include <stdarg.h>
-#  define VA_START(args, lastarg) va_start(args, lastarg)
-# else
-#  include <varargs.h>
-#  define VA_START(args, lastarg) va_start(args)
-# endif
-#else
-# define va_alist a1, a2, a3, a4, a5, a6, a7, a8
-# define va_dcl char *a1, *a2, *a3, *a4, *a5, *a6, *a7, *a8;
-#endif
+#include <stdarg.h>
 
-#define MALLOC(n)	xmalloc(n)	
-#define REALLOC(n,s)	xrealloc(n,s)	
+#define MALLOC(n)	xmalloc(n)
+#define REALLOC(n,s)	xrealloc(n,s)
 
 /* If NULL, report will flush stderr, then print on stderr the program
    name, a colon and a space.  Otherwise, report will call this
    function without parameters instead.  */
-static void (*report_print_progname) (
-#if __STDC__ - 0
-			      void
-#endif
-			      );
+static void (*report_print_progname) (void);
 
 /* Used by report_build() and report_complete() to accumulate partial messages.
  */
@@ -82,20 +67,11 @@ char *strerror (int errnum)
 /* Print the program name and error message MESSAGE, which is a printf-style
    format string with optional args.
    If ERRNUM is nonzero, print its corresponding system error message. */
-/* VARARGS */
 
 void
-#ifdef HAVE_STDARG_H
 report (FILE *errfp, const char *message, ...)
-#else
-report (FILE *errfp, message, va_alist)
-     const char *message;
-     va_dcl
-#endif
 {
-#ifdef VA_START
     va_list args;
-#endif
 
     /* If a partially built message exists, print it now so it's not lost.  */
     if (partial_message_size_used != 0)
@@ -109,15 +85,16 @@ report (FILE *errfp, message, va_alist)
     {
 	int priority;
 
-#ifdef VA_START
-	VA_START (args, message);
-#endif
+	va_start(args, message);
 	priority = (errfp == stderr) ? LOG_ERR : LOG_INFO;
 
 #ifdef HAVE_VSYSLOG
 	vsyslog (priority, message, args);
 #else
 	{
+	    /* XXX FIXME: use snprintf twice, to obtain buffer size,
+	     * and then allocate and format, and then syslog the
+	     * complete message */
 	    char *a1 = va_arg(args, char *);
 	    char *a2 = va_arg(args, char *);
 	    char *a3 = va_arg(args, char *);
@@ -130,9 +107,7 @@ report (FILE *errfp, message, va_alist)
 	}
 #endif
 
-#ifdef VA_START
 	va_end(args);
-#endif
     }
     else
 #endif
@@ -150,17 +125,13 @@ report (FILE *errfp, message, va_alist)
 	    fprintf (errfp, "%s: ", program_name);
 	}
 
-#ifdef VA_START
-	VA_START (args, message);
+	va_start(args, message);
 # if defined(HAVE_VPRINTF) || defined(_LIBC)
 	vfprintf (errfp, message, args);
 # else
 	_doprnt (message, args, errfp);
 # endif
 	va_end (args);
-#else
-	fprintf (errfp, message, a1, a2, a3, a4, a5, a6, a7, a8);
-#endif
 	fflush (errfp);
     }
     ++report_message_count;
@@ -203,7 +174,6 @@ void report_init(int mode)
    message exists, then, in an attempt to keep the messages in their proper
    sequence, the partial message will be printed as-is (with a trailing 
    newline) before report() prints its message. */
-/* VARARGS */
 
 static void rep_ensuresize(void) {
     /* Make an initial guess for the size of any single message fragment.  */
@@ -222,23 +192,14 @@ static void rep_ensuresize(void) {
 }
 
 void
-#ifdef HAVE_STDARG_H
 report_build (FILE *errfp, const char *message, ...)
-#else
-report_build (FILE *errfp, message, va_alist)
-     const char *message;
-     va_dcl
-#endif
 {
-#ifdef VA_START
     va_list args;
     int n;
-#endif
 
     rep_ensuresize();
 
-#if defined(VA_START)
-    VA_START (args, message);
+    va_start(args, message);
     for ( ; ; )
     {
 	n = vsnprintf (partial_message + partial_message_size_used,
@@ -255,23 +216,6 @@ report_build (FILE *errfp, message, va_alist)
 	partial_message = REALLOC (partial_message, partial_message_size);
     }
     va_end (args);
-#else
-    for ( ; ; )
-    {
-	n = snprintf (partial_message + partial_message_size_used,
-		      partial_message_size - partial_message_size_used,
-		      message, a1, a2, a3, a4, a5, a6, a7, a8);
-
-	if (n < partial_message_size - partial_message_size_used)
-        {
-	    partial_message_size_used += n;
-	    break;
-	}
-
-	partial_message_size += 2048;
-	partial_message = REALLOC (partial_message, partial_message_size);
-    }
-#endif
 
     if (use_stderr && partial_message_size_used != 0)
     {
@@ -284,26 +228,16 @@ report_build (FILE *errfp, message, va_alist)
    format string with optional args, to the existing report message (which may
    be empty.)  The completed report message is then printed (and reset to
    empty.) */
-/* VARARGS */
 
 void
-#ifdef HAVE_STDARG_H
 report_complete (FILE *errfp, const char *message, ...)
-#else
-report_complete (FILE *errfp, message, va_alist)
-     const char *message;
-     va_dcl
-#endif
 {
-#ifdef VA_START
     va_list args;
     int n;
-#endif
 
     rep_ensuresize();
 
-#if defined(VA_START)
-    VA_START (args, message);
+    va_start(args, message);
     for ( ; ; )
     {
 	n = vsnprintf (partial_message + partial_message_size_used,
@@ -320,23 +254,6 @@ report_complete (FILE *errfp, message, va_alist)
 	partial_message = REALLOC (partial_message, partial_message_size);
     }
     va_end (args);
-#else
-    for ( ; ; )
-    {
-	n = snprintf (partial_message + partial_message_size_used,
-		      partial_message_size - partial_message_size_used,
-		      message, a1, a2, a3, a4, a5, a6, a7, a8);
-
-	if (n < partial_message_size - partial_message_size_used)
-        {
-	    partial_message_size_used += n;
-	    break;
-	}
-
-	partial_message_size += 2048;
-	partial_message = REALLOC (partial_message, partial_message_size);
-    }
-#endif
 
     /* Finally... print it.  */
     partial_message_size_used = 0;
@@ -357,21 +274,10 @@ report_complete (FILE *errfp, message, va_alist)
 static int error_one_per_line;
 
 void
-#ifdef HAVE_STDARG_H
 report_at_line (FILE *errfp, int errnum, const char *file_name,
 	       unsigned int line_number, const char *message, ...)
-#else
-report_at_line (FILE *errfp, errnum, file_name, line_number, message, va_alist)
-     int errnum;
-     const char *file_name;
-     unsigned int line_number;
-     const char *message;
-     va_dcl
-#endif
 {
-#ifdef VA_START
     va_list args;
-#endif
 
     if (error_one_per_line)
     {
@@ -403,17 +309,13 @@ report_at_line (FILE *errfp, errnum, file_name, line_number, message, va_alist)
     if (file_name != NULL)
 	fprintf (errfp, "%s:%u: ", file_name, line_number);
 
-#ifdef VA_START
-    VA_START (args, message);
+    va_start(args, message);
 # if defined(HAVE_VPRINTF) || defined(_LIBC)
     vfprintf (errfp, message, args);
 # else
     _doprnt (message, args, errfp);
 # endif
     va_end (args);
-#else
-    fprintf (errfp, message, a1, a2, a3, a4, a5, a6, a7, a8);
-#endif
 
     ++report_message_count;
     if (errnum)

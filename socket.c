@@ -32,11 +32,7 @@
 #if defined(HAVE_UNISTD_H)
 #include <unistd.h>
 #endif
-#if defined(HAVE_STDARG_H)
 #include <stdarg.h>
-#else
-#include <varargs.h>
-#endif
 #if TIME_WITH_SYS_TIME
 # include <sys/time.h>
 # include <time.h>
@@ -314,24 +310,13 @@ int SockOpen(const char *host, const char *service,
 }
 
 
-#if defined(HAVE_STDARG_H)
 int SockPrintf(int sock, const char* format, ...)
 {
-#else
-int SockPrintf(sock,format,va_alist)
-int sock;
-char *format;
-va_dcl {
-#endif
 
     va_list ap;
     char buf[8192];
 
-#if defined(HAVE_STDARG_H)
     va_start(ap, format) ;
-#else
-    va_start(ap);
-#endif
     vsnprintf(buf, sizeof(buf), format, ap);
     va_end(ap);
     return SockWrite(sock, buf, strlen(buf));
@@ -973,7 +958,7 @@ static ssize_t cygwin_read(int sock, void *buf, size_t count)
  * Use the chargen service to test input buffering directly.
  * You may have to uncomment the `chargen' service description in your
  * inetd.conf (and then SIGHUP inetd) for this to work.  */
-main()
+int main(void)
 {
     int	 	sock = SockOpen("localhost", "chargen", NULL);
     char	buf[80];
