@@ -18,7 +18,7 @@ Description:	Fetchmail is a free, full-featured, robust, and well-documented
 		then be be read by normal mail user agents such as mutt, elm,
 		pine, (x)emacs/gnus, or mailx.  Comes with an interactive GUI
 		configurator (in Python/Tk) suitable for end-users.
-Keywords:	mail, client, POP, POP2, POP3, APOP, RPOP, KPOP, IMAP, ETRN, ODMR, SMTP, ESMTP, GSSAPI, RPA, NTLM, CRAM-MD5, SASL
+Keywords:	mail, client, POP, POP3, APOP, RPOP, KPOP, IMAP, ETRN, ODMR, SMTP, ESMTP, GSSAPI, RPA, NTLM, CRAM-MD5, SASL
 Author:		esr@thyrsus.com (Eric S. Raymond)
 		matthias.andree@gmx.de (Matthias Andree)
 		shetye@bombay.retortsoft.com (Sunil Shetye)

@@ -37,13 +37,12 @@ char *strstr(const char *, const char *);
 
 /* constants designating the various supported protocols */
 #define		P_AUTO		1
-#define		P_POP2		2
-#define		P_POP3		3
-#define		P_APOP		4
-#define		P_RPOP		5
-#define		P_IMAP		6
-#define		P_ETRN		7
-#define		P_ODMR		8
+#define		P_POP3		2
+#define		P_APOP		3
+#define		P_RPOP		4
+#define		P_IMAP		5
+#define		P_ETRN		6
+#define		P_ODMR		7
 
 #define		SMTP_PORT	"smtp"
 #define		SMTP_PORT_NUM	25
@@ -614,7 +613,6 @@ XMALLOCTYPE *xrealloc(/*@null@*/ XMALLOCTYPE *, size_t);
 char *xstrdup(const char *);
 
 /* protocol driver and methods */
-int doPOP2 (struct query *); 
 int doPOP3 (struct query *);
 int doIMAP (struct query *);
 int doETRN (struct query *);

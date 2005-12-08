@@ -211,9 +211,6 @@ int main(int argc, char **argv)
     if (versioninfo)
     {
 	const char *features = 
-#ifdef POP2_ENABLE
-	"+POP2"
-#endif /* POP2_ENABLE */
 #ifndef POP3_ENABLE
 	"-POP3"
 #endif /* POP3_ENABLE */
@@ -1364,9 +1361,6 @@ static const int autoprobe[] =
 #ifdef POP3_ENABLE
     P_POP3,
 #endif /* POP3_ENABLE */
-#ifdef POP2_ENABLE
-    P_POP2
-#endif /* POP2_ENABLE */
 };
 
 static int query_host(struct query *ctl)
@@ -1400,14 +1394,6 @@ static int query_host(struct query *ctl)
 		break;
 	}
 	ctl->server.protocol = P_AUTO;
-	break;
-    case P_POP2:
-#ifdef POP2_ENABLE
-	st = doPOP2(ctl);
-#else
-	report(stderr, GT_("POP2 support is not configured.\n"));
-	st = PS_PROTOCOL;
-#endif /* POP2_ENABLE */
 	break;
     case P_POP3:
     case P_APOP:
@@ -1861,7 +1847,7 @@ static void dump_params (struct runctl *runp,
 	else if (outlevel >= O_VERBOSE)
 	    printf(GT_("  No plugout command specified.\n"));
 
-	if (ctl->server.protocol > P_POP2 && MAILBOX_PROTOCOL(ctl))
+	if (ctl->server.protocol > P_AUTO && MAILBOX_PROTOCOL(ctl))
 	{
 	    if (!ctl->oldsaved)
 		printf(GT_("  No UIDs saved from this host.\n"));

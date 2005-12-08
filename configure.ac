@@ -5,7 +5,7 @@ dnl
 dnl Process this file with autoconf to produce a configure script.
 dnl
 
-AC_INIT([fetchmail],[6.3.0],[fetchmail-users@lists.berlios.de])
+AC_INIT([fetchmail],[6.4.0-pre1],[fetchmail-devel@lists.berlios.de])
 AC_CONFIG_SRCDIR([fetchmail.h])
 AC_CONFIG_HEADERS([config.h])
 AC_CONFIG_LIBOBJ_DIR([.])
@@ -295,13 +295,6 @@ esac
 AC_CHECK_SIZEOF(short)
 AC_CHECK_SIZEOF(int)
 AC_CHECK_SIZEOF(long)
-
-###	use option --enable-POP2 to compile in the POP2 support
-AC_ARG_ENABLE(POP2,
-	[  --enable-POP2           compile in POP2 protocol support (obsolete)],
-	[with_POP2=$enableval],
-	[with_POP2=no])
-test "$with_POP2" = "yes" && AC_DEFINE(POP2_ENABLE,1,Define if you want POP2 support compiled in)
 
 ###	use option --disable-POP3 to omit the POP3 support
 AC_ARG_ENABLE(POP3,
