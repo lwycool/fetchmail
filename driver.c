@@ -676,7 +676,7 @@ static int fetch_messages(int mailserver_socket, struct query *ctl,
 		     * broken GroupWise IMAP server;
 		     * its body FETCH response is missing
 		     * the required length for the data
-		     * string.  This violates RFC2060.
+		     * string.  This violates RFC3501.
 		     */
 		    if (len == -1)
 			len = msgsize - msgblk.msglen;

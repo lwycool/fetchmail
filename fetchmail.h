@@ -84,7 +84,7 @@ char *strstr(const char *, const char *);
 
 /*
  * Definitions for buffer sizes.  We get little help on setting maxima
- * from IMAP RFCs up to 2060, so these are mostly from POP3.
+ * from IMAP RFCs up to 3501, so these are mostly from POP3.
  */
 #define		HOSTLEN		635	/* max hostname length (RFC1123) */
 #define		POPBUFSIZE	512	/* max length of response (RFC1939) */

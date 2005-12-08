@@ -22,7 +22,7 @@
 /* imap_version values */
 #define IMAP2		-1	/* IMAP2 or IMAP2BIS, RFC1176 */
 #define IMAP4		0	/* IMAP4 rev 0, RFC1730 */
-#define IMAP4rev1	1	/* IMAP4 rev 1, RFC2060 */
+#define IMAP4rev1	1	/* IMAP4 rev 1, RFC3501 */
 
 /* global variables: please reinitialize them explicitly for proper
  * working in daemon mode */
@@ -141,8 +141,8 @@ static int imap_ok(int sock, char *argbuf)
 		 * This checks for the condition and aborts if 
 		 * the mailbox is read-only. 
 		 *
-		 * See RFC 2060 section 6.3.1 (SELECT).
-		 * See RFC 2060 section 6.3.2 (EXAMINE).
+		 * See RFC3501 section 6.3.1 (SELECT).
+		 * See RFC3501 section 6.3.2 (EXAMINE).
 		 */ 
 	    else if (!check_only && strstr(buf, "[READ-ONLY]"))
 	    {
@@ -179,7 +179,7 @@ static int imap_ok(int sock, char *argbuf)
 	else if (strncasecmp(cp, "NO", 2) == 0)
 	{
 	    if (stage == STAGE_GETAUTH) 
-		return(PS_AUTHFAIL);	/* RFC2060, 6.2.2 */
+		return(PS_AUTHFAIL);	/* RFC3501 section 6.2.2 */
 	    else
 		return(PS_ERROR);
 	}
@@ -297,7 +297,7 @@ static void capa_probe(int sock, struct query *ctl)
 	for (cp = capabilities; *cp; cp++)
 	    *cp = toupper((unsigned char)*cp);
 
-	/* UW-IMAP server 10.173 notifies in all caps, but RFC2060 says we
+	/* UW-IMAP server 10.173 notifies in all caps, but RFC3501 says we
 	   should expect a response in mixed-case */
 	if (strstr(capabilities, "IMAP4REV1"))
 	{
@@ -623,7 +623,7 @@ static int imap_idle(int sock)
 	    return ok;
     } else {  /* no idle support, fake it */
 	/* when faking an idle, we can't assume the server will
-	 * send us the new messages out of the blue (RFC2060);
+	 * send us the new messages out of the blue (RFC3501);
 	 * this timeout is potentially the delay before we notice
 	 * new mail (can be small since NOOP checking is cheap) */
 	mytimeout = 28;
@@ -934,7 +934,7 @@ static int imap_fetch_headers(int sock, struct query *ctl,int number,int *lenp)
     number -= expunged;
 
     /*
-     * This is blessed by RFC1176, RFC1730, RFC2060.
+     * This is blessed by RFC1176, RFC1730, RFC3501.
      * According to the RFCs, it should *not* set the \Seen flag.
      */
     gen_send(sock, "FETCH %d RFC822.HEADER", number);
@@ -988,7 +988,7 @@ static int imap_fetch_body(int sock, struct query *ctl, int number, int *lenp)
      * craps out during the message, it will still be marked `unseen' on
      * the server.
      *
-     * According to RFC2060, and Mark Crispin the IMAP maintainer,
+     * According to RFC3501, and Mark Crispin the IMAP maintainer,
      * FETCH %d BODY[TEXT] and RFC822.TEXT are "functionally 
      * equivalent".  However, we know of at least one server that
      * treats them differently in the presence of MIME attachments;
@@ -1004,7 +1004,7 @@ static int imap_fetch_body(int sock, struct query *ctl, int number, int *lenp)
      */
     switch (imap_version)
     {
-    case IMAP4rev1:	/* RFC 2060 */
+    case IMAP4rev1:	/* RFC 3501 */
 	gen_send(sock, "FETCH %d BODY.PEEK[TEXT]", number);
 	break;
 
@@ -1030,7 +1030,7 @@ static int imap_fetch_body(int sock, struct query *ctl, int number, int *lenp)
 	return(PS_ERROR);
 
     /*
-     * Try to extract a length from the FETCH response.  RFC2060 requires
+     * Try to extract a length from the FETCH response.  RFC3501 requires
      * it to be present, but at least one IMAP server (Novell GroupWise)
      * botches this.  The overflow check is needed because of a broken
      * server called dbmail that returns huge garbage lengths.
@@ -1083,7 +1083,6 @@ static int imap_delete(int sock, struct query *ctl, int number)
 
     /*
      * Use SILENT if possible as a minor throughput optimization.
-     * Note: this has been dropped from IMAP4rev1.
      *
      * We set Seen because there are some IMAP servers (notably HP
      * OpenMail) that do message-receipt DSNs, but only when the seen
@@ -1092,7 +1091,7 @@ static int imap_delete(int sock, struct query *ctl, int number)
      * successful.
      */
     if ((ok = gen_transact(sock,
-			imap_version == IMAP4 
+			imap_version >= IMAP4
 				? "STORE %d +FLAGS.SILENT (\\Seen \\Deleted)"
 				: "STORE %d +FLAGS (\\Seen \\Deleted)", 
 			number)))
@@ -1116,7 +1115,7 @@ static int imap_mark_seen(int sock, struct query *ctl, int number)
 /* mark the given message as seen */
 {
     return(gen_transact(sock,
-	imap_version == IMAP4
+	imap_version >= IMAP4
 	? "STORE %d +FLAGS.SILENT (\\Seen)"
 	: "STORE %d +FLAGS (\\Seen)",
 	number));
