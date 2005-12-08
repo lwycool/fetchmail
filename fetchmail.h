@@ -592,7 +592,7 @@ int interface_approve(struct hostdata *, flag domonitor);
 #endif
 XMALLOCTYPE *xmalloc(size_t);
 XMALLOCTYPE *xrealloc(/*@null@*/ XMALLOCTYPE *, size_t);
-#define xfree(p) { if (p) { free(p); } (p) = 0; }
+#define xfree(p) { if (p) { free(p); (p) = 0; } }
 char *xstrdup(const char *);
 
 /* protocol driver and methods */
