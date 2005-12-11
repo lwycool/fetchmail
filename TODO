@@ -12,6 +12,10 @@ rather than duplicating the user name (see l. 211 in smbutil.c).
 For later:
 ==========
 
+Greg Lindahl "more clever resource limitations"
+set expunge and/or MTA delay by time rather than message count,
+<http://lists.berlios.de/pipermail/fetchmail-users/2005-December/000158.html>
+
 IDN
 
 support for CAfile (also multiple)
