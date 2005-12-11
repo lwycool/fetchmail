@@ -8,9 +8,6 @@ Abbreviations in parentheses are the maintainers who committed the respective
 change.  MA = Matthias Andree, ESR = Eric S. Raymond, RF = Rob Funk.)
 
 --------------------------------------------------------------------------------
-* The multidrop To/Cc guessing code along with the fragile duplicate suppressor
-  is deprecated and may be removed from a future release. (MA)
-
 fetchmail 6.4.0 (not yet released):
 
 # MAJOR INCOMPATIBLE CHANGES
@@ -27,6 +24,11 @@ fetchmail 6.4.0 (not yet released):
 
 fetchmail 6.3.1 (not yet released):
 
+# OBSOLETION WARNINGS
+* The multidrop To/Cc guessing code along with the fragile duplicate suppressor
+  is deprecated and may be removed from a future release. (MA)
+
+# USER-VISIBLE CHANGES
 * Fix broken default port in POP2. Patch by Stanislav Brabec, SUSE [CZ]. (MA)
 * Fix manual page, some lines starting with ' were escaped by \&.
   Reported by Simon Barner. (MA)
@@ -37,8 +39,12 @@ fetchmail 6.3.1 (not yet released):
   that we are not using. Patch by Sunil Shetye. (MA)
 * Plug potential memory and socket leak when polling multiple folders or when
   the upstream sends bogus message sizes.  Patch by Sunil Shetye. (MA)
-* Fix segfault in multidrop mode with headerless email.
-  Reported by Daniel Drake, patch by Sunil Shetye. (MA)
+* Fix segfault (null pointer dereference) in multidrop mode with headerless
+  email.  Reported by Daniel Drake, patch by Sunil Shetye. (MA)
+* Update Catalan translation, by Ernest Adrogué Calveras. (MA)
+* Fix segfault (null pointer dereference) on some operating systems with
+  fetchmail's obsolete DNS MX/host alias lookups in multidrop mode.
+  Patch by Dr.-Ing. Andreas Haakh. (MA)
 
 fetchmail 6.3.0 (released 2005-11-30):
 
