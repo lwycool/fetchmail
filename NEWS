@@ -30,6 +30,7 @@ fetchmail 6.3.1 (not yet released):
 # OBSOLETION WARNINGS
 * The multidrop To/Cc guessing code along with the fragile duplicate suppressor
   is deprecated and may be removed from a future release. (MA)
+* RPOP is obsolete, support may be removed from a future fetchmail release. (MA)
 
 # USER-VISIBLE CHANGES
 * Fix broken default port in POP2. Patch by Stanislav Brabec, SUSE [CZ]. (MA)
