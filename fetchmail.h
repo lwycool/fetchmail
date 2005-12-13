@@ -498,13 +498,16 @@ void lock_dispose(void);
 extern int phase;
 
 /* response hooks can use this to identify the query stage */
-#define STAGE_GETAUTH	0
-#define STAGE_GETRANGE	1
-#define STAGE_GETSIZES	2
-#define STAGE_FETCH	3
-#define STAGE_IDLE	4
-#define STAGE_LOGOUT	5
-extern int stage;
+enum Stage {
+    STAGE_PREAUTH,
+    STAGE_GETAUTH,
+    STAGE_GETRANGE,
+    STAGE_GETSIZES,
+    STAGE_FETCH,
+    STAGE_IDLE,
+    STAGE_LOGOUT,
+};
+extern enum Stage stage;
 
 extern int mytimeout;
 
