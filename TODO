@@ -16,6 +16,8 @@ Greg Lindahl "more clever resource limitations"
 set expunge and/or MTA delay by time rather than message count,
 <http://lists.berlios.de/pipermail/fetchmail-users/2005-December/000158.html>
 
+SSL/TLS: support SHA1 fingerprints, too, not just hardcoded MD5
+
 support/propagate address extensions in multidrop mode (must be
 configurable per account, as they are upstream dependent, about everyone
 uses +, qmail uses -)
