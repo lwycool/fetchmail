@@ -18,6 +18,9 @@ set expunge and/or MTA delay by time rather than message count,
 
 SSL/TLS: support SHA1 fingerprints, too, not just hardcoded MD5
 
+Factor out and rewrite the whole IMAP response parsing code. We need to
+support response codes, * BYE and similar.
+
 support/propagate address extensions in multidrop mode (must be
 configurable per account, as they are upstream dependent, about everyone
 uses +, qmail uses -)
