@@ -25,7 +25,7 @@ fetchmail 6.4.0 (not yet released):
 
 --------------------------------------------------------------------------------
 
-fetchmail 6.3.1 (not yet released):
+fetchmail 6.3.1 (released 2005-12-19):
 
 # OBSOLETION WARNINGS
 * The multidrop To/Cc guessing code along with the fragile duplicate suppressor
