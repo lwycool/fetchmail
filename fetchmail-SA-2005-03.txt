@@ -5,7 +5,7 @@ Topics:		#1 crash retrieving headerless message in multidrop mode
 
 Author:		Matthias Andree
 Version:	1.00
-Announced:	XXX
+Announced:	2005-12-19
 Type:		null pointer dereference
 Impact:		fetchmail crashes
 Danger:		low
@@ -25,9 +25,9 @@ Not affected:	fetchmail 6.3.1
 		other versions not mentioned here or in the previous
 		sections have not been checked
 
-Corrected:	(not yet)                  - released fetchmail 6.3.1-rc1
-		2005-12-18                 - released fetchmail 6.3.1-rc1
-		(not yet)                  - released fetchmail 6.2.5.5
+Corrected:	2005-12-19 - released fetchmail 6.3.1
+		2005-12-18 - released fetchmail 6.3.1-rc1
+		2005-12-19 - released fetchmail 6.2.5.5
 
 
 0. Release history
