@@ -60,7 +60,8 @@ fetchmail 6.3.1 (not yet released):
 * Do not trash destination domain if multiple messages are forwarded into the
   same SMTP/LMTP connection. Reported by Joachim Feise, Berlios Bug #5849. (MA)
 * Manual page: Add "-md5" to "openssl x509" example in --sslfingerprint
-  documentation.  Suggested by Jason White. (MA)
+  documentation, since OpenSSL 0.9.8 changed the default to SHA1.
+  Suggested by Jason White. (MA)
 * Cope with servers that return UID information in response to non-UID
   RFC822.{SIZE|HEADER} requests. Reported by Jason White.
   Patch suggestion by by Sunil Shetye, simplified by MA.
