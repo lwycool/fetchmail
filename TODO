@@ -25,7 +25,12 @@ support/propagate address extensions in multidrop mode (must be
 configurable per account, as they are upstream dependent, about everyone
 uses +, qmail uses -)
 
-clean up LMTP vs. SMTP
+clean up LMTP vs. SMTP, --lmtp as global option is useless, and LMTP
+options do not belong into --smtphost. The sink side needs to be more
+flexible, perhaps --mailsink {PROTOCOL}host[/port] (are there better
+names for this option?), and we may need to specify server-specific
+name/password for ESMTP AUTH.  BTW, use libesmtp or SASL to avoid the
+AUTH implementation itself?
 
 clean up protocol vs. authentication (POP3, KPOP, APOP)
 
