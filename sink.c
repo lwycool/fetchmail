@@ -54,7 +54,7 @@ void smtp_close(struct query *ctl, int sayquit)
     if (ctl->smtp_socket != -1)
     {
 	if (sayquit)
-	    SMTP_quit(ctl->smtp_socket);
+	    SMTP_quit(ctl->smtp_socket, ctl->smtphostmode);
 	SockClose(ctl->smtp_socket);
 	ctl->smtp_socket = -1;
     }
@@ -64,8 +64,6 @@ void smtp_close(struct query *ctl, int sayquit)
 int smtp_open(struct query *ctl)
 /* try to open a socket to the appropriate SMTP server for this query */ 
 {
-    char *parsed_host = NULL;
-
     /* maybe it's time to close the socket in order to force delivery */
     if (last_smtp_ok > 0 && time((time_t *)NULL) - last_smtp_ok > mytimeout)
     {
@@ -102,6 +100,7 @@ int smtp_open(struct query *ctl)
 	struct idlist	*idp;
 	const char *id_me = run.invisible ? ctl->server.truename : fetchmailhost;
 	int oldphase = phase;
+	char *parsed_host = NULL;
 
 	errno = 0;
 
@@ -122,13 +121,14 @@ int smtp_open(struct query *ctl)
 	    ctl->smtphost = idp->id;  /* remember last host tried. */
 	    if (ctl->smtphost[0]=='/')
 	    {
-		ctl->listener = LMTP_MODE;
+		ctl->smtphostmode = LMTP_MODE;
 		xfree(parsed_host);
 		if ((ctl->smtp_socket = UnixOpen(ctl->smtphost))==-1)
 		    continue;
 	    }
 	    else
 	    {
+		ctl->smtphostmode = ctl->listener;
 		parsed_host = xstrdup(idp->id);
 		if ((cp = strrchr(parsed_host, '/')))
 		{
@@ -153,12 +153,9 @@ int smtp_open(struct query *ctl)
 		return(ctl->smtp_socket); /* success */
 	    }
 
-	    /* are we doing SMTP or LMTP? */
-	    SMTP_setmode(ctl->listener);
-
 	    /* first, probe for ESMTP */
-	    if (SMTP_ok(ctl->smtp_socket) == SM_OK &&
-		    SMTP_ehlo(ctl->smtp_socket, id_me, 
+	    if (SMTP_ok(ctl->smtp_socket, ctl->smtphostmode) == SM_OK &&
+		    SMTP_ehlo(ctl->smtp_socket, ctl->smtphostmode, id_me,
 			ctl->server.esmtp_name, ctl->server.esmtp_password,
 			&ctl->server.esmtp_options) == SM_OK)
 		break;  /* success */
@@ -185,8 +182,8 @@ int smtp_open(struct query *ctl)
 		}
 	    }
 
-	    if (SMTP_ok(ctl->smtp_socket) == SM_OK && 
-		    SMTP_helo(ctl->smtp_socket, id_me) == SM_OK)
+	    if (SMTP_ok(ctl->smtp_socket, ctl->smtphostmode) == SM_OK &&
+		    SMTP_helo(ctl->smtp_socket, ctl->smtphostmode, id_me) == SM_OK)
 		break;  /* success */
 
 	    smtp_close(ctl, 0);
@@ -269,8 +266,6 @@ static int send_bouncemail(struct query *ctl, struct msgblk *msg,
 
     bounce_to = (run.bouncemail ? msg->return_path : run.postmaster);
 
-    SMTP_setmode(SMTP_MODE);
-
     /* can't just use fetchmailhost here, it might be localhost */
     if (fqdn_of_host == NULL)
 	fqdn_of_host = host_fqdn(0); /* can't afford to bail out and
@@ -283,18 +278,18 @@ static int send_bouncemail(struct query *ctl, struct msgblk *msg,
     if ((sock = SockOpen("localhost", SMTP_PORT, NULL)) == -1)
 	return(FALSE);
 
-    if (SMTP_ok(sock) != SM_OK)
+    if (SMTP_ok(sock, SMTP_MODE) != SM_OK)
     {
 	SockClose(sock);
 	return FALSE;
     }
 
-    if (SMTP_helo(sock, fetchmailhost) != SM_OK
-	|| SMTP_from(sock, "<>", (char *)NULL) != SM_OK
-	|| SMTP_rcpt(sock, bounce_to) != SM_OK
-	|| SMTP_data(sock) != SM_OK) 
+    if (SMTP_helo(sock, SMTP_MODE, fetchmailhost) != SM_OK
+	|| SMTP_from(sock, SMTP_MODE, "<>", (char *)NULL) != SM_OK
+	|| SMTP_rcpt(sock, SMTP_MODE, bounce_to) != SM_OK
+	|| SMTP_data(sock, SMTP_MODE) != SM_OK)
     {
-	SMTP_quit(sock);
+	SMTP_quit(sock, SMTP_MODE);
 	SockClose(sock);
 	return(FALSE);
     }
@@ -407,7 +402,8 @@ static int send_bouncemail(struct query *ctl, struct msgblk *msg,
     }
     SockPrintf(sock, "--%s--\r\n", boundary); 
 
-    if (SMTP_eom(sock) != SM_OK || SMTP_quit(sock))
+    if (SMTP_eom(sock, SMTP_MODE) != SM_OK
+	    || SMTP_quit(sock, SMTP_MODE) != SM_OK)
     {
 	SockClose(sock);
 	return(FALSE);
@@ -500,7 +496,7 @@ static int handle_smtp_report(struct query *ctl, struct msgblk *msg)
      */
     if (smtperr >= 400)
 	report(stderr, GT_("%cMTP error: %s\n"), 
-	      ctl->listener,
+	      ctl->smtphostmode,
 	      responses[0]);
 
     switch (smtperr)
@@ -584,7 +580,7 @@ static int handle_smtp_report_without_bounce(struct query *ctl, struct msgblk *m
 
     if (smtperr >= 400)
 	report(stderr, GT_("%cMTP error: %s\n"), 
-	      ctl->listener,
+	      ctl->smtphostmode,
 	      smtp_response);
 
     switch (smtperr)
@@ -899,7 +895,8 @@ static int open_smtp_sink(struct query *ctl, struct msgblk *msg,
 	ap = addr;
     }
 
-    if ((smtp_err = SMTP_from(ctl->smtp_socket, ap, options)) == SM_UNRECOVERABLE)
+    if ((smtp_err = SMTP_from(ctl->smtp_socket, ctl->smtphostmode,
+		    ap, options)) == SM_UNRECOVERABLE)
     {
 	smtp_close(ctl, 0);
 	return(PS_TRANSIENT);
@@ -908,7 +905,7 @@ static int open_smtp_sink(struct query *ctl, struct msgblk *msg,
     {
 	int err = handle_smtp_report(ctl, msg); /* map to PS_TRANSIENT or PS_REFUSED */
 
-	SMTP_rset(ctl->smtp_socket);    /* stay on the safe side */
+	SMTP_rset(ctl->smtp_socket, ctl->smtphostmode);    /* stay on the safe side */
 	return(err);
     }
 
@@ -926,7 +923,8 @@ static int open_smtp_sink(struct query *ctl, struct msgblk *msg,
 	{
 	    const char *address;
 	    address = rcpt_address (ctl, idp->id, 1);
-	    if ((smtp_err = SMTP_rcpt(ctl->smtp_socket, address)) == SM_UNRECOVERABLE)
+	    if ((smtp_err = SMTP_rcpt(ctl->smtp_socket, ctl->smtphostmode,
+			    address)) == SM_UNRECOVERABLE)
 	    {
 		smtp_close(ctl, 0);
 transient:
@@ -958,14 +956,14 @@ transient:
 		    if (outlevel >= O_VERBOSE)
 			report(stderr,
 			      GT_("%cMTP listener doesn't like recipient address `%s'\n"),
-			      ctl->listener, address);
+			      ctl->smtphostmode, address);
 		    break;
 
 		    case PS_REFUSED:
 		    if (outlevel >= O_VERBOSE)
 			report(stderr,
 			      GT_("%cMTP listener doesn't really like recipient address `%s'\n"),
-			      ctl->listener, address);
+			      ctl->smtphostmode, address);
 		    break;
 		}
 	    }
@@ -976,7 +974,7 @@ transient:
 	     * crap. If one of the recipients returned PS_TRANSIENT,
 	     * we return exactly that.
 	     */
-	    SMTP_rset(ctl->smtp_socket);        /* required by RFC1870 */
+	    SMTP_rset(ctl->smtp_socket, ctl->smtphostmode);        /* required by RFC1870 */
 	    goto transient;
     }
 #ifdef EXPLICIT_BOUNCE_ON_BAD_ADDRESS
@@ -1006,10 +1004,10 @@ transient:
 	{
 	    if (outlevel >= O_VERBOSE)
 		report(stderr, GT_("no address matches; no postmaster set.\n"));
-	    SMTP_rset(ctl->smtp_socket);	/* required by RFC1870 */
+	    SMTP_rset(ctl->smtp_socket, ctl->smtphostmode);	/* required by RFC1870 */
 	    return(PS_REFUSED);
 	}
-	if ((smtp_err = SMTP_rcpt(ctl->smtp_socket,
+	if ((smtp_err = SMTP_rcpt(ctl->smtp_socket, ctl->smtphostmode,
 		rcpt_address (ctl, run.postmaster, 0))) == SM_UNRECOVERABLE)
 	{
 	    smtp_close(ctl, 0);
@@ -1018,7 +1016,7 @@ transient:
 	if (smtp_err != SM_OK)
 	{
 	    report(stderr, GT_("can't even send to %s!\n"), run.postmaster);
-	    SMTP_rset(ctl->smtp_socket);	/* required by RFC1870 */
+	    SMTP_rset(ctl->smtp_socket, ctl->smtphostmode);	/* required by RFC1870 */
 	    return(PS_REFUSED);
 	}
 
@@ -1030,7 +1028,8 @@ transient:
      * Tell the listener we're ready to send data.
      * Some listeners (like zmailer) may return antispam errors here.
      */
-    if ((smtp_err = SMTP_data(ctl->smtp_socket)) == SM_UNRECOVERABLE)
+    if ((smtp_err = SMTP_data(ctl->smtp_socket, ctl->smtphostmode))
+	    == SM_UNRECOVERABLE)
     {
 	smtp_close(ctl, 0);
 	return(PS_TRANSIENT);
@@ -1038,7 +1037,7 @@ transient:
     if (smtp_err != SM_OK)
     {
 	int err = handle_smtp_report(ctl, msg);
-	SMTP_rset(ctl->smtp_socket);    /* stay on the safe side */
+	SMTP_rset(ctl->smtp_socket, ctl->smtphostmode);    /* stay on the safe side */
 	return(err);
     }
 
@@ -1239,7 +1238,7 @@ int open_sink(struct query *ctl, struct msgblk *msg,
     else if (!ctl->mda)
     {
 	report(stderr, GT_("%cMTP connect to %s failed\n"),
-	       ctl->listener,
+	       ctl->smtphostmode,
 	       ctl->smtphost ? ctl->smtphost : "localhost");
 
 #ifndef FALLBACK_MDA
@@ -1352,7 +1351,8 @@ int close_sink(struct query *ctl, struct msgblk *msg, flag forward)
     else if (forward)
     {
 	/* write message terminator */
-	if ((smtp_err = SMTP_eom(ctl->smtp_socket)) == SM_UNRECOVERABLE)
+	if ((smtp_err = SMTP_eom(ctl->smtp_socket, ctl->smtphostmode))
+		== SM_UNRECOVERABLE)
 	{
 	    smtp_close(ctl, 0);
 	    return(FALSE);
@@ -1361,13 +1361,13 @@ int close_sink(struct query *ctl, struct msgblk *msg, flag forward)
 	{
 	    if (handle_smtp_report(ctl, msg) != PS_REFUSED)
 	    {
-	        SMTP_rset(ctl->smtp_socket);    /* stay on the safe side */
+	        SMTP_rset(ctl->smtp_socket, ctl->smtphostmode);    /* stay on the safe side */
 		return(FALSE);
 	    }
 	    else
 	    {
 		report(stderr, GT_("SMTP listener refused delivery\n"));
-	        SMTP_rset(ctl->smtp_socket);    /* stay on the safe side */
+	        SMTP_rset(ctl->smtp_socket, ctl->smtphostmode);    /* stay on the safe side */
 		return(TRUE);
 	    }
 	}
@@ -1382,11 +1382,11 @@ int close_sink(struct query *ctl, struct msgblk *msg, flag forward)
 	 * otherwise the message will get left in the queue and resent
 	 * to people who got it the first time.
 	 */
-	if (ctl->listener == LMTP_MODE)
+	if (ctl->smtphostmode == LMTP_MODE)
 	{
 	    if (lmtp_responses == 0)
 	    {
-		SMTP_ok(ctl->smtp_socket); 
+		SMTP_ok(ctl->smtp_socket, ctl->smtphostmode);
 
 		/*
 		 * According to RFC2033, 503 is the only legal response
@@ -1419,7 +1419,8 @@ int close_sink(struct query *ctl, struct msgblk *msg, flag forward)
 		responses = xmalloc(sizeof(char *) * lmtp_responses);
 		for (errors = i = 0; i < lmtp_responses; i++)
 		{
-		    if ((smtp_err = SMTP_ok(ctl->smtp_socket)) == SM_UNRECOVERABLE)
+		    if ((smtp_err = SMTP_ok(ctl->smtp_socket, ctl->smtphostmode))
+			    == SM_UNRECOVERABLE)
 		    {
 			smtp_close(ctl, 0);
 			goto unrecov;
