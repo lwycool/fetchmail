@@ -66,3 +66,11 @@ autoconf and Makefile.am snippet for automake, so people can just use it
 without further hassle.
 
 fetchmail -vvvv --syslog prints blank lines on the screen.
+
+find a way to abort sink and rollback headers written to BSMTP, kill a
+running MDA, and similar, to avoid incomplete messages (perhaps make it
+an option to ship the incomplete message nonetheless)
+
+clean up TOP vs. RETR but leave TOP as an option for the server scum
+that deletes message right after RETR, voiding client retries (Jakob
+Hirsch, 2006-01-03).
