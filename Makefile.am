@@ -28,7 +28,7 @@ noinst_PYTHON=		$(pys)
 EXTRA_DIST=		$(pym)
 endif
 
-CLEANFILES=		$(nodist_bin_SCRIPTS)
+CLEANFILES=		$(nodist_bin_SCRIPTS) fetchmail-man.html
 
 # for gettext (used by fetchmail.c, NOT by GNU gettext)
 localedir=		$(datadir)/locale
@@ -113,12 +113,14 @@ EXTRA_DIST+=	$(DISTDOCS) fetchmail.spec $(distdirs) ucs/README.svn \
 		m4-local/ac-archive-license.txt \
 		m4-local/ac_ma_search_package.m4 \
 		m4-local/autobuild.m4 \
-		t.smoke t.rc
+		t.smoke t.rc \
+		dist-tools/manServer.pl \
+		dist-tools/html2txt
 
 fetchmailconf:
 	( echo '#! /bin/sh' && echo 'exec @PYTHON@ @pythondir@/fetchmailconf.py "$$@"' ) >$@ || { rm -f $@ ; exit 1; }
 
-FAQ: fetchmail-FAQ.html
+FAQ: fetchmail-FAQ.html $(srcdir)/dist-tools/html2txt
 	AWK=$(AWK) $(SHELL) $(srcdir)/dist-tools/html2txt $(srcdir)/fetchmail-FAQ.html >$@ || { rm -f $@ ; exit 1 ; }
 
 fetchmail-FAQ.pdf: fetchmail-FAQ.html fetchmail-FAQ.book bighand.png
@@ -126,10 +128,10 @@ fetchmail-FAQ.pdf: fetchmail-FAQ.html fetchmail-FAQ.book bighand.png
 	htmldoc --logoimage $(srcdir)/bighand.png --batch $(srcdir)/fetchmail-FAQ.book
 	rm -f fetchmail-FAQ-print.html
 
-FEATURES: fetchmail-features.html
+FEATURES: fetchmail-features.html $(srcdir)/dist-tools/html2txt
 	AWK=$(AWK) $(SHELL) $(srcdir)/dist-tools/html2txt $(srcdir)/fetchmail-features.html >$@ || { rm -f $@ ; exit 1 ; }
 
-NOTES: design-notes.html esrs-design-notes.html
+NOTES: design-notes.html esrs-design-notes.html $(srcdir)/dist-tools/html2txt
 	   echo "This file contains two articles reformatted from HTML." > $@ \
 	&& echo "------------------------------------------------------" >> $@ \
 	&& echo "" >> $@ \
@@ -137,7 +139,7 @@ NOTES: design-notes.html esrs-design-notes.html
 	&& AWK=$(AWK) $(SHELL) $(srcdir)/dist-tools/html2txt $(srcdir)/esrs-design-notes.html >>$@ \
 	|| { rm -f $@ ; exit 1 ; }
 
-TODO: todo.html
+TODO: todo.html $(srcdir)/dist-tools/html2txt
 	AWK=$(AWK) $(SHELL) $(srcdir)/dist-tools/html2txt $(srcdir)/todo.html >$@ || { rm -f $@ ; exit 1 ; }
 
 fetchmail-man.html: fetchmail.man
