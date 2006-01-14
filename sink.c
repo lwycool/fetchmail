@@ -1317,7 +1317,7 @@ int close_sink(struct query *ctl, struct msgblk *msg, flag forward)
 	{
 	    if (WIFSIGNALED(rc)) {
 		report(stderr, 
-			GT_("MDA died of signal %d\n"), WTERMSIG(rc));
+			GT_("MDA died of signal %s\n"), strsignal(WTERMSIG(rc)));
 	    } else if (WIFEXITED(rc)) {
 		report(stderr, 
 			GT_("MDA returned nonzero status %d\n"), WEXITSTATUS(rc));

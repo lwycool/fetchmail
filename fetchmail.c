@@ -787,13 +787,8 @@ int main(int argc, char **argv)
 	    if ((lastsig = interruptible_idle(run.poll_interval)))
 	    {
 		if (outlevel > O_SILENT)
-#ifdef SYS_SIGLIST_DECLARED
 		    report(stdout,
-		       GT_("awakened by %s\n"), sys_siglist[lastsig]);
-#else
-	    	    report(stdout, 
-		       GT_("awakened by signal %d\n"), lastsig);
-#endif
+		       GT_("awakened by %s\n"), strsignal(lastsig));
 		for (ctl = querylist; ctl; ctl = ctl->next)
 		    ctl->wedged = FALSE;
 	    }
@@ -1275,7 +1270,7 @@ static RETSIGTYPE terminate_poll(int sig)
 {
 
     if (sig != 0)
-        report(stdout, GT_("terminated with signal %d\n"), sig);
+        report(stdout, GT_("terminated with signal %s\n"), strsignal(sig));
 
 #ifdef POP3_ENABLE
     /*
