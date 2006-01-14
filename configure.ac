@@ -91,7 +91,7 @@ esac
 
 dnl i18n
 AM_GNU_GETTEXT([external], [need-ngettext])
-AM_GNU_GETTEXT_VERSION(0.14.3)
+AM_GNU_GETTEXT_VERSION([0.14.3])
 dnl end i18n
 
 # Under sysV68, socket and friends are provided by the C library.
@@ -122,7 +122,7 @@ dnl
 dnl AC_CHECK_LIB(intl, gettext,
 dnl 		[LIBS="$LIBS -lintl"])
 
-AC_REPLACE_FUNCS([strstr strcasecmp memmove stpcpy strlcpy strlcat])
+AC_REPLACE_FUNCS([strstr strcasecmp memmove stpcpy strlcpy strlcat strsignal])
 
 AC_CHECK_FUNC(MD5Init, [],
 	      [AC_LIBSOURCE(md5c.c)

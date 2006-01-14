@@ -35,6 +35,11 @@
 char *strstr(const char *, const char *);
 #endif
 
+/* strsignal.c */
+#ifndef HAVE_STRSIGNAL
+char *strsignal(int);
+#endif
+
 /* constants designating the various supported protocols */
 #define		P_AUTO		1
 #define		P_POP3		2
