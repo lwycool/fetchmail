@@ -763,8 +763,8 @@ int main(int argc, char **argv)
 		exit(PS_AUTHFAIL);
 	    }
 
-	    if (outlevel > O_SILENT)
-		report(stdout, 
+	    if (outlevel > O_NORMAL)
+		report(stdout,
 		       GT_("sleeping at %s\n"), timestamp());
 
 	    /*
@@ -788,7 +788,7 @@ int main(int argc, char **argv)
 	    {
 		if (outlevel > O_SILENT)
 #ifdef SYS_SIGLIST_DECLARED
-		    report(stdout, 
+		    report(stdout,
 		       GT_("awakened by %s\n"), sys_siglist[lastsig]);
 #else
 	    	    report(stdout, 
@@ -798,7 +798,7 @@ int main(int argc, char **argv)
 		    ctl->wedged = FALSE;
 	    }
 
-	    if (outlevel > O_SILENT)
+	    if (outlevel > O_NORMAL)
 		report(stdout, GT_("awakened at %s\n"), timestamp());
 	}
     } while
