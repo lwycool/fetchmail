@@ -16,16 +16,12 @@ dist_noinst_SCRIPTS=	specgen.sh
 dist_man1_MANS=		fetchmail.man
 
 pys=			fetchmailconf.py
-pym=			fetchmailconf.man
 
 if HAVE_PYTHON
 nodist_bin_SCRIPTS=	fetchmailconf
 python_PYTHON=		$(pys)
-dist_man1_MANS+=	$(pym)
-EXTRA_DIST=
 else
 noinst_PYTHON=		$(pys)
-EXTRA_DIST=		$(pym)
 endif
 
 CLEANFILES=		$(nodist_bin_SCRIPTS) fetchmail-man.html
@@ -107,7 +103,7 @@ DISTDOCS=	BUGS FAQ FEATURES NOTES OLDNEWS fetchmail-man.html \
 # extra directories to ship
 distdirs = rh-config contrib beos
 
-EXTRA_DIST+=	$(DISTDOCS) fetchmail.spec $(distdirs) ucs/README.svn \
+EXTRA_DIST=	$(DISTDOCS) fetchmail.spec $(distdirs) ucs/README.svn \
 		trio/CHANGES trio/README \
 		strlcpy.3 bighand.png \
 		m4-local/ac-archive-license.txt \
@@ -153,6 +149,10 @@ dist-hook:
 .PHONY: lsm
 lsm: genlsm.sh dist
 	$(SHELL) genlsm.sh >$(PACKAGE)-$(VERSION).lsm
+
+# symlinks for manual pages go here
+install-data-hook:
+	(cd $(DESTDIR)$(man1dir) && $(LN_S) fetchmail.1 fetchmailconf.1)
 
 # The following sets edit modes for GNU EMACS.
 # Local Variables:

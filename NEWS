@@ -21,6 +21,8 @@ fetchmail 6.4.0 (not yet released):
   6.3.X had falsely assumed only IMAP4 supported SILENT.  Sunil Shetye.
 * The "sleeping at" and "awakened at" messages are now only logged and printed
   in --verbose mode. Patch by Alexander Motzkau. Fixes Debian Bug#282259. (MA)
+* The dummy ".so fetchmail.1" fetchmailconf.man has been removed, we're
+  symlinking instead from install-data-hook. Matthias Andree.
 
 # INTERNAL CHANGES
 * "stage" (type int) was converted to type "enum Stage".  Sunil Shetye.

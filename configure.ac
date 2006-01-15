@@ -28,6 +28,7 @@ AM_PATH_PYTHON(2.0,,AC_MSG_WARN([Disabling fetchmailconf: python 2.0 or greater 
 AM_CONDITIONAL([HAVE_PYTHON], [test "$PYTHON" != :])
 
 AC_PROG_AWK
+AC_PROG_LN_S
 AC_PROG_CC
 AC_PROG_INSTALL
 AC_PROG_CPP			dnl Later checks need this.
