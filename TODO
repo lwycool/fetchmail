@@ -14,6 +14,10 @@ Merge 6.3.1 -> 6.3.2 changes.
 For later:
 ==========
 
+Make "sleeping at"/"awakened at" configurable WRT log level. Some people
+want it at O_NORMAL, some don't. Perhaps use a flag file that other
+programs can probe?
+
 Wrap broken messages in a MIME blob and ship them, rather than
 discarding them. Rob MacGregor, fetchmail-users 2005-11-10,
 <43ea8d070511100843p1eaf920dv@mail.gmail.com>
