@@ -44,6 +44,9 @@ fetchmail 6.3.2 (to be released):
   alternate between verbose and debug mode. debug mode now comprises all verbose
   output, and adding more -v options does not switch back from debug to verbose
   mode.  Matthias Andree
+* Fix segfault or bus error after bouncing a message.  This bug was introduced
+  into 6.3.0 when removing alloca(); it caused fetchmail to free random memory.
+  Reported by Nathaniel W. Turner, Debian Bug#348747. Fix: Matthias Andree.
 
 fetchmail 6.3.1 (released 2005-12-19):
 
