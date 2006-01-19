@@ -343,6 +343,9 @@ int main(int argc, char **argv)
 	}
     }
 
+    free_netrc(netrc_list);
+    netrc_list = 0;
+
     /* perhaps we just want to check options? */
     if (versioninfo)
     {
