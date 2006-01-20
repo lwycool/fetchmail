@@ -14,6 +14,8 @@ Merge 6.3.1 -> 6.3.2 changes.
 For later:
 ==========
 
+Fix Debian Bug#348995: allow read-only IMAP folders in --keep mode.
+
 Make "sleeping at"/"awakened at" configurable WRT log level. Some people
 want it at O_NORMAL, some don't. Perhaps use a flag file that other
 programs can probe?
