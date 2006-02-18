@@ -8,13 +8,18 @@ location?
 Yves Boisjoly reports that NTLM auth needs to use the real Wks field
 rather than duplicating the user name (see l. 211 in smbutil.c).
 
-Merge 6.3.1 -> 6.3.2 changes.
+Merge 6.3.1 -> 6.3.2 changes
 
 
 For later:
 ==========
 
+Add "polling ... folder XYZ" information to "tracepolls".
+
 Fix Debian Bug#348995: allow read-only IMAP folders in --keep mode.
+
+Fix Debian Bug#349726: recognize X-Envelope-From (instead of
+Return-Path) - perhaps add a configuration option.
 
 Make "sleeping at"/"awakened at" configurable WRT log level. Some people
 want it at O_NORMAL, some don't. Perhaps use a flag file that other
@@ -50,6 +55,8 @@ flexible, perhaps --mailsink {PROTOCOL}host[/port] (are there better
 names for this option?), and we may need to specify server-specific
 name/password for ESMTP AUTH.  BTW, use libesmtp or SASL to avoid the
 AUTH implementation itself?
+
+Support Postfix's XCLIENT/XFORWARD?
 
 clean up protocol vs. authentication (POP3, KPOP, APOP)
 
