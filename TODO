@@ -1,3 +1,23 @@
+20060213T122015 [  53: Frederic Marchal] [fetchmail-users] Incorrect header line and lost mails
+See if fetchmail still segfaults (see quotes of Frederic Marchal
+2006-02-17):
+> In fetchmail, the problem is clearly located in transact.c (I wouldn't
+> call it a bug until I get some clarification from the one who wrote
+> it). The part of the code that rejects the mail is preceded by a comment
+> stating
+>
+>         * At least one brain-dead website (netmind.com) is known to
+>         * send out robotmail that's missing the RFC822 delimiter blank
+>         * line before the body! Without this check fetchmail segfaults.
+>         * With it, we treat such messages as spam and refuse them.
+>
+> But the test after this comment doesn't test for the beginning of the
+> body but for a header line not starting with a blank and not containing
+> a colon.
+
+Make fetchmailconf a noarch RPM (needs %ifarch hacks and running
+rpmbuild twice).
+
 Add FAQ entry about procmail configuration with 1. ORGMAIL/DEFAULT, 2.
 :0e { EXITCODE=75 HOST }, 3. explicit default recipe, 4. LOGFILE
 location?
