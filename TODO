@@ -1,6 +1,3 @@
-For 6.3.0:
-==========
-
 Add FAQ entry about procmail configuration with 1. ORGMAIL/DEFAULT, 2.
 :0e { EXITCODE=75 HOST }, 3. explicit default recipe, 4. LOGFILE
 location?
@@ -10,9 +7,12 @@ rather than duplicating the user name (see l. 211 in smbutil.c).
 
 Merge 6.3.1 -> 6.3.2 changes
 
+Validate --mda/mda option so that single quotes (') around the
+placeholders are rejected Debian Bug #347909
 
-For later:
-==========
+Use Errors-To: as envelope sender fallback?
+
+Clean up null envelope handling everywhere to get rid of <> kludge.
 
 Add "polling ... folder XYZ" information to "tracepolls".
 
@@ -60,6 +60,8 @@ Support Postfix's XCLIENT/XFORWARD?
 
 clean up protocol vs. authentication (POP3, KPOP, APOP)
 
+Add a warning when mda contains sendmail but not -i, -oi, -O IgnoreDots
+
 IDN
 
 support for CAfile (also multiple)
@@ -92,6 +94,7 @@ autoconf and Makefile.am snippet for automake, so people can just use it
 without further hassle.
 
 fetchmail -vvvv --syslog prints blank lines on the screen.
+uid.c lines 254 and 265?
 
 find a way to abort sink and rollback headers written to BSMTP, kill a
 running MDA, and similar, to avoid incomplete messages (perhaps make it
