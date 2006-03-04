@@ -15,6 +15,10 @@ See if fetchmail still segfaults (see quotes of Frederic Marchal
 > body but for a header line not starting with a blank and not containing
 > a colon.
 
+several *scanf (such as the one that parses the POP3 STAT reply) do not
+check the return value, they should and return PS_PROTOCOL in case of
+trouble.
+
 Make fetchmailconf a noarch RPM (needs %ifarch hacks and running
 rpmbuild twice).
 
