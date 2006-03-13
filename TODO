@@ -127,3 +127,6 @@ an option to ship the incomplete message nonetheless)
 clean up TOP vs. RETR but leave TOP as an option for the server scum
 that deletes message right after RETR, voiding client retries (Jakob
 Hirsch, 2006-01-03).
+
+"[PATCH] Allow to specify pid dir independent of home dir"
+(Héctor García, 2006-03-13, fetchmail-devel@)
