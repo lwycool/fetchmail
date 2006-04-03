@@ -1,3 +1,9 @@
+sourceforge bug 780933: fetchmail 6.2.3 (and 6.3.4-rc1 probably as well)
+fails to delete certain emails from POP3 server (no UIDL used, no
+Message-ID/Date headers). fetchmail should hash the entire header
+(perhaps weeding out particular headers such as Status headers that
+change on the POP3 server) rather than use the Message-ID.
+
 20060213T122015 [  53: Frederic Marchal] [fetchmail-users] Incorrect header line and lost mails
 See if fetchmail still segfaults (see quotes of Frederic Marchal
 2006-02-17):
