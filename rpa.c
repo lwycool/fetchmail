@@ -712,11 +712,11 @@ static void GenChallenge(unsigned char *buf, int len)
     devrandom = fopen("/dev/urandom","rb");
     if (devrandom == NULL && outlevel > O_SILENT)
     {
-	report(stdout, GT_("RPA Failed open of /dev/urandom. This shouldn't\n"));
-	report(stdout, GT_("    prevent you logging in, but means you\n"));
-	report(stdout, GT_("    cannot be sure you are talking to the\n"));
-	report(stdout, GT_("    service that you think you are (replay\n"));
-	report(stdout, GT_("    attacks by a dishonest service are possible.)\n"));
+	report(stdout, GT_("RPA Failed open of /dev/urandom. This shouldn't\n"
+	                   "    prevent you logging in, but means you\n"
+	                   "    cannot be sure you are talking to the\n"
+	                   "    service that you think you are (replay\n"
+	                   "    attacks by a dishonest service are possible.)\n"));
     }
 
     for(i=0; i<len; i++)
