@@ -1,3 +1,6 @@
+allow configuration of separate CommonName (for SSL) to configure
+(Daniel Richard G, Apr 24 2006 on fetchmail-devel)
+
 sourceforge bug 780933: fetchmail 6.2.3 (and 6.3.4-rc1 probably as well)
 fails to delete certain emails from POP3 server (no UIDL used, no
 Message-ID/Date headers). fetchmail should hash the entire header
