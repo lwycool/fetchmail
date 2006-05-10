@@ -1,3 +1,5 @@
+make interval option a minimum delay between polls or logins?
+
 allow configuration of separate CommonName (for SSL) to configure
 (Daniel Richard G, Apr 24 2006 on fetchmail-devel)
 
