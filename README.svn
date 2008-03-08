@@ -1,3 +1,9 @@
+
+
+WARNING: the trunk is currently unmaintained, use branches/BRANCH_6-3 instead.
+========
+
+
 In order to be able to build from the subversion repository (working
 directory), some files need to be (re-)generated.
 

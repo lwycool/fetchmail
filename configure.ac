@@ -10,6 +10,13 @@ AC_CONFIG_SRCDIR([fetchmail.h])
 AC_CONFIG_HEADERS([config.h])
 AC_CONFIG_LIBOBJ_DIR([.])
 
+AC_MSG_NOTICE([])
+AC_MSG_WARN([!!!  This trunk is currently not maintained,  !!!])
+AC_MSG_WARN([!!!  please use branches/BRANCH_6-3 instead.  !!!])
+AC_MSG_NOTICE([])
+AC_MSG_NOTICE([continuing in 10 seconds])
+sleep 10 || :
+
 AC_CANONICAL_TARGET
 
 dnl we may need a newer automake version - the oldest tested is 1.7
@@ -762,6 +769,10 @@ fi
 dnl ----------------------------------------------------------------'
 
 AC_CONFIG_FILES([Makefile m4/Makefile po/Makefile.in genlsm.sh])
+AC_CONFIG_COMMANDS([warntrunk],[
+		    AC_MSG_WARN([!!!  This trunk is currently not maintained,  !!!])
+		    AC_MSG_WARN([!!!  please use branches/BRANCH_6-3 instead.  !!!])
+])
 AC_OUTPUT
 
 dnl Local Variables:
