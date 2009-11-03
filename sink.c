@@ -24,11 +24,7 @@
 #if defined(HAVE_UNISTD_H)
 #include  <unistd.h>
 #endif
-#if defined(HAVE_STDARG_H)
 #include  <stdarg.h>
-#else
-#include  <varargs.h>
-#endif
 #include  <ctype.h>
 #include  <langinfo.h>
 
@@ -141,7 +137,7 @@ int smtp_open(struct query *ctl)
 			portnum = cp;
 		}
 		if ((ctl->smtp_socket = SockOpen(parsed_host,portnum,
-				ctl->server.plugout, &ai1)) == -1)
+				ctl->server.plugout)) == -1)
 		{
 		    xfree(parsed_host);
 		    continue;
@@ -158,7 +154,7 @@ int smtp_open(struct query *ctl)
 	    }
 
 	    /* first, probe for ESMTP */
-	    if (SMTP_ok(ctl->smtp_socket, ctl->smtphostmode, TIMEOUT_STARTSMTP) == SM_OK &&
+	    if (SMTP_ok(ctl->smtp_socket, ctl->smtphostmode) == SM_OK &&
 		    SMTP_ehlo(ctl->smtp_socket, ctl->smtphostmode, id_me,
 			ctl->server.esmtp_name, ctl->server.esmtp_password,
 			&ctl->server.esmtp_options) == SM_OK)
@@ -179,14 +175,14 @@ int smtp_open(struct query *ctl)
 	    else
 	    {
 		if ((ctl->smtp_socket = SockOpen(parsed_host,portnum,
-				ctl->server.plugout, &ai1)) == -1)
+				ctl->server.plugout)) == -1)
 		{
 		    xfree(parsed_host);
 		    continue;
 		}
 	    }
 
-	    if (SMTP_ok(ctl->smtp_socket, ctl->smtphostmode, TIMEOUT_STARTSMTP) == SM_OK &&
+	    if (SMTP_ok(ctl->smtp_socket, ctl->smtphostmode) == SM_OK &&
 		    SMTP_helo(ctl->smtp_socket, ctl->smtphostmode, id_me) == SM_OK)
 		break;  /* success */
 
@@ -251,7 +247,7 @@ char *rcpt_address(struct query *ctl, const char *id,
 }
 
 static int send_bouncemail(struct query *ctl, struct msgblk *msg,
-			   int userclass, char *message /* should have \r\n at the end */,
+			   int userclass, char *message,
 			   int nerrors, char *errors[])
 /* bounce back an error report a la RFC 1892 */
 {
@@ -262,7 +258,7 @@ static int send_bouncemail(struct query *ctl, struct msgblk *msg,
     const char *md1 = "MAILER-DAEMON", *md2 = "MAILER-DAEMON@";
 
     /* don't bounce in reply to undeliverable bounces */
-    if (!msg || !msg->return_path[0] ||
+    if (!msg->return_path[0] ||
 	strcmp(msg->return_path, "<>") == 0 ||
 	strcasecmp(msg->return_path, md1) == 0 ||
 	strncasecmp(msg->return_path, md2, strlen(md2)) == 0)
@@ -279,10 +275,10 @@ static int send_bouncemail(struct query *ctl, struct msgblk *msg,
     /* we need only SMTP for this purpose */
     /* XXX FIXME: hardcoding localhost is nonsense if smtphost can be
      * configured */
-    if ((sock = SockOpen("localhost", SMTP_PORT, NULL, &ai1)) == -1)
+    if ((sock = SockOpen("localhost", SMTP_PORT, NULL)) == -1)
 	return(FALSE);
 
-    if (SMTP_ok(sock, SMTP_MODE, TIMEOUT_STARTSMTP) != SM_OK)
+    if (SMTP_ok(sock, SMTP_MODE) != SM_OK)
     {
 	SockClose(sock);
 	return FALSE;
@@ -300,7 +296,7 @@ static int send_bouncemail(struct query *ctl, struct msgblk *msg,
 
     /* our first duty is to keep the sacred foo counters turning... */
     snprintf(boundary, sizeof(boundary), "foo-mani-padme-hum-%ld-%ld-%ld", 
-	    (long)getpid(), (long)getppid(), (long)time(NULL));
+	    (long)getpid(), (long)getppid(), time(NULL));
 
     if (outlevel >= O_VERBOSE)
 	report(stdout, GT_("SMTP: (bounce-message body)\n"));
@@ -322,14 +318,10 @@ static int send_bouncemail(struct query *ctl, struct msgblk *msg,
     SockPrintf(sock, "--%s\r\n", boundary); 
     SockPrintf(sock,"Content-Type: text/plain\r\n");
     SockPrintf(sock, "\r\n");
-    SockPrintf(sock, "This message was created automatically by mail delivery software.\r\n");
-    SockPrintf(sock, "\r\n");
+    SockPrintf(sock, "This message was created automatically by mail delivery software.\r\n\r\n");
     SockPrintf(sock, "A message that you sent could not be delivered to one or more of its\r\n");
-    SockPrintf(sock, "recipients. This is a permanent error.\r\n");
+    SockPrintf(sock, "recipients. This is a permanent error. The following address(es) failed:\r\n");
     SockPrintf(sock, "\r\n");
-    SockPrintf(sock, "Reason: %s", message);
-    SockPrintf(sock, "\r\n");
-    SockPrintf(sock, "The following address(es) failed:\r\n");
 
     if (nerrors)
     {
@@ -539,24 +531,11 @@ static int handle_smtp_report(struct query *ctl, struct msgblk *msg)
 	free(responses[0]);
 	return(PS_REFUSED);
 
-    case 530: /* must issue STARTTLS error */
-	/*
-	 * Some SMTP servers insist on encrypted communication
-	 * Let's set PS_TRANSIENT, otherwise all messages to be sent
-	 * over such server would be blackholed - see RFC 3207.
-	 */
-	if (outlevel > O_SILENT)
-		report_complete(stdout,
-				GT_("SMTP server requires STARTTLS, keeping message.\n"));
-	free(responses[0]);
-	return(PS_TRANSIENT);
-
     default:
 	/* bounce non-transient errors back to the sender */
 	if (smtperr >= 500 && smtperr <= 599)
 	{
-	    if (run.bouncemail)
-		send_bouncemail(ctl, msg, XMIT_ACCEPT,
+	    send_bouncemail(ctl, msg, XMIT_ACCEPT,
 				"General SMTP/ESMTP error.\r\n", 
 				1, responses);
 	    free(responses[0]);
@@ -591,8 +570,6 @@ static int handle_smtp_report_without_bounce(struct query *ctl, struct msgblk *m
  * no PS_TRANSIENT, no PS_SUCCESS: do not send the bounce mail, delete the mail */
 {
     int smtperr = atoi(smtp_response);
-
-    (void)msg;
 
     if (str_find(&ctl->antispam, smtperr))
     {
@@ -668,7 +645,6 @@ int stuffline(struct query *ctl, char *buf)
 	if (ctl->server.base_protocol->delimited)	/* server has already byte-stuffed */
 	{
 	    if (ctl->mda) {
-		/* writing to MDA, undo byte-stuffing */
 		++buf;
 	    } else {
 		/* writing to SMTP, leave the byte-stuffing in place */;
@@ -676,16 +652,14 @@ int stuffline(struct query *ctl, char *buf)
 	}
         else /* if (!protocol->delimited)	-- not byte-stuffed already */
 	{
-	    /* byte-stuff it */
-	    if (!ctl->mda)  {
-		if (!ctl->bsmtp) {
-		    n = SockWrite(ctl->smtp_socket, buf, 1);
-		} else {
-		    n = fwrite(buf, 1, 1, sinkfp);
-		    if (ferror(sinkfp)) n = -1;
+	  if (!ctl->mda)      /* byte-stuff it */
+	    {
+	      if (!ctl->bsmtp)
+		SockWrite(ctl->smtp_socket, buf, 1);
+	      else
+		{
+		  fwrite(buf, 1, 1, sinkfp);
 		}
-		if (n < 0)
-		    return n;
 	    }
 	}
     }
@@ -703,10 +677,9 @@ int stuffline(struct query *ctl, char *buf)
     }
 
     n = 0;
-    if (ctl->mda || ctl->bsmtp) {
-	n = fwrite(buf, 1, last - buf, sinkfp);
-	if (ferror(sinkfp)) n = -1;
-    } else if (ctl->smtp_socket != -1)
+    if (ctl->mda || ctl->bsmtp)
+	n = fwrite(buf, last - buf, 1, sinkfp);
+    else if (ctl->smtp_socket != -1)
 	n = SockWrite(ctl->smtp_socket, buf, last - buf);
 
     phase = oldphase;
@@ -725,12 +698,6 @@ static int open_bsmtp_sink(struct query *ctl, struct msgblk *msg,
 	sinkfp = stdout;
     else
 	sinkfp = fopen(ctl->bsmtp, "a");
-
-    if (!sinkfp || ferror(sinkfp)) {
-	report(stderr, GT_("BSMTP file open failed: %s\n"), 
-		strerror(errno));
-        return(PS_BSMTP);
-    }
 
     /* see the ap computation under the SMTP branch */
     need_anglebrs = (msg->return_path[0] != '<');
@@ -771,9 +738,9 @@ static int open_bsmtp_sink(struct query *ctl, struct msgblk *msg,
 
     fputs("DATA\r\n", sinkfp);
 
-    if (fflush(sinkfp) || ferror(sinkfp))
+    if (ferror(sinkfp))
     {
-	report(stderr, GT_("BSMTP preamble write failed.\n"));
+	report(stderr, GT_("BSMTP file open or preamble write failed\n"));
 	return(PS_BSMTP);
     }
 
@@ -949,7 +916,7 @@ static int open_smtp_sink(struct query *ctl, struct msgblk *msg,
     for (idp = msg->recipients; idp; idp = idp->next)
 	total_addresses++;
 #ifdef EXPLICIT_BOUNCE_ON_BAD_ADDRESS
-    from_responses = (char **)xmalloc(sizeof(char *) * total_addresses);
+    from_responses = xmalloc(sizeof(char *) * total_addresses);
 #endif /* EXPLICIT_BOUNCE_ON_BAD_ADDRESS */
     for (idp = msg->recipients; idp; idp = idp->next)
 	if (idp->val.status.mark == XMIT_ACCEPT)
@@ -981,6 +948,7 @@ transient:
 		    case PS_SUCCESS:
 #ifdef EXPLICIT_BOUNCE_ON_BAD_ADDRESS
 		    from_responses[*bad_addresses] = xstrdup(smtp_response);
+		    strcpy(from_responses[*bad_addresses], smtp_response);
 #endif /* EXPLICIT_BOUNCE_ON_BAD_ADDRESS */
 
 		    (*bad_addresses)++;
@@ -1098,7 +1066,6 @@ static int open_mda_sink(struct query *ctl, struct msgblk *msg,
     int	length = 0, fromlen = 0, nameslen = 0;
     char	*names = NULL, *before, *after, *from = NULL;
 
-    (void)bad_addresses;
     xfree(ctl->destaddr);
     ctl->destaddr = xstrdup("localhost");
 
@@ -1173,7 +1140,7 @@ static int open_mda_sink(struct query *ctl, struct msgblk *msg,
 	    sp += 2;
 	}
 
-	after = (char *)xmalloc(length + 1);
+	after = xmalloc(length + 1);
 
 	/* copy mda source string to after, while expanding %[sTF] */
 	for (dp = after, sp = before; (*dp = *sp); dp++, sp++) {
@@ -1238,7 +1205,6 @@ static int open_mda_sink(struct query *ctl, struct msgblk *msg,
 
     if (!sinkfp)
     {
-		 perror("MDA open failed");
 	report(stderr, GT_("MDA open failed\n"));
 	return(PS_IOERR);
     }
@@ -1339,40 +1305,30 @@ int close_sink(struct query *ctl, struct msgblk *msg, flag forward)
     int smtp_err;
     if (ctl->mda)
     {
-	int rc = 0, e = 0, e2 = 0, err = 0;
+	int rc;
 
 	/* close the delivery pipe, we'll reopen before next message */
 	if (sinkfp)
 	{
-	    if (ferror(sinkfp))
-		err = 1, e2 = errno;
-	    if ((fflush(sinkfp)))
-		err = 1, e2 = errno;
-
-	    errno = 0;
 	    rc = pclose(sinkfp);
-	    e = errno;
 	    sinkfp = (FILE *)NULL;
 	}
 	else
-	    rc = e = 0;
+	    rc = 0;
 
 	deal_with_sigchld(); /* Restore SIGCHLD handling to reap zombies */
 
-	if (rc || err)
+	if (rc)
 	{
-	    if (err) {
-		report(stderr, GT_("Error writing to MDA: %s\n"), strerror(e2));
-	    } else if (WIFSIGNALED(rc)) {
+	    if (WIFSIGNALED(rc)) {
 		report(stderr, 
-			GT_("MDA died of signal %d\n"), WTERMSIG(rc));
+			GT_("MDA died of signal %s\n"), strsignal(WTERMSIG(rc)));
 	    } else if (WIFEXITED(rc)) {
 		report(stderr, 
 			GT_("MDA returned nonzero status %d\n"), WEXITSTATUS(rc));
 	    } else {
 		report(stderr,
-			GT_("Strange: MDA pclose returned %d and errno %d/%s, cannot handle at %s:%d\n"),
-			rc, e, strerror(e), __FILE__, __LINE__);
+			GT_("Strange: MDA pclose returned %d, cannot handle at %s:%d\n"), rc, __FILE__, __LINE__);
 	    }
 
 	    return(FALSE);
@@ -1435,7 +1391,7 @@ int close_sink(struct query *ctl, struct msgblk *msg, flag forward)
 	{
 	    if (lmtp_responses == 0)
 	    {
-		SMTP_ok(ctl->smtp_socket, ctl->smtphostmode, TIMEOUT_EOM);
+		SMTP_ok(ctl->smtp_socket, ctl->smtphostmode);
 
 		/*
 		 * According to RFC2033, 503 is the only legal response
@@ -1465,10 +1421,10 @@ int close_sink(struct query *ctl, struct msgblk *msg, flag forward)
 		char	**responses;
 
 		/* eat the RFC2033-required responses, saving errors */ 
-		responses = (char **)xmalloc(sizeof(char *) * lmtp_responses);
+		responses = xmalloc(sizeof(char *) * lmtp_responses);
 		for (errors = i = 0; i < lmtp_responses; i++)
 		{
-		    if ((smtp_err = SMTP_ok(ctl->smtp_socket, ctl->smtphostmode, TIMEOUT_EOM))
+		    if ((smtp_err = SMTP_ok(ctl->smtp_socket, ctl->smtphostmode))
 			    == SM_UNRECOVERABLE)
 		    {
 			smtp_close(ctl, 0);
@@ -1508,7 +1464,7 @@ unrecov:
     return(TRUE);
 }
 
-int open_warning_by_mail(struct query *ctl)
+int open_warning_by_mail(struct query *ctl, struct msgblk *msg)
 /* set up output sink for a mailed warning to calling user */
 {
     int	good, bad;
@@ -1562,31 +1518,19 @@ int open_warning_by_mail(struct query *ctl)
 /* if rfc2047charset is non-NULL, encode the line (that is assumed to be
  * a header line) as per RFC-2047 using rfc2047charset as the character
  * set field */
-#if defined(HAVE_STDARG_H)
-void stuff_warning(const char *rfc2047charset, struct query *ctl, const char *fmt, ... )
-#else
-void stuff_warning(rfc2047charset, ctl, fmt, va_alist)
-const char *charset;
-struct query *ctl;
-const char *fmt;	/* printf-style format */
-va_dcl
-#endif
+void stuff_warning(const char *rfc2047charset, struct query *ctl, const char *fmt, ...)
 {
     /* make huge -- i18n can bulk up error messages a lot */
-    char	buf[2*MSGBUFSIZE+4];
+    char	buf[6*MSGBUFSIZE+4];
     va_list ap;
 
     /*
      * stuffline() requires its input to be writeable (for CR stripping),
      * so we needed to copy the message to a writeable buffer anyway in
      * case it was a string constant.  We make a virtue of that necessity
-     * here by supporting stdargs/varargs.
+     * here by supporting stdargs.
      */
-#if defined(HAVE_STDARG_H)
     va_start(ap, fmt) ;
-#else
-    va_start(ap);
-#endif
     vsnprintf(buf, sizeof(buf) - 2, fmt, ap);
     va_end(ap);
 
@@ -1606,5 +1550,4 @@ void close_warning_by_mail(struct query *ctl, struct msgblk *msg)
     stuff_warning(NULL, ctl, GT_("-- \nThe Fetchmail Daemon"));
     close_sink(ctl, msg, TRUE);
 }
-
 /* sink.c ends here */
