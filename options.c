@@ -233,7 +233,10 @@ static int xatoi(char *s, int *errflagptr)
 int parsecmdline (int argc /** argument count */,
 		  char **argv /** argument strings */,
 		  struct runctl *rctl /** global run controls to modify */,
-		  struct query *ctl /** option record to initialize */)
+		  struct query *ctl /** option record to initialize */,
+		  flag *safewithbg /** set to whether options are
+				     compatible with another copy
+				     running in the background */)
 {
     /*
      * return value: if positive, argv index of last parsed option + 1
@@ -248,9 +251,12 @@ int parsecmdline (int argc /** argument count */,
     int errflag = 0;	/* TRUE when a syntax error is detected */
     int helpflag = 0;	/* TRUE when option help was explicitly requested */
     int option_index;
+    int option_safe;	/* to track if option currently parsed is safe
+			   with a background copy */
     char *buf, *cp;
 
     rctl->poll_interval = -1;
+    *safewithbg = TRUE;
 
     memset(ctl, '\0', sizeof(struct query));    /* start clean */
     ctl->smtp_socket = -1;
@@ -259,21 +265,26 @@ int parsecmdline (int argc /** argument count */,
 	   (c = getopt_long(argc,argv,shortoptions,
 			    longoptions, &option_index)) != -1)
     {
+	option_safe = FALSE;
+
 	switch (c) {
 	case 'V':
 	    versioninfo = TRUE;
+	    option_safe = TRUE;
 	    break;
 	case 'c':
 	    check_only = TRUE;
 	    break;
 	case 's':
 	    outlevel = O_SILENT;
+	    option_safe = 1;
 	    break;
 	case 'v':
 	    if (outlevel >= O_VERBOSE)
 		outlevel = O_DEBUG;
 	    else
 		outlevel = O_VERBOSE;
+	    option_safe = TRUE;
 	    break;
 	case 'd':
 	    rctl->poll_interval = xatoi(optarg, &errflag);
@@ -600,6 +611,7 @@ int parsecmdline (int argc /** argument count */,
 
 	case LA_CONFIGDUMP:
 	    configdump = TRUE;
+	    option_safe = TRUE;
 	    break;
 
 	case LA_SYSLOG:
@@ -615,9 +627,11 @@ int parsecmdline (int argc /** argument count */,
 	    break;
 
 	case '?':
+	    helpflag = 1;
 	default:
-	    helpflag++;
+	    break;
 	}
+	*safewithbg &= option_safe;
     }
 
     if (errflag || ocount > 1 || helpflag) {
