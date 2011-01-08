@@ -182,11 +182,11 @@ AC_ARG_ENABLE(pwmd,
 	, [enable_pwmd=no])
 
 if test "$enable_pwmd" = "yes"; then
-    PKG_CHECK_EXISTS([libpwmd], have_libpwmd=1,
+    PKG_CHECK_EXISTS([libpwmd-7.0], have_libpwmd=1,
 		     AC_MSG_ERROR([Could not find libpwmd pkg-config module.]))
 
 
-    PKG_CHECK_MODULES([libpwmd], [libpwmd >= 6.0.0])
+    PKG_CHECK_MODULES([libpwmd], [libpwmd-7.0 >= 7.0.0])
     AM_CONDITIONAL(HAVE_LIBPWMD, true)
     AC_DEFINE(HAVE_LIBPWMD, 1, [Define if you have libPWMD installed.])
 else

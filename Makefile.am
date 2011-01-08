@@ -85,6 +85,11 @@ endif
 if NEED_GETADDRINFO
 fetchmail_SOURCES += libesmtp/getaddrinfo.h libesmtp/getaddrinfo.c
 endif
+if HAVE_LIBPWMD
+CFLAGS += @libpwmd_CFLAGS@
+LDFLAGS += @libpwmd_LIBS@
+fetchmail_SOURCES += pwmd.c pwmd.h
+endif
 
 check_PROGRAMS +=	rfc822 unmime netrc rfc2047e rfc822valid \
 			x509_name_match
