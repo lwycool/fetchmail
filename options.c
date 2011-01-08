@@ -54,22 +54,26 @@ enum {
     LA_NOSOFTBOUNCE,
     LA_SOFTBOUNCE,
     LA_BADHEADER,
-    LA_RETRIEVEERROR
+    LA_RETRIEVEERROR,
+#ifdef HAVE_LIBPWMD
+    LA_PWMD_SOCKET,
+    LA_PWMD_SOCKET_ARGS,
+    LA_PWMD_FILE,
+    LA_PINENTRY_TIMEOUT,
+#endif
 };
 
 static const char *shortoptions =
-/* options still left: ghHjJoRTWxXYz */
-#ifdef HAVE_LIBPWMD
-	"O:C:G:"
-#endif
+/* options still left: ghHjJoRTWxYzOCGX */
 	"?Vcsvd:NqL:f:i:p:UP:A:t:E:Q:u:akKFnl:r:S:Z:b:B:e:m:I:M:yw:D:";
 
 static const struct option longoptions[] = {
 /* this can be const because all flag fields are 0 and will never get set */
 #ifdef HAVE_LIBPWMD
-  {"pwmd-socket",	required_argument,  (int *) 0, 'C' },
-  {"pwmd-file",		required_argument,  (int *) 0, 'G' },
-  {"pinentry-timeout",	required_argument,  (int *) 0, 'O' },
+  {"pwmd-socket",	required_argument,  (int *) 0, LA_PWMD_SOCKET },
+  {"pwmd-socket-args",	required_argument,  (int *) 0, LA_PWMD_SOCKET_ARGS },
+  {"pwmd-file",		required_argument,  (int *) 0, LA_PWMD_FILE },
+  {"pinentry-timeout",	required_argument,  (int *) 0, LA_PINENTRY_TIMEOUT },
 #endif
   {"help",	no_argument,	   (int *) 0, '?' },
   {"version",	no_argument,	   (int *) 0, 'V' },
@@ -241,13 +245,16 @@ int parsecmdline (int argc /** argument count */,
 
 	switch (c) {
 #ifdef HAVE_LIBPWMD
-	case 'C':
+	case LA_PWMD_SOCKET:
 	    ctl->pwmd_socket = prependdir(optarg, currentwd);
 	    break;
-	case 'G':
+	case LA_PWMD_SOCKET_ARGS:
+	    ctl->pwmd_socket_args = xstrdup (optarg);
+	    break;
+	case LA_PWMD_FILE:
 	    ctl->pwmd_file = xstrdup(optarg);
 	    break;
-	case 'O':
+	case LA_PINENTRY_TIMEOUT:
 	    rctl->pinentry_timeout = atoi(optarg);
 	    break;
 #endif
@@ -685,9 +692,11 @@ int parsecmdline (int argc /** argument count */,
 
 	P(GT_("  -p, --protocol    specify retrieval protocol (see man page)\n"));
 #ifdef HAVE_LIBPWMD
-        P(GT_("  -C, --pwmd-socket pwmd socket path (~/.pwmd/socket)\n"));
-        P(GT_("  -G, --pwmd-file   filename to use on the pwmd server\n"));
-        P(GT_("  -O, --pinentry-timeout   seconds until pinentry is canceled\n"));
+        P(GT_("      --pwmd-socket pwmd socket path (~/.pwmd/socket)\n"));
+        P(GT_("      --pwmd-socket-args {arg1,arg2,arg3,...}\n"
+	      "                          see libpwmd(3) for details\n"));
+        P(GT_("      --pwmd-file   filename to use on the pwmd server\n"));
+        P(GT_("      --pinentry-timeout   seconds until pinentry is canceled\n"));
 #endif
 
 	P(GT_("      --port        TCP port to connect to (obsolete, use --service)\n"));

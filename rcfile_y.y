@@ -59,7 +59,7 @@ extern char * yytext;
 
 %token DEFAULTS POLL SKIP VIA AKA LOCALDOMAINS PROTOCOL
 %token AUTHENTICATE TIMEOUT KPOP SDPS ENVELOPE QVIRTUAL
-%token PINENTRY_TIMEOUT PWMD_SOCKET PWMD_FILE
+%token PINENTRY_TIMEOUT PWMD_SOCKET PWMD_SOCKET_ARGS PWMD_FILE
 %token USERNAME PASSWORD FOLDER SMTPHOST FETCHDOMAINS MDA BSMTP LMTP
 %token SMTPADDRESS SMTPNAME SPAMRESPONSE PRECONNECT POSTCONNECT LIMIT WARNINGS
 %token INTERFACE MONITOR PLUGIN PLUGOUT
@@ -394,15 +394,21 @@ user_option	: TO mapping_list HERE
 #else
 		    yyerror(GT_("pwmd not enabled"));
 #endif
-					}
-
+                }
+		| PWMD_SOCKET_ARGS STRING {
+#ifdef HAVE_LIBPWMD
+		    current.pwmd_socket_args = xstrdup($2);
+#else
+		    yyerror(GT_("pwmd not enabled"));
+#endif
+                }
 		| PWMD_FILE STRING	{
 #ifdef HAVE_LIBPWMD
 		    current.pwmd_file = xstrdup($2);
 #else
 		    yyerror(GT_("pwmd not enabled"));
 #endif
-					}
+                }
 		;
 %%
 

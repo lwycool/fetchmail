@@ -338,6 +338,7 @@ struct query
 
 #ifdef HAVE_LIBPWMD
     char *pwmd_socket;		/* socket to connect to */
+    char *pwmd_socket_args;     /* pwmd_connect() socket args (libpwmd(3)) */
     char *pwmd_file;		/* file to open on the server */
 #endif
 

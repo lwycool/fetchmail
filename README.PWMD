@@ -1,82 +1,124 @@
-When compiled with pwmd (Password Manager Daemon) support (--enable-pwmd)
-fetchmail can retrieve server details from pwmd. pwmd v2.0 and libpwmd v6.0.0
-or later are required.
+When compiled with pwmd[1] (Password Manager Daemon) support by passing
+--enable-pwmd to configure, fetchmail can retrieve mail server and
+authentication details from pwmd. libpwmd 7.0.0 or later is required.
 
-Three new configuration parameters are added: pwmd_socket (optional) to
-specify the socket to connect to (default is ~/.pwmd/socket), pwmd_file
-(required) which specifies the filename on the server to open, and a global
-parameter pinentry_timeout (optional) which specifies the number of seconds
+Four configuration parameters are used to configure pwmd support:
+pwmd_socket (optional) to specify the socket to connect to (the
+default is ~/.pwmd/socket), pwmd_socket_args (optional) to specify the
+socket arguments when not using a UDS (see libpwmd(3) for details
+about the pwmd_connect() function), pwmd_file (required) which
+specifies the filename on the server to open, and a global parameter
+pinentry_timeout (optional) which specifies the number of seconds
 until pinentry is cancelled while waiting for the password.
 
-Three new command line options are also added:
-    --pwmd-socket, -C	   same as pwmd_socket
-    --pwmd-file, -G	   same as pwmd_file
-    --pinentry_timeout, -O same as pinentry_timeout
+Four command line options can also be used:
+    --pwmd-socket	   same as pwmd_socket
+    --pwmd-socket-args     same as pwmd_socket_args
+    --pwmd-file 	   same as pwmd_file
+    --pinentry_timeout     same as pinentry_timeout
 
-If no pinentry timeout value is specified then the server default will be
-used.
+If no pinentry timeout value is specified then a default of 30 seconds
+will be used.
 
-The format of pwmd_socket and --pwmd-socket can be either a URL string in the
-form of:
+The format of pwmd_socket and --pwmd-socket is a URL string in the form of:
 	file://[path/to/socket]
-
 	or
+	ssh[46]://[username@]hostname[:port]
+	or
+	tls[46]://hostname[:port]
 
-	ssh[46]://[username@]hostname[:port],identity_file,known_hosts_file
+If neither file:// or ssh[46]:// or tls[46]:// are specified then it
+is assumed to be a local UNIX domain socket to connect to with a
+default of ~/.pwmd/socket. Which URL's are supported depends on
+libpwmd compile time features.
 
-If neither file:// or ssh[46]:// are specified it is assumed to be a local
-UNIX domain socket to connect to (file://~/.pwmd/socket).
-
-See the pwmc(1) manual page for details about the identity and known_hosts
-files. Note that if connecting to a remote pwmd server, pwmd's pinentry will
-be disabled and a local pinentry will be tried.
+See the pwmc(1) manual page for details about the identity and
+known_hosts files when connecting to a remote pwmd server over an SSH
+channel. Note that when connecting to a remote pwmd server, the remote
+pwmd pinentry will be disabled and a local pinentry will be tried.
 
 The data that pwmd uses to serve clients is stored in an (encrypted) XML file.
-You'll need to create the file you want fetchmail to use by connecting to the
-server with a pwmd client (socat or pwmc from libpwmd) and send commands to
-store the data. See COMMANDS included with pwmd for details.
+The password, if needed, is either cached on the server (the file has been
+opened before), or gotten from a pinentry(1) program. See the pwmc(1) or
+pwmd(1) manual pages for information about the ~/.pwmd/pinentry.conf file
+which may contain DISPLAY and TTYNAME settings to tell the pinentry where
+to prompt for the password when fetchmail is running as a background process.
 
-The password, if any, to open the encrypted data file is either cached on the
-server (the file has been opened before), or gotten from pinentry(1). See the
-pwmd(1) manual page for information about the ~/.pwmd/pinentry.conf file which
-may contain DISPLAY and TTYNAME settings to let pinentry(1) know where to
-prompt for the password.
+You will need to create or modify the file you want fetchmail to use by
+connecting to pwmd with a client to create the required element paths. You can
+use pwmc which is included with libpwmd, or use QPwmc[3] which has a Qt
+graphical interface. The QPwmc client can use a form to create the required
+elements by doing:
 
-An account (e.g., pollname) may be an element path. Instead of separating the
-elements with a TAB character, separate them with a '^'.
+	 qpwmc -t /usr/local/share/qpwmc/mail.xml
 
-Here are the elements that fetchmail uses:
+after qpwmc installation.
 
-    [...]elements in the element path (^ separated)[...]
+Here are the pwmd XML elements that fetchmail uses:
+
+    ... any optional elements in the element path which are ^ separated
     <pollname>
 	<username>		- Optional (--username/username)
 	<password>		- Optional (--password/password)
-	<POP3|IMAP|etc..>       - Server protocol (must match the protocol
-				  keyword from the rcfile or command line)
+	<pop3|imap|etc>         - Server protocol (must match the protocol
+				  keyword from the rcfile or command line
+				  converted to lower case)
 	    <hostname>		- Required (servername/via)
 	    <port>		- Required (--service/protocol)
-	    <ssl>		- Optional (--ssl/ssl)
 	    <sslfingerprint>	- Optional (--sslfingerprint/sslfingerprint)
-	</POP3|IMAP|etc..>
+	</pop3|imap|etc>
     </pollname>
 
+An account (e.g., pollname) is itself an element path. Instead of
+separating the elements with a TAB character, separate them with a ^,
+if needed.
 
 A minimal fetchmailrc might look like this:
 
     set pinentry_timeout 30
-    poll isp proto POP3:
-	pwmd_file default
+    # Use the default pwmd socket ~/.pwmd/socket and open datafile
+    poll isp proto pop3:
+	pwmd_file datafile sslmode "starttls=must"
 
-    poll myaccounts^isp proto IMAP:
-	pwmd_file default
-	pwmd_socket "ssh://user@host,~/.pwmd/fetchmail,~/.pwmd/known_hosts"
-
+    # Open datafile on a remote pwmd server over an SSH connection
+    poll myaccounts^isp proto imap:
+	pwmd_file datafile
+	pwmd_socket "ssh://user@host:22"
+	pwmd_socket_args "~/.ssh/fetchmail,~/.ssh/known_hosts"
+	sslmode wrapped
 
 Or from the command line:
 
     fetchmail -f fetchmailrc isp
-    fetchmail --pwmd-file somefile -p POP3 isp
+    fetchmail --pwmd-file datafile -p pop3 isp
 
+In the above examples, "isp" and "myaccounts^isp" are the pollname's.
+
+Note that the sslmode is not determined from pwmd elements and must be
+specified on the command line or in the rcfile, if needed.
+
+A quick example on how to create the hostname element path using the pwmc
+client included with libpwmd:
+
+$ echo -n pop3.isp.com | pwmc --inquire STORE -L 'isp\tpop3\thostname\t' -S \
+    datafile
+
+The --inquire command line option is used for commands that require a protocol
+inquire from the pwmd server. In this case it is the STORE protocol command.
+
+The -L option is the initial line to send and is the element path to create
+with pop3.isp.com being the element path value.
+
+Finally, the -S option says to save the changes to the opened file which is
+datafile.
+
+
+Please read the libpwmd tutorial[2] for more detailed pwmc examples and usage.
+It also gives more information about the document structure and protocol.
+
+
+1. http://pwmd.sourceforge.net/
+2. http://libpwmd.sourceforge.net/
+3. http://qpwmc.sourceforge.net/
 
 Ben Kibbey <bjk@luxsci.net>
-http://bjk.sourceforge.net/pwmd/.
