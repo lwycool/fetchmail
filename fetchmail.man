@@ -259,12 +259,9 @@ work with ETRN or ODMR.
 (Keyword: proto[col])
 .br
 Specify the protocol to use when communicating with the remote
-mailserver.  If no protocol is specified, the default is AUTO.
-\fBproto\fP may be one of the following:
+mailserver. Note that starting with fetchmail version 7.0.0, there is no
+longer a default, and no longer support for "auto".  \fBproto\fP may be one of the following:
 .RS
-.IP AUTO
-Tries IMAP and POP3 (skipping any of these for which support
-has not been compiled in).
 .IP POP3
 Post Office Protocol 3
 .IP APOP

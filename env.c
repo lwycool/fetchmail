@@ -240,7 +240,6 @@ const char *showproto(int proto)
 {
     switch (proto)
     {
-    case P_AUTO: return("auto");
 #ifdef POP3_ENABLE
     case P_POP3: return("POP3");
     case P_APOP: return("APOP");

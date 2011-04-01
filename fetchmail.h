@@ -36,7 +36,6 @@ struct addrinfo;
 #endif
 
 /* constants designating the various supported protocols */
-#define		P_AUTO		1
 #define		P_POP3		3
 #define		P_APOP		4
 #define		P_IMAP		6

@@ -85,6 +85,8 @@ NOTE THIS IS AN ALPHA RELEASE THAT HAS NOT BEEN THOROUGHLY TESTED!
   never supported IPv6 (including IPv6-mapped IPv4) either.
   Non-DNS based alias keywords such as "aka" remain.
 * Kerberos IV support was removed.
+* Automatic protocol probing, proto auto, and the related default have been
+  removed.
 
 # CHANGES
 * A foreground fetchmail can now accept a few more options while another copy is

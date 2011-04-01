@@ -319,8 +319,8 @@ int parsecmdline (int argc /** argument count */,
 
 	case 'p':
 	    /* XXX -- should probably use a table lookup here */
-	    if (strcasecmp(optarg,"auto") == 0)
-		ctl->server.protocol = P_AUTO;
+	    if (strcasecmp(optarg,"imap") == 0)
+		ctl->server.protocol = P_IMAP;
 #ifdef SDPS_ENABLE
 	    else if (strcasecmp(optarg,"sdps") == 0)
 	    {
@@ -340,8 +340,6 @@ int parsecmdline (int argc /** argument count */,
 		ctl->server.authenticate =  A_KERBEROS_V5;
 #endif /* KERBEROS_V5 */
 	    }
-	    else if (strcasecmp(optarg,"imap") == 0)
-		ctl->server.protocol = P_IMAP;
 	    else if (strcasecmp(optarg,"etrn") == 0)
 		ctl->server.protocol = P_ETRN;
 	    else if (strcasecmp(optarg,"odmr") == 0)

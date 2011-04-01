@@ -1313,7 +1313,7 @@ static int load_params(int argc, char **argv, int optind)
     def_opts.smtp_socket = -1;
     def_opts.smtpaddress = (char *)0;
     def_opts.smtpname = (char *)0;
-    def_opts.server.protocol = P_AUTO;
+    def_opts.server.protocol = 0;
     def_opts.server.timeout = CLIENT_TIMEOUT;
     def_opts.server.esmtp_name = user;
     def_opts.server.badheader = BHREJECT;
@@ -1768,18 +1768,6 @@ static void terminate_run(int sig)
 	exit(successes ? PS_SUCCESS : querystatus);
 }
 
-/*
- * Sequence of protocols to try when autoprobing, most capable to least.
- */
-static const int autoprobe[] = 
-{
-#ifdef IMAP_ENABLE
-    P_IMAP,
-#endif /* IMAP_ENABLE */
-#ifdef POP3_ENABLE
-    P_POP3,
-#endif /* POP3_ENABLE */
-};
 
 static int query_host(struct query *ctl)
 /* perform fetch transaction with single host */
@@ -1801,19 +1789,6 @@ static int query_host(struct query *ctl)
     }
 
     switch (ctl->server.protocol) {
-    case P_AUTO:
-	for (i = 0; i < sizeof(autoprobe)/sizeof(autoprobe[0]); i++)
-	{
-	    ctl->server.protocol = autoprobe[i];
-	    do {
-		st = query_host(ctl);
-	    } while 
-		(st == PS_REPOLL);
-	    if (st == PS_SUCCESS || st == PS_NOMAIL || st == PS_AUTHFAIL || st == PS_LOCKBUSY || st == PS_SMTP || st == PS_MAXFETCH || st == PS_DNS)
-		break;
-	}
-	ctl->server.protocol = P_AUTO;
-	break;
     case P_POP3:
     case P_APOP:
 #ifdef POP3_ENABLE
