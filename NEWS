@@ -56,6 +56,13 @@ removed from a 6.4.0 or newer release.)
 
 --------------------------------------------------------------------------------
 
+fetchmail-6.3.21 (not yet released):
+
+# CRITICAL BUG FIX
+* The IMAP client no longer inserts NUL bytes into the last line of a message
+  when it is not closed with a LF or CRLF sequence. Reported by Antoine Levitt.
+
+
 fetchmail-6.3.20 (released 2011-06-06, 26005 LoC):
 
 # SECURITY BUG FIXES
