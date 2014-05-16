@@ -50,7 +50,7 @@ DEPENDENCIES=		libfm.a $(LIBOBJS)
 check_PROGRAMS=
 
 TESTS=			t.smoke t.validate-xhtml10 t.validate-xhtml t.x509_name_match
-LOG_COMPILER=		LC_ALL=C TZ=UTC $(SHELL)
+LOG_COMPILER=		env LC_ALL=C TZ=UTC $(SHELL)
 
 fetchmail_SOURCES=	fetchmail.h getopt.h \
 		gettext.h kerberos.h fm_md5.h netrc.h smtp.h \
