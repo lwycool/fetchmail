@@ -1,9 +1,8 @@
 #! /bin/sh
 
 # Script to upload fetchmail website from Git repository
-# (C) 2008 - 2010 by Matthias Andree. GNU GPL v3.
+# (C) 2008 - 2014 by Matthias Andree. GNU GPL v3.
 
-: ${BERLIOS_LOGIN=m-a}
 : ${SOURCEFORGE_LOGIN=m-a}
 
 # abort on error
@@ -21,17 +20,6 @@ if LC_ALL=C file * | egrep broken\|dangling ; then
 fi
 
 pids=
-
-echo "==>  Uploading website (rsync) to BerliOS"
-# upload
-rsync \
-    --chmod=ug=rwX,o=rX,Dg=s --perms \
-    --copy-links --times --checksum --verbose \
-    --exclude host-scripts \
-    --exclude .git --exclude '*~' --exclude '#*#' \
-    * \
-    "$BERLIOS_LOGIN@shell.berlios.de:/home/groups/fetchmail/htdocs/" &
-pids="$pids $!"
 
 echo "==>  Uploading website (rsync) to SourceForge"
 # upload
