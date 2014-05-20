@@ -25,7 +25,7 @@
   
 /* parser reads these */
 char *rcfile;			/* path name of rc file */
-struct query cmd_opts;		/* where to put command-line info */
+extern struct query cmd_opts;	/* where to put command-line info */
 
 /* parser sets these */
 struct query *querylist;	/* head of server list (globally visible) */

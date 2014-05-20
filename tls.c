@@ -64,7 +64,7 @@ e_sslmode tlsm_parse(const char *s) {
     for (int i = 0; i < TLSM_NAMESCOUNT; i++) {
 	if (tlsm_names[i] // we may not have names for all options
 		&& 0 == strcasecmp(tlsm_names[i], s))
-	    return i;
+	    return (e_sslmode)i;
     }
     return TLSM_INVALID;
 }
