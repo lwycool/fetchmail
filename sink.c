@@ -1534,12 +1534,12 @@ int open_warning_by_mail(struct query *ctl)
     else				/* send to postmaster  */
 	status = open_sink(ctl, &reply, &good, &bad);
     if (status == 0) {
-	stuff_warning(NULL, ctl, "From: FETCHMAIL-DAEMON@%s",
+	stuff_warning(NULL, ctl, "From: ", "FETCHMAIL-DAEMON@%s",
 		ctl->smtpaddress ? ctl->smtpaddress : fetchmailhost);
-	stuff_warning(NULL, ctl, "Date: %s", rfc822timestamp());
-	stuff_warning(NULL, ctl, "MIME-Version: 1.0");
-	stuff_warning(NULL, ctl, "Content-Transfer-Encoding: 8bit");
-	stuff_warning(NULL, ctl, "Content-Type: text/plain; charset=\"%s\"", iana_charset);
+	stuff_warning(NULL, ctl, "Date: ", "%s", rfc822timestamp());
+	stuff_warning(NULL, ctl, "MIME-Version: ", "1.0");
+	stuff_warning(NULL, ctl, "Content-Transfer-Encoding: ", "8bit");
+	stuff_warning(NULL, ctl, "Content-Type: ", "text/plain; charset=\"%s\"", iana_charset);
     }
     return(status);
 }
@@ -1548,11 +1548,13 @@ int open_warning_by_mail(struct query *ctl)
 /* if rfc2047charset is non-NULL, encode the line (that is assumed to be
  * a header line) as per RFC-2047 using rfc2047charset as the character
  * set field */
-void stuff_warning(const char *rfc2047charset, struct query *ctl, const char *fmt, ... )
+void stuff_warning(const char *rfc2047charset, struct query *ctl, const char *prefix, const char *fmt, ... )
 {
     /* make huge -- i18n can bulk up error messages a lot */
-    char	buf[2*MSGBUFSIZE+4];
+    char	buf[3*MSGBUFSIZE+4];
     va_list ap;
+
+    snprintf(buf, sizeof(buf), "%s", prefix);
 
     /*
      * stuffline() requires its input to be writeable (for CR stripping),
@@ -1561,7 +1563,7 @@ void stuff_warning(const char *rfc2047charset, struct query *ctl, const char *fm
      * here by supporting stdargs/varargs.
      */
     va_start(ap, fmt) ;
-    vsnprintf(buf, sizeof(buf) - 2, fmt, ap);
+    vsnprintf(buf+strlen(buf), sizeof(buf)-strlen(buf)-2, fmt, ap);
     va_end(ap);
 
     snprintf(buf+strlen(buf), sizeof(buf)-strlen(buf), "\r\n");
@@ -1577,7 +1579,7 @@ void stuff_warning(const char *rfc2047charset, struct query *ctl, const char *fm
 void close_warning_by_mail(struct query *ctl, struct msgblk *msg)
 /* sign and send mailed warnings */
 {
-    stuff_warning(NULL, ctl, GT_("-- \nThe Fetchmail Daemon"));
+    stuff_warning(NULL, ctl, "-- \n", GT_("The Fetchmail Daemon"));
     close_sink(ctl, msg, TRUE);
 }
 

@@ -588,8 +588,11 @@ int open_sink(struct query*, struct msgblk *, int*, int*);
 void release_sink(struct query *);
 int close_sink(struct query *, struct msgblk *, flag);
 int open_warning_by_mail(struct query *);
-void stuff_warning(const char *, struct query *, const char *, ... )
-    __attribute__ ((format (printf, 3, 4)))
+void stuff_warning(const char *,
+                   struct query *,
+                   const char *pfx,
+                   const char *fmt, ...)
+    __attribute__ ((format (printf, 4, 5)))
     ;
 void close_warning_by_mail(struct query *, struct msgblk *);
 void abort_message_sink(struct query *ctl);

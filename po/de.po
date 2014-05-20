@@ -2,17 +2,17 @@
 # German Messages for fetchmail.
 # Copyright (C) 2001, 2005, 2006 Free Software Foundation, Inc.
 # Michael Piefel <piefel@informatik.hu-berlin.de>, 2001, 2002, 2003.
-# Matthias Andree <matthias.andree@gmx.de>, 2004 - 2013
+# Matthias Andree <matthias.andree@gmx.de>, 2004 - 2014
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: fetchmail 7.0.0-alpha5\n"
 "Report-Msgid-Bugs-To: fetchmail-devel@lists.berlios.de\n"
-"POT-Creation-Date: 2013-04-23 00:55+0200\n"
-"PO-Revision-Date: 2013-04-23 01:12+0200\n"
+"POT-Creation-Date: 2014-05-20 21:56+0200\n"
+"PO-Revision-Date: 2014-05-20 21:58+0200\n"
 "Last-Translator: Matthias Andree <matthias.andree@gmx.de>\n"
 "Language-Team: Deutsch <de@li.org>\n"
-"Language: \n"
+"Language: de\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -32,9 +32,9 @@ msgstr "dekodiert als %s\n"
 msgid "krb5_sendauth: %s [server says '%s']\n"
 msgstr "krb5_sendauth: %s [Server sagt „%s“]\n"
 
-#: driver.c:259
-msgid "Subject: Fetchmail oversized-messages warning"
-msgstr "Subject: Fetchmail-Warnung: übergroße Nachrichten"
+#: driver.c:345
+msgid "Fetchmail oversized-messages warning"
+msgstr "Fetchmail-Warnung: übergroße Nachrichten"
 
 #: driver.c:263
 #, c-format
@@ -167,9 +167,9 @@ msgstr ""
 msgid "timeout after %d seconds.\n"
 msgstr "Zeitüberschreitung nach %d Sekunden.\n"
 
-#: driver.c:876
-msgid "Subject: fetchmail sees repeated timeouts"
-msgstr "Subject: fetchmail erlebt wiederholte Zeitüberschreitungen"
+#: driver.c:926
+msgid "fetchmail sees repeated timeouts"
+msgstr "fetchmail erlebt wiederholte Zeitüberschreitungen"
 
 #: driver.c:879
 #, c-format
@@ -257,8 +257,8 @@ msgstr ""
 
 #: driver.c:1139
 #, c-format
-msgid "Subject: fetchmail authentication failed on %s@%s"
-msgstr "Subject: Fetchmail: Authentifikation fehlgeschlagen bei %s@%s"
+msgid "fetchmail authentication failed on %s@%s"
+msgstr "Fetchmail: Authentifikation fehlgeschlagen bei %s@%s"
 
 #: driver.c:1143
 #, c-format
@@ -342,8 +342,8 @@ msgstr "Authentifikation OK bei %s@%s\n"
 
 #: driver.c:1214
 #, c-format
-msgid "Subject: fetchmail authentication OK on %s@%s"
-msgstr "Subject: Fetchmail: Authentifikation OK bei %s@%s"
+msgid "fetchmail authentication OK on %s@%s"
+msgstr "Fetchmail: Authentifikation OK bei %s@%s"
 
 #: driver.c:1218
 #, c-format
@@ -2910,13 +2910,9 @@ msgstr "LMTP-Auslieferungsfehler bei EOM\n"
 msgid "Unexpected non-503 response to LMTP EOM: %s\n"
 msgstr "Unerwartete Nicht-503-Erwiderung auf LMTP EOM: %s\n"
 
-#: sink.c:1580
-msgid ""
-"-- \n"
-"The Fetchmail Daemon"
-msgstr ""
-"-- \n"
-"Der Fetchmail-Dämon"
+#: sink.c:1623
+msgid "The Fetchmail Daemon"
+msgstr "Der Fetchmail-Dämon"
 
 #: smtp.c:81
 msgid "ESMTP CRAM-MD5 Authentication...\n"
