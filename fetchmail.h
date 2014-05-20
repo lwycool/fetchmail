@@ -593,8 +593,11 @@ void release_sink(struct query *);
 int close_sink(struct query *, struct msgblk *, flag);
 int open_warning_by_mail(struct query *);
 #if defined(HAVE_STDARG_H)
-void stuff_warning(const char *, struct query *, const char *, ... )
-    __attribute__ ((format (printf, 3, 4)))
+void stuff_warning(const char *,
+                   struct query *,
+                   const char *pfx,
+                   const char *fmt, ...)
+    __attribute__ ((format (printf, 4, 5)))
     ;
 #else
 void stuff_warning();
