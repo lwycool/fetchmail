@@ -8,4 +8,4 @@ MAILER=mail
 
 $MAILER -r matthias.andree@gmx.de -s "$SUBJECT" <$FILE \
     vendor-sec@lst.de \
-    fetchmail-announce@lists.berlios.de
+    fetchmail-announce@lists.sourceforge.net

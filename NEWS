@@ -183,6 +183,7 @@ fetchmail-6.3.27 (not yet released, if ever):
 * Fix a typo in the FAQ. Submitted by David Lawyer, Debian Bug#706776.
 * Do not translate header tags such as "Subject:".  Reported by Gonzalo Pérez de
   Olaguer Córdoba, Debian Bug#744907.
+* Convert most links from berlios.de to sourceforge.net.
 
 # KNOWN BUGS AND WORKAROUNDS
   (This section floats upwards through the NEWS file so it stays with the

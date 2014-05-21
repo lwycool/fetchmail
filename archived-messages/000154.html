@@ -1,0 +1,449 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [fetchmail-devel] [BUG] fetchmail hangs during pop3 pull after a mail with a null char
+   </TITLE>
+   <LINK REL="Index" HREF="index.html" >
+   <LINK REL="made" HREF="mailto:fetchmail-devel%40lists.berlios.de?Subject=Re%3A%20%5Bfetchmail-devel%5D%20%5BBUG%5D%20fetchmail%20hangs%20during%20pop3%20pull%20after%20a%20mail%20with%20a%20null%20char&In-Reply-To=%3C416D2205.3040502%40dgreaves.com%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000152.html">
+   <LINK REL="Next"  HREF="000155.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[fetchmail-devel] [BUG] fetchmail hangs during pop3 pull after a mail with a null char</H1>
+    <B>David Greaves</B> 
+    <A HREF="mailto:fetchmail-devel%40lists.berlios.de?Subject=Re%3A%20%5Bfetchmail-devel%5D%20%5BBUG%5D%20fetchmail%20hangs%20during%20pop3%20pull%20after%20a%20mail%20with%20a%20null%20char&In-Reply-To=%3C416D2205.3040502%40dgreaves.com%3E"
+       TITLE="[fetchmail-devel] [BUG] fetchmail hangs during pop3 pull after a mail with a null char">david at dgreaves.com
+       </A><BR>
+    <I>Wed Oct 13 14:39:33 CEST 2004</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000152.html">[fetchmail-devel] Not Yet Reviewed Queue is Empty!
+</A></li>
+        <LI>Next message: <A HREF="000155.html">[fetchmail-devel] warning message charset fix: progress indicator 1/3.
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#154">[ date ]</a>
+              <a href="thread.html#154">[ thread ]</a>
+              <a href="subject.html#154">[ subject ]</a>
+              <a href="author.html#154">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>First : fetchmail is great - thanks  :) 
+
+I sent this to fetchmail-friends a while back and it was suggested that I send it to the devlist.
+I joined and lurked - and finally got round to sending this in...
+
+
+It's been working for years with these occasional hangs that have been
+fixed by popping the bad messages and manually filing them. I finally
+had a bad message arrive when I was in a position to debug!
+
+Summary : fetchmail hangs during pop3 pull after a mail with a null char.
+
+The mail with a null char is pulled OK but then rejected by local
+Cyrus lmtp and bounced to postmaster via exim4.20
+The next pop3 pull then fails.
+I've made an effort to trace and I think the hang occurs due to a
+double call to SMTP_ok which is empty the second time. I am pretty
+sure the second call originates at sink.c line 1433.
+
+in the config expunge 1 fixes the problem (which makes sense)
+
+general config is pop3-&gt;lmtp-&gt;local Cyrus IMAP
+
+So I went through the FAQ G3 points:
+1. OS: Linux RedHat 7.3 kernel 2.6.6
+2. gcc version 2.96 20000731 (Red Hat Linux 7.3 2.96-110)
+3. below
+4. forwarding to lmtp listener on cyrus 2.2.3 (bounce goes to SMTP
+exim 4.2)
+5. -v -v -f /etc/fetchmailrc
+6. at the end
+
+nb: SMTP_ok loop start comments are my trace.
+
+Aug 17 17:33:01 willow fetchmail[13648]: 6.2.5 querying pop3.ukfsn.org
+(protocol POP3) at Tue 17 Aug 2004 05:33:01 PM BST: poll started
+Aug 17 17:33:01 willow fetchmail[13648]: POP3&lt; +OK
+&lt;<A HREF="https://lists.berlios.de/mailman/listinfo/fetchmail-devel">aa55cd0b5451bb3c3210dadaf2bf26b2 at pop3.ukfsn.org</A>&gt;
+Aug 17 17:33:01 willow fetchmail[13648]: POP3&gt; CAPA^M
+Aug 17 17:33:01 willow fetchmail[13648]: POP3&lt; +OK Capability list follows
+Aug 17 17:33:01 willow fetchmail[13648]: POP3&lt; PIPELINING
+Aug 17 17:33:01 willow fetchmail[13648]: POP3&lt; TOP
+Aug 17 17:33:01 willow fetchmail[13648]: POP3&lt; USER
+Aug 17 17:33:01 willow fetchmail[13648]: POP3&lt; UIDL
+Aug 17 17:33:01 willow fetchmail[13648]: POP3&lt; STLS
+Aug 17 17:33:01 willow fetchmail[13648]: POP3&lt; .
+Aug 17 17:33:01 willow fetchmail[13648]: POP3&gt; USER dgreaves^M
+Aug 17 17:33:01 willow fetchmail[13648]: POP3&lt; +OK Tell me your password.
+Aug 17 17:33:01 willow fetchmail[13648]: POP3&gt; PASS *^M
+Aug 17 17:33:02 willow fetchmail[13648]: POP3&lt; +OK Welcome aboard! You
+have 55 messages.
+Aug 17 17:33:05 willow fetchmail[13648]: POP3&gt; STAT
+Aug 17 17:33:05 willow fetchmail[13648]: POP3&lt; +OK 55 429607
+Aug 17 17:33:05 willow fetchmail[13648]: 55 messages for dgreaves at
+pop3.ukfsn.org (429607 octets).
+
+
+
+fetchmailrc:
+set syslog
+set postmaster &quot;<A HREF="https://lists.berlios.de/mailman/listinfo/fetchmail-devel">david at dgreaves.com</A>&quot;
+set nobouncemail
+set properties &quot;&quot;
+#set daemon 180
+set idfile /var/run/fetchmail.ids
+
+# The ukfsn accounts
+poll pop3.ukfsn.org with proto POP3 tracepolls
+~    user 'dgreaves' there with password 'xxxxxxx' is
+<A HREF="https://lists.berlios.de/mailman/listinfo/fetchmail-devel">david at dgreaves.com</A> here options fetchall lmtp smtp
+/var/imap/socket/lmtp expunge 5
+~    antispam 571 550 501 554
+
+&lt;more user accounts removed&gt;
+
+here is output from
+~  ./fetchmail -v -v -f /etc/fetchmailrc
+
+Aug 17 17:43:33 willow fetchmail[13675]: 6.2.5 querying pop3.ukfsn.org
+(protocol POP3) at Tue 17 Aug 2004 05:43:33 PM BST: poll started
+Aug 17 17:43:33 willow fetchmail[13675]: POP3&lt; +OK
+&lt;<A HREF="https://lists.berlios.de/mailman/listinfo/fetchmail-devel">40b4ee38e8c2b8d6ea0b39ace1b3d5cd at pop3.ukfsn.org</A>&gt;
+Aug 17 17:43:33 willow fetchmail[13675]: POP3&gt; CAPA^M
+Aug 17 17:43:33 willow fetchmail[13675]: POP3&lt; +OK Capability list follows
+Aug 17 17:43:34 willow fetchmail[13675]: POP3&lt; PIPELINING
+Aug 17 17:43:34 willow fetchmail[13675]: POP3&lt; TOP
+Aug 17 17:43:34 willow fetchmail[13675]: POP3&lt; USER
+Aug 17 17:43:34 willow fetchmail[13675]: POP3&lt; UIDL
+Aug 17 17:43:34 willow fetchmail[13675]: POP3&lt; STLS
+Aug 17 17:43:34 willow fetchmail[13675]: POP3&lt; .
+Aug 17 17:43:34 willow fetchmail[13675]: POP3&gt; USER dgreaves^M
+Aug 17 17:43:34 willow fetchmail[13675]: POP3&lt; +OK Tell me your password.
+Aug 17 17:43:34 willow fetchmail[13675]: POP3&gt; PASS *^M
+Aug 17 17:43:34 willow fetchmail[13675]: POP3&lt; +OK Welcome aboard! You
+have 33 messages.
+Aug 17 17:43:37 willow fetchmail[13675]: selecting or re-polling
+default folder
+Aug 17 17:43:37 willow fetchmail[13675]: POP3&gt; STAT
+Aug 17 17:43:37 willow fetchmail[13675]: POP3&lt; +OK 33 186252
+Aug 17 17:43:37 willow fetchmail[13675]: 33 messages for dgreaves at
+pop3.ukfsn.org (186252 octets).
+Aug 17 17:43:37 willow fetchmail[13675]: POP3&gt; LIST 1
+#**********************************************Aug 17 17:43:37 willow
+fetchmail[13675]: POP3&lt; +OK 1 9060
+Aug 17 17:43:37 willow fetchmail[13675]: POP3&gt; RETR 1
+Aug 17 17:43:37 willow fetchmail[13675]: POP3&lt; +OK Message follows
+Aug 17 17:43:37 willow fetchmail[13675]: reading message
+<A HREF="https://lists.berlios.de/mailman/listinfo/fetchmail-devel">dgreaves at pop3.ukfsn.org</A>:1 of 33 (9060 octets)
+Aug 17 17:43:37 willow fetchmail[13675]: About to rewrite Return-Path:
+&lt;linux-kernel-owner+lkml=<A HREF="https://lists.berlios.de/mailman/listinfo/fetchmail-devel">40dgreaves.com-S268306AbUHQPkZ at vger.kernel.org</A>&gt;^M
+Rewritten version is Return-Path:
+&lt;linux-kernel-owner+lkml=<A HREF="https://lists.berlios.de/mailman/listinfo/fetchmail-devel">40dgreaves.com-S268306AbUHQPkZ at vger.kernel.org</A>&gt;^M
+Aug 17 17:43:38 willow fetchmail[13675]: About to rewrite From:
+&quot;O.Sezer&quot; &lt;<A HREF="https://lists.berlios.de/mailman/listinfo/fetchmail-devel">sezeroz at ttnet.net.tr</A>&gt;^M Rewritten version is From:
+&quot;O.Sezer&quot; &lt;<A HREF="https://lists.berlios.de/mailman/listinfo/fetchmail-devel">sezeroz at ttnet.net.tr</A>&gt;^M
+Aug 17 17:43:38 willow fetchmail[13675]: About to rewrite To:
+<A HREF="https://lists.berlios.de/mailman/listinfo/fetchmail-devel">linux-kernel at vger.kernel.org</A>^M Rewritten version is To:
+<A HREF="https://lists.berlios.de/mailman/listinfo/fetchmail-devel">linux-kernel at vger.kernel.org</A>^M
+Aug 17 17:43:38 willow fetchmail[13675]: About to rewrite Cc:
+<A HREF="https://lists.berlios.de/mailman/listinfo/fetchmail-devel">marcelo.tosatti at cyclades.com</A>^M Rewritten version is Cc:
+<A HREF="https://lists.berlios.de/mailman/listinfo/fetchmail-devel">marcelo.tosatti at cyclades.com</A>^M
+Aug 17 17:43:38 willow fetchmail[13675]: About to rewrite Sender:
+<A HREF="https://lists.berlios.de/mailman/listinfo/fetchmail-devel">linux-kernel-owner at vger.kernel.org</A>^M Rewritten version is Sender:
+<A HREF="https://lists.berlios.de/mailman/listinfo/fetchmail-devel">linux-kernel-owner at vger.kernel.org</A>^M
+Aug 17 17:43:38 willow fetchmail[13675]: SMTP_ok loop start
+Aug 17 17:43:38 willow fetchmail[13675]: LMTP&lt; 220 willow LMTP Cyrus
+v2.2.3 ready
+Aug 17 17:43:38 willow fetchmail[13675]: LMTP&gt; LHLO localhost
+Aug 17 17:43:38 willow fetchmail[13675]: SMTP&lt; 250-willow
+Aug 17 17:43:38 willow fetchmail[13675]: SMTP&lt; 250-8BITMIME
+Aug 17 17:43:38 willow fetchmail[13675]: SMTP&lt; 250-ENHANCEDSTATUSCODES
+Aug 17 17:43:38 willow fetchmail[13675]: SMTP&lt; 250-PIPELINING
+Aug 17 17:43:38 willow fetchmail[13675]: SMTP&lt; 250-SIZE
+Aug 17 17:43:38 willow fetchmail[13675]: SMTP&lt; 250-AUTH EXTERNAL
+Aug 17 17:43:38 willow fetchmail[13675]: SMTP&lt; 250 IGNOREQUOTA
+Aug 17 17:43:38 willow fetchmail[13675]: forwarding to
+/var/imap/socket/lmtp
+Aug 17 17:43:38 willow fetchmail[13675]: LMTP&gt; MAIL
+FROM:&lt;linux-kernel-owner+lkml=<A HREF="https://lists.berlios.de/mailman/listinfo/fetchmail-devel">40dgreaves.com-S268306AbUHQPkZ at vger.kernel.org</A>&gt;
+SIZE=9060
+Aug 17 17:43:38 willow fetchmail[13675]: SMTP_ok loop start
+Aug 17 17:43:38 willow fetchmail[13675]: LMTP&lt; 250 2.1.0 ok
+Aug 17 17:43:38 willow fetchmail[13675]: LMTP&gt; RCPT
+TO:&lt;<A HREF="https://lists.berlios.de/mailman/listinfo/fetchmail-devel">david at dgreaves.com</A>&gt;
+Aug 17 17:43:38 willow fetchmail[13675]: SMTP_ok loop start
+Aug 17 17:43:38 willow fetchmail[13675]: LMTP&lt; 250 2.1.5 ok
+Aug 17 17:43:38 willow fetchmail[13675]: LMTP&gt; DATA
+Aug 17 17:43:38 willow fetchmail[13675]: SMTP_ok loop start
+Aug 17 17:43:38 willow fetchmail[13675]: LMTP&lt; 354 go ahead
+********************************************************************************************************************************************************************Aug
+17 17:43:38 willow fetchmail[13675]: message <A HREF="https://lists.berlios.de/mailman/listinfo/fetchmail-devel">dgreaves at pop3.ukfsn.org</A>:1
+was not the expected length (9317 actual != 9060 expected)
+Aug 17 17:43:38 willow fetchmail[13675]: LMTP&gt;. (EOM)
+Aug 17 17:43:38 willow fetchmail[13675]: SMTP_ok loop start
+Aug 17 17:43:38 willow fetchmail[13675]: LMTP&lt; 250 2.1.5 Ok
+Aug 17 17:43:38 willow fetchmail[13675]:  flushed
+Aug 17 17:43:38 willow fetchmail[13675]: POP3&gt; DELE 1^M
+Aug 17 17:43:38 willow fetchmail[13675]: POP3&lt; +OK Done.
+Aug 17 17:43:38 willow fetchmail[13675]: POP3&gt; LIST 2
+Aug 17 17:43:38 willow fetchmail[13675]: POP3&lt; +OK 2 5098
+Aug 17 17:43:38 willow fetchmail[13675]: POP3&gt; RETR 2
+Aug 17 17:43:39 willow fetchmail[13675]: POP3&lt; +OK Message follows
+Aug 17 17:43:39 willow fetchmail[13675]: reading message
+<A HREF="https://lists.berlios.de/mailman/listinfo/fetchmail-devel">dgreaves at pop3.ukfsn.org</A>:2 of 33 (5098 octets)
+Aug 17 17:43:39 willow fetchmail[13675]: About to rewrite Return-Path:
+&lt;linux-kernel-owner+lkml=<A HREF="https://lists.berlios.de/mailman/listinfo/fetchmail-devel">40dgreaves.com-S268293AbUHQPhg at vger.kernel.org</A>&gt;^M
+Rewritten version is Return-Path:
+&lt;linux-kernel-owner+lkml=<A HREF="https://lists.berlios.de/mailman/listinfo/fetchmail-devel">40dgreaves.com-S268293AbUHQPhg at vger.kernel.org</A>&gt;^M
+#****************************************************************Aug
+17 17:43:39 willow fetchmail[13675]: About to rewrite From: Christoph
+Hellwig &lt;<A HREF="https://lists.berlios.de/mailman/listinfo/fetchmail-devel">hch at infradead.org</A>&gt;^M Rewritten version is From: Christoph
+Hellwig &lt;<A HREF="https://lists.berlios.de/mailman/listinfo/fetchmail-devel">hch at infradead.org</A>&gt;^M
+Aug 17 17:43:39 willow fetchmail[13675]: About to rewrite To: Markus
+Lidel &lt;<A HREF="https://lists.berlios.de/mailman/listinfo/fetchmail-devel">Markus.Lidel at shadowconnect.com</A>&gt;^M Rewritten version is To:
+Markus Lidel &lt;<A HREF="https://lists.berlios.de/mailman/listinfo/fetchmail-devel">Markus.Lidel at shadowconnect.com</A>&gt;^M
+Aug 17 17:43:39 willow fetchmail[13675]: About to rewrite Cc:
+Christoph Hellwig &lt;<A HREF="https://lists.berlios.de/mailman/listinfo/fetchmail-devel">hch at infradead.org</A>&gt;,^M ^IWarren Togami
+&lt;<A HREF="https://lists.berlios.de/mailman/listinfo/fetchmail-devel">wtogami at redhat.com</A>&gt;, <A HREF="https://lists.berlios.de/mailman/listinfo/fetchmail-devel">linux-kernel at vger.kernel.org</A>^M Rewritten version
+is Cc: Christoph Hellwig &lt;<A HREF="https://lists.berlios.de/mailman/listinfo/fetchmail-devel">hch at infradead.org</A>&gt;,^M ^IWarren Togami
+&lt;<A HREF="https://lists.berlios.de/mailman/listinfo/fetchmail-devel">wtogami at redhat.com</A>&gt;, <A HREF="https://lists.berlios.de/mailman/listinfo/fetchmail-devel">linux-kernel at vger.kernel.org</A>^M
+Aug 17 17:43:39 willow fetchmail[13675]: About to rewrite Sender:
+<A HREF="https://lists.berlios.de/mailman/listinfo/fetchmail-devel">linux-kernel-owner at vger.kernel.org</A>^M Rewritten version is Sender:
+<A HREF="https://lists.berlios.de/mailman/listinfo/fetchmail-devel">linux-kernel-owner at vger.kernel.org</A>^M
+Aug 17 17:43:39 willow fetchmail[13675]: forwarding to
+/var/imap/socket/lmtp
+Aug 17 17:43:39 willow fetchmail[13675]: LMTP&gt; MAIL
+FROM:&lt;linux-kernel-owner+lkml=<A HREF="https://lists.berlios.de/mailman/listinfo/fetchmail-devel">40dgreaves.com-S268293AbUHQPhg at vger.kernel.org</A>&gt;
+SIZE=5098
+Aug 17 17:43:39 willow fetchmail[13675]: SMTP_ok loop start
+Aug 17 17:43:39 willow fetchmail[13675]: LMTP&lt; 250 2.1.0 ok
+Aug 17 17:43:39 willow fetchmail[13675]: LMTP&gt; RCPT
+TO:&lt;<A HREF="https://lists.berlios.de/mailman/listinfo/fetchmail-devel">david at dgreaves.com</A>&gt;
+Aug 17 17:43:39 willow fetchmail[13675]: SMTP_ok loop start
+Aug 17 17:43:39 willow fetchmail[13675]: LMTP&lt; 250 2.1.5 ok
+Aug 17 17:43:39 willow fetchmail[13675]: LMTP&gt; DATA
+Aug 17 17:43:39 willow fetchmail[13675]: SMTP_ok loop start
+Aug 17 17:43:39 willow fetchmail[13675]: LMTP&lt; 354 go ahead
+Aug 17 17:43:39 willow fetchmail[13675]: message
+<A HREF="https://lists.berlios.de/mailman/listinfo/fetchmail-devel">dgreaves at pop3.ukfsn.org</A>:2 was not the expected length (5209 actual !=
+5098 expected)
+Aug 17 17:43:39 willow fetchmail[13675]: LMTP&gt;. (EOM)
+Aug 17 17:43:39 willow fetchmail[13675]: SMTP_ok loop start
+Aug 17 17:43:39 willow fetchmail[13675]: LMTP&lt; 250 2.1.5 Ok
+Aug 17 17:43:39 willow fetchmail[13675]:  flushed
+Aug 17 17:43:39 willow fetchmail[13675]: POP3&gt; DELE 2^M
+Aug 17 17:43:39 willow fetchmail[13675]: POP3&lt; +OK Done.
+Aug 17 17:43:39 willow fetchmail[13675]: POP3&gt; LIST 3
+Aug 17 17:43:39 willow fetchmail[13675]: POP3&lt; +OK 3 2147
+Aug 17 17:43:39 willow fetchmail[13675]: POP3&gt; RETR 3
+Aug 17 17:43:40 willow fetchmail[13675]: POP3&lt; +OK Message follows
+Aug 17 17:43:40 willow fetchmail[13675]: reading message
+<A HREF="https://lists.berlios.de/mailman/listinfo/fetchmail-devel">dgreaves at pop3.ukfsn.org</A>:3 of 33 (2147 octets)
+Aug 17 17:43:40 willow fetchmail[13675]: About to rewrite Return-Path:
+&lt;reiserfs-list-return-20355-david=<A HREF="https://lists.berlios.de/mailman/listinfo/fetchmail-devel">dgreaves.com at namesys.com</A>&gt;^M
+Rewritten version is Return-Path:
+&lt;reiserfs-list-return-20355-david=<A HREF="https://lists.berlios.de/mailman/listinfo/fetchmail-devel">dgreaves.com at namesys.com</A>&gt;^M
+#********#****************************Aug 17 17:43:40 willow
+fetchmail[13675]: About to rewrite From: elliott
+&lt;<A HREF="https://lists.berlios.de/mailman/listinfo/fetchmail-devel">aurelius at sesmail.com</A>&gt;^M Rewritten version is From: elliott
+&lt;<A HREF="https://lists.berlios.de/mailman/listinfo/fetchmail-devel">aurelius at sesmail.com</A>&gt;^M
+Aug 17 17:43:40 willow fetchmail[13675]: About to rewrite To:
+<A HREF="https://lists.berlios.de/mailman/listinfo/fetchmail-devel">reiserfs-list at namesys.com</A>^M Rewritten version is To:
+<A HREF="https://lists.berlios.de/mailman/listinfo/fetchmail-devel">reiserfs-list at namesys.com</A>^M
+Aug 17 17:43:40 willow fetchmail[13675]: forwarding to
+/var/imap/socket/lmtp
+Aug 17 17:43:40 willow fetchmail[13675]: LMTP&gt; MAIL
+FROM:&lt;reiserfs-list-return-20355-david=<A HREF="https://lists.berlios.de/mailman/listinfo/fetchmail-devel">dgreaves.com at namesys.com</A>&gt;
+BODY=8BITMIME SIZE=2147
+Aug 17 17:43:40 willow fetchmail[13675]: SMTP_ok loop start
+Aug 17 17:43:40 willow fetchmail[13675]: LMTP&lt; 250 2.1.0 ok
+Aug 17 17:43:40 willow fetchmail[13675]: LMTP&gt; RCPT
+TO:&lt;<A HREF="https://lists.berlios.de/mailman/listinfo/fetchmail-devel">david at dgreaves.com</A>&gt;
+Aug 17 17:43:40 willow fetchmail[13675]: SMTP_ok loop start
+Aug 17 17:43:40 willow fetchmail[13675]: LMTP&lt; 250 2.1.5 ok
+Aug 17 17:43:40 willow fetchmail[13675]: LMTP&gt; DATA
+Aug 17 17:43:40 willow fetchmail[13675]: SMTP_ok loop start
+Aug 17 17:43:40 willow fetchmail[13675]: LMTP&lt; 354 go ahead
+Aug 17 17:43:40 willow fetchmail[13675]: message
+<A HREF="https://lists.berlios.de/mailman/listinfo/fetchmail-devel">dgreaves at pop3.ukfsn.org</A>:3 was not the expected length (2194 actual !=
+2147 expected)
+Aug 17 17:43:40 willow fetchmail[13675]: LMTP&gt;. (EOM)
+Aug 17 17:43:40 willow fetchmail[13675]: SMTP_ok loop start
+Aug 17 17:43:40 willow fetchmail[13675]: LMTP&lt; 554 5.6.0 Message
+contains NUL characters
+Aug 17 17:43:40 willow fetchmail[13675]: SMTP_ok loop start
+Aug 17 17:43:40 willow fetchmail[13675]: SMTP&lt; 220 willow ESMTP Exim
+4.20 Tue, 17 Aug 2004 17:43:40 +0100
+Aug 17 17:43:40 willow fetchmail[13675]: SMTP&gt; HELO localhost
+Aug 17 17:43:40 willow fetchmail[13675]: SMTP_ok loop start
+Aug 17 17:43:40 willow fetchmail[13675]: SMTP&lt; 250 willow Hello
+[AdFSF0x5m0a0vDWoZf1oPXMI8ichzbi7] at localhost.localdomain [127.0.0.1]
+Aug 17 17:43:40 willow fetchmail[13675]: SMTP&gt; MAIL
+FROM:&lt;<A HREF="https://lists.berlios.de/mailman/listinfo/fetchmail-devel">FETCHMAIL-DAEMON at willow.dgreaves.com</A>&gt;
+Aug 17 17:43:40 willow fetchmail[13675]: SMTP_ok loop start
+Aug 17 17:43:40 willow fetchmail[13675]: SMTP&lt; 250 OK
+Aug 17 17:43:40 willow fetchmail[13675]: SMTP&gt; RCPT
+TO:&lt;<A HREF="https://lists.berlios.de/mailman/listinfo/fetchmail-devel">david at dgreaves.com</A>&gt;
+Aug 17 17:43:40 willow fetchmail[13675]: SMTP_ok loop start
+Aug 17 17:43:40 willow fetchmail[13675]: SMTP&lt; 250 Accepted
+Aug 17 17:43:40 willow fetchmail[13675]: SMTP&gt; DATA
+Aug 17 17:43:40 willow fetchmail[13675]: SMTP_ok loop start
+Aug 17 17:43:40 willow fetchmail[13675]: SMTP&lt; 354 Enter message,
+ending with &quot;.&quot; on a line by itself
+Aug 17 17:43:40 willow fetchmail[13675]: SMTP: (bounce-message body)
+Aug 17 17:43:40 willow fetchmail[13675]: SMTP&gt;. (EOM)
+Aug 17 17:43:40 willow fetchmail[13675]: SMTP_ok loop start
+Aug 17 17:43:40 willow fetchmail[13675]: SMTP&lt; 250 OK id=1Bx73k-0003Ya-FK
+Aug 17 17:43:40 willow fetchmail[13675]: SMTP&gt; QUIT
+Aug 17 17:43:40 willow fetchmail[13675]: SMTP_ok loop start
+Aug 17 17:43:40 willow fetchmail[13675]: SMTP&lt; 221 willow closing
+connection
+Aug 17 17:43:40 willow fetchmail[13675]:  flushed
+Aug 17 17:43:40 willow fetchmail[13675]: POP3&gt; DELE 3^M
+Aug 17 17:43:40 willow fetchmail[13675]: POP3&lt; +OK Done.
+Aug 17 17:43:40 willow fetchmail[13675]: POP3&gt; LIST 4
+Aug 17 17:43:40 willow fetchmail[13675]: POP3&lt; +OK 4 4406
+Aug 17 17:43:40 willow fetchmail[13675]: POP3&gt; RETR 4
+Aug 17 17:43:40 willow fetchmail[13675]: POP3&lt; +OK Message follows
+Aug 17 17:43:40 willow fetchmail[13675]: reading message
+<A HREF="https://lists.berlios.de/mailman/listinfo/fetchmail-devel">dgreaves at pop3.ukfsn.org</A>:4 of 33 (4406 octets)
+Aug 17 17:43:41 willow fetchmail[13675]: About to rewrite Return-Path:
+&lt;<A HREF="https://lists.berlios.de/mailman/listinfo/fetchmail-devel">netdev-bounce at oss.sgi.com</A>&gt;^M Rewritten version is Return-Path:
+&lt;<A HREF="https://lists.berlios.de/mailman/listinfo/fetchmail-devel">netdev-bounce at oss.sgi.com</A>&gt;^M
+Aug 17 17:43:41 willow fetchmail[13675]: About to rewrite From:
+Wensong Zhang &lt;<A HREF="https://lists.berlios.de/mailman/listinfo/fetchmail-devel">wensong at linux-vs.org</A>&gt;^M Rewritten version is From:
+Wensong Zhang &lt;<A HREF="https://lists.berlios.de/mailman/listinfo/fetchmail-devel">wensong at linux-vs.org</A>&gt;^M
+Aug 17 17:43:41 willow fetchmail[13675]: About to rewrite To:
+<A HREF="https://lists.berlios.de/mailman/listinfo/fetchmail-devel">netdev at oss.sgi.com</A>^M Rewritten version is To: <A HREF="https://lists.berlios.de/mailman/listinfo/fetchmail-devel">netdev at oss.sgi.com</A>^M
+Aug 17 17:43:41 willow fetchmail[13675]: About to rewrite Cc: Julian
+Anastasov &lt;<A HREF="https://lists.berlios.de/mailman/listinfo/fetchmail-devel">ja at ssi.bg</A>&gt;^M Rewritten version is Cc: Julian Anastasov
+&lt;<A HREF="https://lists.berlios.de/mailman/listinfo/fetchmail-devel">ja at ssi.bg</A>&gt;^M
+Aug 17 17:43:41 willow fetchmail[13675]: About to rewrite Sender:
+<A HREF="https://lists.berlios.de/mailman/listinfo/fetchmail-devel">netdev-bounce at oss.sgi.com</A>^M Rewritten version is Sender:
+<A HREF="https://lists.berlios.de/mailman/listinfo/fetchmail-devel">netdev-bounce at oss.sgi.com</A>^M
+Aug 17 17:43:41 willow fetchmail[13675]: forwarding to
+/var/imap/socket/lmtp
+Aug 17 17:43:41 willow fetchmail[13675]: SMTP&gt; MAIL
+FROM:&lt;<A HREF="https://lists.berlios.de/mailman/listinfo/fetchmail-devel">netdev-bounce at oss.sgi.com</A>&gt; SIZE=4406
+Aug 17 17:43:41 willow fetchmail[13675]: SMTP_ok loop start
+Aug 17 17:43:41 willow fetchmail[13675]: SMTP&lt; 250 2.1.0 ok
+Aug 17 17:43:41 willow fetchmail[13675]: SMTP&gt; RCPT
+TO:&lt;<A HREF="https://lists.berlios.de/mailman/listinfo/fetchmail-devel">david at dgreaves.com</A>&gt;
+Aug 17 17:43:41 willow fetchmail[13675]: SMTP_ok loop start
+Aug 17 17:43:41 willow fetchmail[13675]: SMTP&lt; 250 2.1.5 ok
+Aug 17 17:43:41 willow fetchmail[13675]: SMTP&gt; DATA
+Aug 17 17:43:41 willow fetchmail[13675]: SMTP_ok loop start
+Aug 17 17:43:41 willow fetchmail[13675]: SMTP&lt; 354 go ahead
+*******************************************************Aug 17 17:43:41
+willow fetchmail[13675]: message <A HREF="https://lists.berlios.de/mailman/listinfo/fetchmail-devel">dgreaves at pop3.ukfsn.org</A>:4 was not the
+expected length (4533 actual != 4406 expected)
+Aug 17 17:43:41 willow fetchmail[13675]: SMTP&gt;. (EOM)
+Aug 17 17:43:41 willow fetchmail[13675]: SMTP_ok loop start
+Aug 17 17:43:41 willow fetchmail[13675]: SMTP&lt; 250 2.1.5 Ok
+
+## 5 minute hang
+
+Aug 17 17:48:41 willow fetchmail[13675]: smtp listener protocol error 2
+Aug 17 17:48:41 willow fetchmail[13675]:  not flushed
+Aug 17 17:48:41 willow fetchmail[13675]: POP3&gt; LIST 5
+Aug 17 17:48:41 willow fetchmail[13675]: POP3&lt; -ERR Client has been
+idle for too long.
+Aug 17 17:48:41 willow fetchmail[13675]: Client has been idle for too
+long.
+Aug 17 17:48:41 willow fetchmail[13675]: POP3&gt; QUIT^M
+Aug 17 17:48:41 willow fetchmail[13675]: client/server protocol error
+while fetching from pop3.ukfsn.org
+Aug 17 17:48:41 willow fetchmail[13675]: 6.2.5 querying pop3.ukfsn.org
+(protocol POP3) at Tue 17 Aug 2004 05:48:41 PM BST: poll completed
+Aug 17 17:48:41 willow fetchmail[13675]: Query status=4 (PROTOCOL)
+
+# ./fetchmail -V -v -v -f /etc/fetchmailrc
+This is fetchmail release 6.2.5+NLS
+Fallback MDA: (none)
+Linux willow 2.6.6 #1 Wed Jun 2 12:15:21 BST 2004 i586 unknown
+Taking options from command line and /etc/fetchmailrc
+Idfile is /var/run/fetchmail.ids
+Progress messages will be logged via syslog
+Fetchmail will show progress dots even in logfiles.
+Fetchmail will forward misaddressed multidrop messages to
+<A HREF="https://lists.berlios.de/mailman/listinfo/fetchmail-devel">david at dgreaves.com.</A>
+Fetchmail will direct error mail to the postmaster.
+Options for retrieving from <A HREF="https://lists.berlios.de/mailman/listinfo/fetchmail-devel">dgreaves at pop3.ukfsn.org</A>:
+~  True name of server is pop3.ukfsn.org.
+~  This host will be queried when no host is specified.
+~  Password = &quot;xxxxxx&quot;.
+~  Protocol is POP3 (using default port).
+~  All available authentication methods will be tried.
+~  Server nonresponse timeout is 300 seconds (default).
+~  Default mailbox selected.
+~  All messages will be retrieved (--all on).
+~  Fetched messages will not be kept on the server (--keep off).
+~  Old messages will not be flushed before message retrieval (--flush
+off).
+~  Rewrite of server-local addresses is enabled (--norewrite off).
+~  Carriage-return stripping is disabled (stripcr off).
+~  Carriage-return forcing is disabled (forcecr off).
+~  Interpretation of Content-Transfer-Encoding is enabled (pass8bits off).
+~  MIME decoding is disabled (mimedecode off).
+~  Idle after poll is disabled (idle off).
+~  Nonempty Status lines will be kept (dropstatus off)
+~  Delivered-To lines will be kept (dropdelivered off)
+~  No received-message limit (--fetchlimit 0).
+~  Fetch message size limit is 100 (--fetchsizelimit 100).
+~  Do binary search of UIDs during 9 out of 10 polls (--fastuidl 10).
+~  No SMTP message batch limit (--batchlimit 0).
+~  Deletion interval between expunges forced to 5 (--expunge 5).
+~  Messages will be LMTP-forwarded to: /var/imap/socket/lmtp
+~  Recognized listener spam block responses are: 571 550 501 554
+~  No pre-connection command.
+~  No post-connection command.
+~  Single-drop mode: 1 local name(s) recognized.
+~        <A HREF="https://lists.berlios.de/mailman/listinfo/fetchmail-devel">david at dgreaves.com</A>
+~  No interface requirement specified.
+~  No monitor interface specified.
+~  No plugin command specified.
+~  No plugout command specified.
+~  1 UIDs saved.
+~        0bcc1e7633bb91ec04fbf4e1505b377d
+~  Poll trace information will be added to the Received header.
+
+other account info removed
+
+David Greaves
+
+
+
+
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000152.html">[fetchmail-devel] Not Yet Reviewed Queue is Empty!
+</A></li>
+	<LI>Next message: <A HREF="000155.html">[fetchmail-devel] warning message charset fix: progress indicator 1/3.
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#154">[ date ]</a>
+              <a href="thread.html#154">[ thread ]</a>
+              <a href="subject.html#154">[ subject ]</a>
+              <a href="author.html#154">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/fetchmail-devel">More information about the fetchmail-devel
+mailing list</a><br>
+</body></html>
