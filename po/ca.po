@@ -6,8 +6,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: fetchmail 6.3.11\n"
-"Report-Msgid-Bugs-To: fetchmail-devel@lists.berlios.de\n"
-"POT-Creation-Date: 2013-04-23 23:24+0200\n"
+"Report-Msgid-Bugs-To: fetchmail-devel@lists.sourceforge.net\n"
+"POT-Creation-Date: 2014-05-21 22:46+0200\n"
 "PO-Revision-Date: 2009-08-06 14:52+0200\n"
 "Last-Translator: Ernest Adrogué Calveras <eadrogue@gmx.net>\n"
 "Language-Team: Catalan <ca@dodds.net>\n"
@@ -62,7 +62,8 @@ msgid "krb5_sendauth: %s [server says '%s']\n"
 msgstr "krb5_sendauth: %s [el servidor diu: '%*s'] \n"
 
 #: driver.c:345
-msgid "Subject: Fetchmail oversized-messages warning"
+#, fuzzy
+msgid "Fetchmail oversized-messages warning"
 msgstr "Subject: fetchmail: Missatges excessivament grans"
 
 #: driver.c:349
@@ -194,7 +195,8 @@ msgid "timeout after %d seconds.\n"
 msgstr "temps d'espera esgotat després de %d segons.\n"
 
 #: driver.c:926
-msgid "Subject: fetchmail sees repeated timeouts"
+#, fuzzy
+msgid "fetchmail sees repeated timeouts"
 msgstr "Subject: fetchmail: S'esgota el temps d'espera molt sovint"
 
 #: driver.c:929
@@ -280,8 +282,8 @@ msgid "For help, see http://www.fetchmail.info/fetchmail-FAQ.html#R15\n"
 msgstr ""
 
 #: driver.c:1201
-#, c-format
-msgid "Subject: fetchmail authentication failed on %s@%s"
+#, fuzzy, c-format
+msgid "fetchmail authentication failed on %s@%s"
 msgstr "Subject: fetchmail: L'autenticació per a %s@%s ha fallat"
 
 #: driver.c:1205
@@ -357,8 +359,8 @@ msgid "Authorization OK on %s@%s\n"
 msgstr "Autorització reeixida per a %s@%s\n"
 
 #: driver.c:1276
-#, c-format
-msgid "Subject: fetchmail authentication OK on %s@%s"
+#, fuzzy, c-format
+msgid "fetchmail authentication OK on %s@%s"
 msgstr "Subject: fetchmail: Autenticació reeixida per a %s@%s"
 
 #: driver.c:1280
@@ -2923,10 +2925,9 @@ msgstr "Error de lliurament LMTP a EOM\n"
 msgid "Unexpected non-503 response to LMTP EOM: %s\n"
 msgstr "Resposta no-503 inesperada al final del missatge LMTP: %s\n"
 
-#: sink.c:1620
-msgid ""
-"-- \n"
-"The Fetchmail Daemon"
+#: sink.c:1623
+#, fuzzy
+msgid "The Fetchmail Daemon"
 msgstr ""
 "-- \n"
 "El Dimoni Fetchmail"

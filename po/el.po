@@ -5,8 +5,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: fetchmail 6.2.2\n"
-"Report-Msgid-Bugs-To: fetchmail-devel@lists.berlios.de\n"
-"POT-Creation-Date: 2013-04-23 23:24+0200\n"
+"Report-Msgid-Bugs-To: fetchmail-devel@lists.sourceforge.net\n"
+"POT-Creation-Date: 2014-05-21 22:46+0200\n"
 "PO-Revision-Date: 2003-05-06 01:03+0300\n"
 "Last-Translator: Dokianakis Theofanis <madf@hellug.gr>\n"
 "Language-Team: Greek <nls@tux.hellug.gr>\n"
@@ -62,7 +62,7 @@ msgid "krb5_sendauth: %s [server says '%s']\n"
 msgstr "krb5_sendauth: %s [ο διαχειριστής λέει '%*s'] \n"
 
 #: driver.c:345
-msgid "Subject: Fetchmail oversized-messages warning"
+msgid "Fetchmail oversized-messages warning"
 msgstr ""
 
 #: driver.c:349
@@ -192,7 +192,7 @@ msgstr "λήξη χρόνου μετά από %d δεύτερα.\n"
 
 #: driver.c:926
 #, fuzzy
-msgid "Subject: fetchmail sees repeated timeouts"
+msgid "fetchmail sees repeated timeouts"
 msgstr "Subject: το fetchmail βλέπει επαναλαμβανόμενες λήξεις ορίων χρόνου\n"
 
 #: driver.c:929
@@ -279,7 +279,7 @@ msgstr ""
 
 #: driver.c:1201
 #, fuzzy, c-format
-msgid "Subject: fetchmail authentication failed on %s@%s"
+msgid "fetchmail authentication failed on %s@%s"
 msgstr "Subject: fetchmail αποτυχία εξουσιοδότησης στο %s@%s\n"
 
 #: driver.c:1205
@@ -373,7 +373,7 @@ msgstr "Εξουσιοδότηση πέτυχε στον %s@%s\n"
 
 #: driver.c:1276
 #, fuzzy, c-format
-msgid "Subject: fetchmail authentication OK on %s@%s"
+msgid "fetchmail authentication OK on %s@%s"
 msgstr "Subject: εξουσιοδότηση του fetchmail πέτυχε στο %s@%s\n"
 
 #: driver.c:1280
@@ -2907,11 +2907,9 @@ msgstr "Σφάλμα διανομής LMTP στο  EOM\n"
 msgid "Unexpected non-503 response to LMTP EOM: %s\n"
 msgstr "Μη αναμενόμενη απάντηση όχι-503 στο LMTP EOM: %s\n"
 
-#: sink.c:1620
+#: sink.c:1623
 #, fuzzy
-msgid ""
-"-- \n"
-"The Fetchmail Daemon"
+msgid "The Fetchmail Daemon"
 msgstr ""
 "--\n"
 "\t\t\t\tΟ Δαίμονας  Fetchmail\n"

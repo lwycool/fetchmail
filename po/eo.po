@@ -7,8 +7,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: fetchmail 6.3.24.1\n"
-"Report-Msgid-Bugs-To: fetchmail-devel@lists.berlios.de\n"
-"POT-Creation-Date: 2013-04-23 23:24+0200\n"
+"Report-Msgid-Bugs-To: fetchmail-devel@lists.sourceforge.net\n"
+"POT-Creation-Date: 2014-05-21 22:46+0200\n"
 "PO-Revision-Date: 2013-03-09 21:43-0300\n"
 "Last-Translator: Felipe Castro <fefcas@gmail.com>\n"
 "Language-Team: Esperanto <translation-team-eo@lists.sourceforge.net>\n"
@@ -61,7 +61,8 @@ msgid "krb5_sendauth: %s [server says '%s']\n"
 msgstr "krb5_sendauth: %s [servilo diras «%s»]\n"
 
 #: driver.c:345
-msgid "Subject: Fetchmail oversized-messages warning"
+#, fuzzy
+msgid "Fetchmail oversized-messages warning"
 msgstr "Temo: averto pri trograndaj mesaĝoj de Fetchmail"
 
 #: driver.c:349
@@ -185,7 +186,8 @@ msgid "timeout after %d seconds.\n"
 msgstr "tempolimo atingita post %d sekundoj.\n"
 
 #: driver.c:926
-msgid "Subject: fetchmail sees repeated timeouts"
+#, fuzzy
+msgid "fetchmail sees repeated timeouts"
 msgstr "Temo: fetchmail alfrontas ripetitajn tempolimojn"
 
 #: driver.c:929
@@ -271,8 +273,8 @@ msgstr ""
 "Por helpo, vidu http://www.fetchmail.info/fetchmail-FAQ.html#R15 (angle)\n"
 
 #: driver.c:1201
-#, c-format
-msgid "Subject: fetchmail authentication failed on %s@%s"
+#, fuzzy, c-format
+msgid "fetchmail authentication failed on %s@%s"
 msgstr "Temo: fetchmail aŭtentikokontrolo malsukcesis sur %s@%s"
 
 #: driver.c:1205
@@ -349,8 +351,8 @@ msgid "Authorization OK on %s@%s\n"
 msgstr "Aŭtentiko ĝustas sur %s@%s\n"
 
 #: driver.c:1276
-#, c-format
-msgid "Subject: fetchmail authentication OK on %s@%s"
+#, fuzzy, c-format
+msgid "fetchmail authentication OK on %s@%s"
 msgstr "Temo: fetchmail-aŭtentiko ĝustas sur %s@%s"
 
 #: driver.c:1280
@@ -2865,10 +2867,9 @@ msgstr "LMTP-transdona eraro sur EOM\n"
 msgid "Unexpected non-503 response to LMTP EOM: %s\n"
 msgstr "Neatendata respondo non-503 al LMTP EOM: %s\n"
 
-#: sink.c:1620
-msgid ""
-"-- \n"
-"The Fetchmail Daemon"
+#: sink.c:1623
+#, fuzzy
+msgid "The Fetchmail Daemon"
 msgstr ""
 "-- \n"
 "La Fetchmail-demono"

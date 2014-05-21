@@ -7,8 +7,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: fetchmail 6.3.22.2\n"
-"Report-Msgid-Bugs-To: fetchmail-devel@lists.berlios.de\n"
-"POT-Creation-Date: 2013-04-23 23:24+0200\n"
+"Report-Msgid-Bugs-To: fetchmail-devel@lists.sourceforge.net\n"
+"POT-Creation-Date: 2014-05-21 22:46+0200\n"
 "PO-Revision-Date: 2013-03-08 09:33+0800\n"
 "Last-Translator: Ji ZhengYu <zhengyuji@gmail.com>\n"
 "Language-Team: Chinese (simplified) <i18n-zh@googlegroups.com>\n"
@@ -61,7 +61,8 @@ msgid "krb5_sendauth: %s [server says '%s']\n"
 msgstr "krb5_sendauth: %s [ 服务器响应 \"%s\"]\n"
 
 #: driver.c:345
-msgid "Subject: Fetchmail oversized-messages warning"
+#, fuzzy
+msgid "Fetchmail oversized-messages warning"
 msgstr "主题: Fetchmail 超大邮件警告"
 
 #: driver.c:349
@@ -180,7 +181,8 @@ msgid "timeout after %d seconds.\n"
 msgstr "等待 %d 秒后超时。\n"
 
 #: driver.c:926
-msgid "Subject: fetchmail sees repeated timeouts"
+#, fuzzy
+msgid "fetchmail sees repeated timeouts"
 msgstr "主题: fetchmail 发现反复超时"
 
 #: driver.c:929
@@ -262,8 +264,8 @@ msgid "For help, see http://www.fetchmail.info/fetchmail-FAQ.html#R15\n"
 msgstr "寻求帮助请访问 http://www.fetchmail.info/fetchmail-FAQ.html#R15\n"
 
 #: driver.c:1201
-#, c-format
-msgid "Subject: fetchmail authentication failed on %s@%s"
+#, fuzzy, c-format
+msgid "fetchmail authentication failed on %s@%s"
 msgstr "主题: fetchmail 在 %s@%s 上验证失败"
 
 #: driver.c:1205
@@ -336,8 +338,8 @@ msgid "Authorization OK on %s@%s\n"
 msgstr "验证正确 %s@%s\n"
 
 #: driver.c:1276
-#, c-format
-msgid "Subject: fetchmail authentication OK on %s@%s"
+#, fuzzy, c-format
+msgid "fetchmail authentication OK on %s@%s"
 msgstr "主题: fetchmail 验证正确 %s@%s"
 
 #: driver.c:1280
@@ -2771,10 +2773,9 @@ msgstr "邮件结尾时用 LTMP 协议投递错误\n"
 msgid "Unexpected non-503 response to LMTP EOM: %s\n"
 msgstr "邮件结尾时 LMTP 协议的未知的非 503 响应: %s\n"
 
-#: sink.c:1620
-msgid ""
-"-- \n"
-"The Fetchmail Daemon"
+#: sink.c:1623
+#, fuzzy
+msgid "The Fetchmail Daemon"
 msgstr ""
 "-- \n"
 "Fetchmail 后台服务"

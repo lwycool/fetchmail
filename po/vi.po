@@ -8,8 +8,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: fetchmail-6.3.24.1\n"
-"Report-Msgid-Bugs-To: fetchmail-devel@lists.berlios.de\n"
-"POT-Creation-Date: 2013-04-23 23:24+0200\n"
+"Report-Msgid-Bugs-To: fetchmail-devel@lists.sourceforge.net\n"
+"POT-Creation-Date: 2014-05-21 22:46+0200\n"
 "PO-Revision-Date: 2013-03-12 07:23+0700\n"
 "Last-Translator: Trần Ngọc Quân <vnwildman@gmail.com>\n"
 "Language-Team: Vietnamese <translation-team-vi@lists.sourceforge.net>\n"
@@ -67,7 +67,8 @@ msgid "krb5_sendauth: %s [server says '%s']\n"
 msgstr "krb5_sendauth: %s [máy phục vụ nói “%s”]\n"
 
 #: driver.c:345
-msgid "Subject: Fetchmail oversized-messages warning"
+#, fuzzy
+msgid "Fetchmail oversized-messages warning"
 msgstr "Chủ đề: cảnh báo Fetchmail về thư quá lớn"
 
 #: driver.c:349
@@ -188,7 +189,8 @@ msgid "timeout after %d seconds.\n"
 msgstr "quá giờ sau %d giây.\n"
 
 #: driver.c:926
-msgid "Subject: fetchmail sees repeated timeouts"
+#, fuzzy
+msgid "fetchmail sees repeated timeouts"
 msgstr "Chủ đề: fetchmail thấy nhiều việc quá giờ"
 
 #: driver.c:929
@@ -271,8 +273,8 @@ msgstr ""
 "Để tìm trợ giúp, xem: http://www.fetchmail.info/fetchmail-FAQ.html#R15\n"
 
 #: driver.c:1201
-#, c-format
-msgid "Subject: fetchmail authentication failed on %s@%s"
+#, fuzzy, c-format
+msgid "fetchmail authentication failed on %s@%s"
 msgstr "Chủ đề: việc xác thực fetchmail gặp lỗi trên %s@%s"
 
 #: driver.c:1205
@@ -347,8 +349,8 @@ msgid "Authorization OK on %s@%s\n"
 msgstr "Đã được quyền trên %s@%s\n"
 
 #: driver.c:1276
-#, c-format
-msgid "Subject: fetchmail authentication OK on %s@%s"
+#, fuzzy, c-format
+msgid "fetchmail authentication OK on %s@%s"
 msgstr "Chủ đề: fetchmail đã được xác thực là đúng trên %s@%s"
 
 #: driver.c:1280
@@ -2899,10 +2901,9 @@ msgstr "Lỗi phát LMTP tại kết thúc thư\n"
 msgid "Unexpected non-503 response to LMTP EOM: %s\n"
 msgstr "Gặp đáp ứng không phải 503 không mong đợi với kết thúc thư LMTP: %s\n"
 
-#: sink.c:1620
-msgid ""
-"-- \n"
-"The Fetchmail Daemon"
+#: sink.c:1623
+#, fuzzy
+msgid "The Fetchmail Daemon"
 msgstr ""
 "-- \n"
 "Dịch vụ chạy nền Fetchmail"

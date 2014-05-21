@@ -12,8 +12,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: fetchmail 5.3.6\n"
-"Report-Msgid-Bugs-To: fetchmail-devel@lists.berlios.de\n"
-"POT-Creation-Date: 2013-04-23 23:24+0200\n"
+"Report-Msgid-Bugs-To: fetchmail-devel@lists.sourceforge.net\n"
+"POT-Creation-Date: 2014-05-21 22:46+0200\n"
 "PO-Revision-Date: 2000-04-10 01:26+0200\n"
 "Last-Translator: Jesús Bravo Álvarez <jba@pobox.com>\n"
 "Language-Team: Galician <gpul-traduccion@ceu.fi.udc.es>\n"
@@ -65,7 +65,7 @@ msgid "krb5_sendauth: %s [server says '%s']\n"
 msgstr "krb5_sendauth: %s [o servidor di '%*s'] \n"
 
 #: driver.c:345
-msgid "Subject: Fetchmail oversized-messages warning"
+msgid "Fetchmail oversized-messages warning"
 msgstr ""
 
 #: driver.c:349
@@ -190,7 +190,7 @@ msgstr "tempo esgotado tras %d segundos.\n"
 
 #: driver.c:926
 #, fuzzy
-msgid "Subject: fetchmail sees repeated timeouts"
+msgid "fetchmail sees repeated timeouts"
 msgstr "Subject: fetchmail atopa repetidas expiracións do tempo de espera\n"
 
 #: driver.c:929
@@ -277,7 +277,7 @@ msgstr ""
 
 #: driver.c:1201
 #, fuzzy, c-format
-msgid "Subject: fetchmail authentication failed on %s@%s"
+msgid "fetchmail authentication failed on %s@%s"
 msgstr "Subject: fallou a autenticación do fetchmail\n"
 
 #: driver.c:1205
@@ -347,7 +347,7 @@ msgstr "Fallou a autorización en %s@%s\n"
 
 #: driver.c:1276
 #, fuzzy, c-format
-msgid "Subject: fetchmail authentication OK on %s@%s"
+msgid "fetchmail authentication OK on %s@%s"
 msgstr "Subject: fallou a autenticación do fetchmail\n"
 
 #: driver.c:1280
@@ -2921,11 +2921,10 @@ msgstr "Erro na entrega LMTP no EOM\n"
 msgid "Unexpected non-503 response to LMTP EOM: %s\n"
 msgstr "Resposta distinta de 503 non agardada ó LMTP EOM: %s\n"
 
-#: sink.c:1620
-msgid ""
-"-- \n"
-"The Fetchmail Daemon"
-msgstr ""
+#: sink.c:1623
+#, fuzzy
+msgid "The Fetchmail Daemon"
+msgstr "iniciando o demonio de fetchmail %s \n"
 
 #: smtp.c:81
 #, fuzzy

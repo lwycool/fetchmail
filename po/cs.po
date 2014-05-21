@@ -12,8 +12,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: fetchmail 6.3.24.1\n"
-"Report-Msgid-Bugs-To: fetchmail-devel@lists.berlios.de\n"
-"POT-Creation-Date: 2013-04-23 23:24+0200\n"
+"Report-Msgid-Bugs-To: fetchmail-devel@lists.sourceforge.net\n"
+"POT-Creation-Date: 2014-05-21 22:46+0200\n"
 "PO-Revision-Date: 2013-03-09 08:36+0100\n"
 "Last-Translator: Petr Pisar <petr.pisar@atlas.cz>\n"
 "Language-Team: Czech <translation-team-cs@lists.sourceforge.net>\n"
@@ -67,7 +67,8 @@ msgstr "krb5_sendauth: %s [server říká „%s“]\n"
 
 # XXX: This is e-mail header as literal. Dont't touch "Subject: " header name.
 #: driver.c:345
-msgid "Subject: Fetchmail oversized-messages warning"
+#, fuzzy
+msgid "Fetchmail oversized-messages warning"
 msgstr "Subject: Varování fetchmail o příliš velkých zprávách"
 
 #: driver.c:349
@@ -197,7 +198,8 @@ msgid "timeout after %d seconds.\n"
 msgstr "po %d sekundách vypršel čas.\n"
 
 #: driver.c:926
-msgid "Subject: fetchmail sees repeated timeouts"
+#, fuzzy
+msgid "fetchmail sees repeated timeouts"
 msgstr "Subject: fetchmailu opakovaně vypršel čas"
 
 #: driver.c:929
@@ -281,8 +283,8 @@ msgstr "Rady naleznete na http://www.fetchmail.info/fetchmail-FAQ.html#R15\n"
 
 # XXX: This is e-mail header as literal. Dont't touch "Subject: " header name.
 #: driver.c:1201
-#, c-format
-msgid "Subject: fetchmail authentication failed on %s@%s"
+#, fuzzy, c-format
+msgid "fetchmail authentication failed on %s@%s"
 msgstr "Subject: autentizace fetchmailu selhala na %s@%s"
 
 #: driver.c:1205
@@ -359,8 +361,8 @@ msgstr "Úspěšná autorizace na %s@%s\n"
 
 # XXX: This is e-mail header as literal. Dont't touch "Subject: " header name.
 #: driver.c:1276
-#, c-format
-msgid "Subject: fetchmail authentication OK on %s@%s"
+#, fuzzy, c-format
+msgid "fetchmail authentication OK on %s@%s"
 msgstr "Subject: Autentizace fetchmailu úspěšná na %s@%s"
 
 #: driver.c:1280
@@ -2886,10 +2888,9 @@ msgstr "Chyba doručování LMTP při EOM\n"
 msgid "Unexpected non-503 response to LMTP EOM: %s\n"
 msgstr "Neočekávaná odpověď na LMTP EOM jiná než 503: %s\n"
 
-#: sink.c:1620
-msgid ""
-"-- \n"
-"The Fetchmail Daemon"
+#: sink.c:1623
+#, fuzzy
+msgid "The Fetchmail Daemon"
 msgstr ""
 "-- \n"
 "Démon Fetchmail"

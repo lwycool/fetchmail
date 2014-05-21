@@ -8,8 +8,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: fetchmail 6.3.24.1\n"
-"Report-Msgid-Bugs-To: fetchmail-devel@lists.berlios.de\n"
-"POT-Creation-Date: 2013-04-23 23:24+0200\n"
+"Report-Msgid-Bugs-To: fetchmail-devel@lists.sourceforge.net\n"
+"POT-Creation-Date: 2014-05-21 22:46+0200\n"
 "PO-Revision-Date: 2013-03-09 16:18+0100\n"
 "Last-Translator: Göran Uddeborg <goeran@uddeborg.se>\n"
 "Language-Team: Swedish <tp-sv@listor.tp-sv.se>\n"
@@ -64,7 +64,8 @@ msgid "krb5_sendauth: %s [server says '%s']\n"
 msgstr "krb5_sendauth: %s [servern säger ”%s”]\n"
 
 #: driver.c:345
-msgid "Subject: Fetchmail oversized-messages warning"
+#, fuzzy
+msgid "Fetchmail oversized-messages warning"
 msgstr "Subject: Fetchmail-varning om för stora meddelanden"
 
 #: driver.c:349
@@ -193,7 +194,8 @@ msgid "timeout after %d seconds.\n"
 msgstr "tiden gick ut efter %d sekunder.\n"
 
 #: driver.c:926
-msgid "Subject: fetchmail sees repeated timeouts"
+#, fuzzy
+msgid "fetchmail sees repeated timeouts"
 msgstr "Subject: fetchmail ser att tiden går ut upprepade gånger"
 
 #: driver.c:929
@@ -279,8 +281,8 @@ msgid "For help, see http://www.fetchmail.info/fetchmail-FAQ.html#R15\n"
 msgstr "För hjälp, se http://www.fetchmail.info/fetchmail-FAQ.html#R15\n"
 
 #: driver.c:1201
-#, c-format
-msgid "Subject: fetchmail authentication failed on %s@%s"
+#, fuzzy, c-format
+msgid "fetchmail authentication failed on %s@%s"
 msgstr "Subject: fetchmail-autenticering misslyckades på %s@%s"
 
 #: driver.c:1205
@@ -356,8 +358,8 @@ msgid "Authorization OK on %s@%s\n"
 msgstr "Auktorisationen OK på %s@%s\n"
 
 #: driver.c:1276
-#, c-format
-msgid "Subject: fetchmail authentication OK on %s@%s"
+#, fuzzy, c-format
+msgid "fetchmail authentication OK on %s@%s"
 msgstr "Subject: fetchmail-auktorisation OK på %s@%s"
 
 #: driver.c:1280
@@ -2883,10 +2885,9 @@ msgstr "LMTP-leveransfel vid EOM\n"
 msgid "Unexpected non-503 response to LMTP EOM: %s\n"
 msgstr "Oväntat icke-503-svar på LMTP EOM: %s\n"
 
-#: sink.c:1620
-msgid ""
-"-- \n"
-"The Fetchmail Daemon"
+#: sink.c:1623
+#, fuzzy
+msgid "The Fetchmail Daemon"
 msgstr ""
 "-- \n"
 "Fetchmail-demonen"
