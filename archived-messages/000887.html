@@ -1,0 +1,105 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [fetchmail-devel] Security vulnerability in APOP authentication
+   </TITLE>
+   <LINK REL="Index" HREF="index.html" >
+   <LINK REL="made" HREF="mailto:fetchmail-devel%40lists.berlios.de?Subject=Re%3A%20%5Bfetchmail-devel%5D%20Security%20vulnerability%20in%20APOP%20authentication&In-Reply-To=%3Cqlkbqirheq7.fsf%40clipper.ens.fr%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000884.html">
+   <LINK REL="Next"  HREF="000889.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[fetchmail-devel] Security vulnerability in APOP authentication</H1>
+    <B>Ga&#235;tan LEURENT</B> 
+    <A HREF="mailto:fetchmail-devel%40lists.berlios.de?Subject=Re%3A%20%5Bfetchmail-devel%5D%20Security%20vulnerability%20in%20APOP%20authentication&In-Reply-To=%3Cqlkbqirheq7.fsf%40clipper.ens.fr%3E"
+       TITLE="[fetchmail-devel] Security vulnerability in APOP authentication">gaetan.leurent at ens.fr
+       </A><BR>
+    <I>Wed Mar 14 15:55:08 CET 2007</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000884.html">[fetchmail-devel] Bug#413059: --sslcheck - non-existent option	in the man page
+</A></li>
+        <LI>Next message: <A HREF="000889.html">[fetchmail-devel] Security vulnerability in APOP authentication
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#887">[ date ]</a>
+              <a href="thread.html#887">[ thread ]</a>
+              <a href="subject.html#887">[ subject ]</a>
+              <a href="author.html#887">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Hello,
+
+I found a security vulnerability in the APOP authentication.  It is
+related to recent collision attacks by Wang and al. against MD5.  The
+basic idea is to craft a pair of message-ids that will collide in the
+APOP hash if the password begins in a specified way.  So the attacker
+would impersonate a POP server, and send these msg-id; the client will
+return the hash, and the attacker can learn some password characters.
+
+The msg-ids will be generated from a MD5 collision: if you have two
+colliding messages for MD5 &quot;&lt;????@????&gt;x&quot; and &quot;&lt;&#191;&#191;&#191;&#191;@&#191;&#191;&#191;&#191;&gt;x&quot;, and the
+message are of length two blocks, then you will use &quot;&lt;????@????&gt;&quot; and
+&quot;&lt;&#191;&#191;&#191;&#191;@&#191;&#191;&#191;&#191;&gt;&quot; as msg-ids.  When the client computes MD5(msg-id||passwd)
+with these two, it will collide if the first password character if 'x',
+no matter what is next (since we are at a block boundary, and the end of
+the password will be the same in the two hashs).  Therefore you can
+learn the password characters one by one (actually you can only recover
+three of them, due to the way MD5 collisions are computed).
+
+This attack is really a practical one: it needs about an hour of
+computation and a few hundred authentications from the client, and can
+recover three password characters.  I tested it against fetchmail, and
+it does work.
+
+However, using the current techniques available to attack MD5, the
+msg-ids sent by the server can easily be distinguished from genuine ones
+as they will not respect the RFC specification.  In particular, they
+will contain non-ASCII characters.  Therefore, as a security
+countermeasure, I think fetchmail should reject msg-ids that does not
+conform to the RFC.
+
+The details of the attack and the new results against MD5 needed to
+build it will be presented in the Fast Software Encryption conference on
+March 28.  I can send you some more details if needed.
+
+Meanwhile, feel free to alert any one that you believe is concerned.
+I am already sending this mail to the maintainers of Thunderbird,
+Evolution, fetchmail, and mutt.  KMail already seems to do enough checks
+on the msg-id to avoid the attack.
+
+Please CC me in any reply.
+
+-- 
+Ga&#235;tan LEURENT
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000884.html">[fetchmail-devel] Bug#413059: --sslcheck - non-existent option	in the man page
+</A></li>
+	<LI>Next message: <A HREF="000889.html">[fetchmail-devel] Security vulnerability in APOP authentication
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#887">[ date ]</a>
+              <a href="thread.html#887">[ thread ]</a>
+              <a href="subject.html#887">[ subject ]</a>
+              <a href="author.html#887">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/fetchmail-devel">More information about the fetchmail-devel
+mailing list</a><br>
+</body></html>

@@ -10,7 +10,7 @@
 .\" Load www macros to process .URL requests, this requires groff:
 .mso www.tmac
 .\"
-.TH fetchmail 1 "fetchmail 6.3.26" "fetchmail" "fetchmail reference manual"
+.TH fetchmail 1 "fetchmail 6.3.27" "fetchmail" "fetchmail reference manual"
 
 .SH NAME
 fetchmail \- fetch mail from a POP, IMAP, ETRN, or ODMR-capable server
@@ -62,7 +62,7 @@ env LC_ALL=C fetchmail \-vvv  \-\-nodetach \-\-nosyslog
 (This command line actually runs fetchmail with verbose English output.)
 .PP
 Also see 
-.URL "http://fetchmail.berlios.de/fetchmail-FAQ.html#G3" "item #G3 in fetchmail's FAQ"
+.URL "http://fetchmail.sourceforge.net/fetchmail-FAQ.html#G3" "item #G3 in fetchmail's FAQ"
 .PP
 You can omit the LC_ALL=C part above if you want output in the local
 language (if supported). However if you are posting to mailing lists,
@@ -2914,11 +2914,11 @@ The BSMTP error handling is virtually nonexistent and may leave broken
 messages behind.
 .PP
 Send comments, bug reports, gripes, and the like to the
-.MTO "fetchmail-devel@lists.berlios.de" "fetchmail-devel list"
+.MTO "fetchmail-devel@lists.sourceforge.net" "fetchmail-devel list"
 
 .PP
 An
-.URL "http://fetchmail.berlios.de/fetchmail-FAQ.html" "HTML FAQ"
+.URL "http://fetchmail.sourceforge.net/fetchmail-FAQ.html" "HTML FAQ"
 is available at the fetchmail home page, it should also accompany your
 installation.
 
@@ -2956,7 +2956,10 @@ Beinert, and H\['e]ctor Garc\['i]a.
 .BR netrc (5).
 
 .PP
-.URL "http://fetchmail.berlios.de/" "The fetchmail home page."
+.URL "http://www.fetchmail.info/" "The fetchmail home page."
+
+.PP
+.URL "http://fetchmail.sourceforge.net/" "The fetchmail home page (alternative URI)."
 
 .PP
 .URL "http://www.courier-mta.org/maildrop/" "The maildrop home page."

@@ -6,8 +6,8 @@
 #
 
 my $project = "fetchmail";
-my $website = "http://developer.berlios.de/projects/$project";
-my $mailfrom = "<$project-devel\@lists.berlios.de> (Fetchmail Development Team)";
+my $website = "http://sourceforge.net/projects/$project";
+my $mailfrom = "<$project-devel\@lists.sourceforge.net> (Fetchmail Development Team)";
 my $distsufx =	'.tar.bz2';
 my $xzsufx =	'.tar.xz';
 
@@ -194,10 +194,6 @@ print "### Uploading\n";
 print "=== local\n";
 
 system("cp", "autobuild/$project-$version$xzsufx", "autobuild/$project-$version$xzsufx.asc", "$ENV{HOME}/public_html/fetchmail/") and die "Cannot upload to \$HOME/public_html/fetchmail/: $!";
-
-print "=== berlios\n";
-
-system("lftp -e \"lcd autobuild ; mput $project-$version$distsufx $project-$version$distsufx.asc ; quit\" ftp.berlios.de:/incoming/") and warn "Upload to berlios failed: $!";
 
 print "=== sourceforge \n";
 system("rsync -acvHP autobuild/$project-$version$xzsufx autobuild/$project-$version$xzsufx.asc autobuild/README m-a\@frs.sourceforge.net:/home/frs/project/fetchmail/branch_6.3/");
