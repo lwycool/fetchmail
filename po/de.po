@@ -7,8 +7,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: fetchmail 7.0.0-alpha5\n"
-"Report-Msgid-Bugs-To: fetchmail-devel@lists.berlios.de\n"
-"POT-Creation-Date: 2014-05-20 22:05+0200\n"
+"Report-Msgid-Bugs-To: fetchmail-devel@lists.sourceforge.net\n"
+"POT-Creation-Date: 2014-05-21 23:01+0200\n"
 "PO-Revision-Date: 2014-05-20 22:15+0200\n"
 "Last-Translator: Matthias Andree <matthias.andree@gmx.de>\n"
 "Language-Team: Deutsch <de@li.org>\n"
@@ -2111,7 +2111,9 @@ msgstr "Ungültige Authentifikation „%s“ angegeben.\n"
 
 #: options.c:534
 msgid "Warning: --ssl is obsolescent, please use --sslmode=wrapped instead.\n"
-msgstr "Warnung: --ssl läuft aus, bitte verwenden Sie stattdessen --sslmode=wrapped.\n"
+msgstr ""
+"Warnung: --ssl läuft aus, bitte verwenden Sie stattdessen --"
+"sslmode=wrapped.\n"
 
 #: options.c:552
 #, c-format
@@ -2239,7 +2241,9 @@ msgstr "      --sslcert     SSL-Klienten-Zertifikat\n"
 #: options.c:669
 msgid ""
 "      --nosslcertck INSECURE disable server certificate check (discouraged)\n"
-msgstr "      --nosslcertck UNSICHER Keine Prüfung des SSL-Serverzertifikats (abgeraten)\n"
+msgstr ""
+"      --nosslcertck UNSICHER Keine Prüfung des SSL-Serverzertifikats "
+"(abgeraten)\n"
 
 #: options.c:670
 msgid "      --sslcertck   do strict server certificate check (recommended)\n"
@@ -2275,13 +2279,17 @@ msgstr ""
 msgid ""
 "      --sslmode     force ssl mode (none/wrapped/starttls=may/"
 "starttls=must)\n"
-msgstr "     --sslmode      SSL-Modus erzwingen (none/wrapped/starttls=may/starttls=must)\n"
+msgstr ""
+"     --sslmode      SSL-Modus erzwingen (none/wrapped/starttls=may/"
+"starttls=must)\n"
 
 #: options.c:676
 msgid ""
 "      --sslprotocolver  force ssl version (often unneeded, see manual "
 "page!)\n"
-msgstr "     --sslmode      TLS-Protokollversion erzwingen (oft nicht nötig, siehe Handbuch!)\n"
+msgstr ""
+"     --sslmode      TLS-Protokollversion erzwingen (oft nicht nötig, siehe "
+"Handbuch!)\n"
 
 #: options.c:679
 msgid "      --plugin      specify external command to open connection\n"
@@ -2567,7 +2575,9 @@ msgstr ""
 
 #: rcfile_y.y:347
 msgid "WARNING: ssl is obsolescent. Please use sslmode wrapped instead."
-msgstr "WARNUNG: die ssl-Option läuft aus. Verwenden Sie stattdessen: sslmode wrapped."
+msgstr ""
+"WARNUNG: die ssl-Option läuft aus. Verwenden Sie stattdessen: sslmode "
+"wrapped."
 
 #: rcfile_y.y:349
 msgid "SSL is not enabled"
@@ -3222,7 +3232,9 @@ msgstr "Datei-Deskriptor außerhalb des Bereichs für SSL"
 msgid ""
 "Invalid SSL protocol '%s' specified, using default (autonegotiate SSLv3/"
 "TLSv1 or newer).\n"
-msgstr "Ungültiges SSL-Protokoll „%s“ angegeben, benutze Voreinstellung (automatische Aushandlung SSLv3/TLSv1 oder neuer).\n"
+msgstr ""
+"Ungültiges SSL-Protokoll „%s“ angegeben, benutze Voreinstellung "
+"(automatische Aushandlung SSLv3/TLSv1 oder neuer).\n"
 
 #: socket.c:936
 #, c-format
@@ -3237,7 +3249,9 @@ msgstr "SSL/TLS: Chiffrierung konnte nicht von %s auf \"%s\" gesetzt werden\n"
 #: socket.c:943
 #, c-format
 msgid "SSL/TLS: environment variable %s unset, using OpenSSL default ciphers"
-msgstr "SSL/TLS: Umgebungsvariable %s nicht gesetzt, verwende OpenSSL-Standardchiffrierung"
+msgstr ""
+"SSL/TLS: Umgebungsvariable %s nicht gesetzt, verwende OpenSSL-"
+"Standardchiffrierung"
 
 #: socket.c:979
 #, c-format
@@ -3246,7 +3260,9 @@ msgstr "SSL/TLS: Chiffrierung mit Priorität %3d ist %s\n"
 
 #: socket.c:1036
 msgid "Cannot obtain current SSL/TLS cipher - no session established?\n"
-msgstr "Kann aktuelle SSL/TLS-Chiffrierung nicht ermitteln - keine Sitzung aufgebaut?\n"
+msgstr ""
+"Kann aktuelle SSL/TLS-Chiffrierung nicht ermitteln - keine Sitzung "
+"aufgebaut?\n"
 
 #: socket.c:1039
 #, c-format
