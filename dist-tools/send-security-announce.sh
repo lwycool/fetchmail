@@ -11,4 +11,4 @@ $MAILER -r ma+bt@dt.e-technik.uni-dortmund.de -s "$SUBJECT" <$FILE \
     bugtraq@securityfocus.com
 
 $MAILER -r matthias.andree@gmx.de -s "$SUBJECT" <$FILE \
-    fetchmail-announce@lists.berlios.de
+    fetchmail-announce@lists.sourceforge.net
