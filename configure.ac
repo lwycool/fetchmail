@@ -20,7 +20,7 @@ dnl keep this before stuff that runs the compiler!
 AC_USE_SYSTEM_EXTENSIONS
 
 dnl automake options are in Makefile.am
-AC_PREREQ(2.64)
+AC_PREREQ([2.69])
 dnl 2.60 required for AC_USE_SYSTEM_EXTENSIONS
 AM_INIT_AUTOMAKE(silent-rules)
 
@@ -90,7 +90,7 @@ AC_CACHE_SAVE
 
 dnl i18n
 AM_GNU_GETTEXT([external], [need-ngettext])
-AM_GNU_GETTEXT_VERSION([0.17])
+AM_GNU_GETTEXT_VERSION([0.18.3])
 dnl end i18n
 
 # Under sysV68, socket and friends are provided by the C library.

@@ -1,7 +1,7 @@
 # Makefile for fetchmail
 
 SUBDIRS=		. po
-AUTOMAKE_OPTIONS=	1.11 foreign no-dist-gzip dist-xz color-tests
+AUTOMAKE_OPTIONS=	1.11 foreign no-dist-gzip dist-xz color-tests subdir-objects
 
 AM_CPPFLAGS=		-I$(srcdir)/libesmtp
 ACLOCAL_AMFLAGS=	-I m4 -I m4-local
@@ -50,7 +50,7 @@ DEPENDENCIES=		libfm.a $(LIBOBJS)
 check_PROGRAMS=
 
 TESTS=			t.smoke t.validate-xhtml10 t.validate-xhtml t.x509_name_match
-TESTS_ENVIRONMENT=	srcdir="$(srcdir)" LC_ALL=C TZ=UTC SHELL="$(SHELL)" $(SHELL)
+LOG_COMPILER=		/usr/bin/env srcdir="$(srcdir)" LC_ALL=C TZ=UTC SHELL="$(SHELL)" $(SHELL)
 
 fetchmail_SOURCES=	fetchmail.h getopt.h \
 		gettext.h kerberos.h fm_md5.h netrc.h smtp.h \
