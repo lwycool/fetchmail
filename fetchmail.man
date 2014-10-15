@@ -447,7 +447,7 @@ causes the remainder of the session to be encrypted.
 .IP
 .B NOTE
 that with sslcertck enabled (also default), this option is implicity
-upgraded to starttls=must.
+upgraded to starttls=must, described below:
 .IP starttls=must
 Fetchmail connects to the base protocol port and upgrades to an
 encrypted connection in-band (via STARTTLS). If the STARTTLS negotiation
@@ -468,13 +468,15 @@ useful with buggy SSL/TLS implementations on servers, which are
 extremely rare.
 .IP
 Selects an SSL/TLS protocol version. Possible values are
-\&'\fBAUTO\fP', '\fBSSL3\fP', and '\fBTLS1\fP'.
-AUTO lets fetchmail autonegotiate any supported version
-except SSLv2 (Fetchmail, since v7.0.0, prohibits
-negotiation of SSLv2 -- it has been deprecated for 15 years and is
-insecure). \&'\fBSSL3\fP' and \&'\fBTLS1\fP' explicitly select SSL v3 or
-TLS v1.0, respectively. Note that OpenSSL, as of version 1.0.X, only
-supports TLS v1.0, but not v1.1 or newer.
+\&'\fBAUTO\fP', '\fBSSL3\fP', '\fBTLS1\fP', '\fBTLS1.1\fP',
+\&'\fBTLS1.2\fP'\.
+AUTO, the default, lets fetchmail autonegotiate any supported TLS v1.0
+or newer version.  SSLv2 and SSLv3 are exempt. (Fetchmail, since v7.0.0,
+prohibits negotiation of SSLv2 altogether and disallows automatic
+downgrade to SSLv3).  \&'\fBSSL3\fP' and the values starting with
+\&'\fBTLS1\fP' explicitly select SSL v3 or the indicated respective TLS
+version.  This is only useful if the auto-negotiated version is
+dysfunctional at the respective server.
 .TP
 .B \-\-sslcertck
 (Keyword: sslcertck, default since v7.0.0)

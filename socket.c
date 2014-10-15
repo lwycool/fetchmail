@@ -897,15 +897,18 @@ int SSLOpen(int sock, char *mycert, char *mykey, const char *myproto, int certck
 
 	/* Make sure a connection referring to an older context is not left */
 	_ssl_context[sock] = NULL;
+	int avoid_v3 = 0;
 	if (myproto) {
 		if(!strcasecmp("ssl3",myproto)) {
 		    _ctx[sock] = SSL_CTX_new(SSLv3_client_method());
 		} else if(!strcasecmp("tls1",myproto)) {
 		    _ctx[sock] = SSL_CTX_new(TLSv1_client_method());
+		    avoid_v3 = SSL_OP_NO_SSLv3;
 		} else {
 		    if (!strcasecmp("auto",myproto))
 			report(stderr,GT_("Invalid SSL protocol '%s' specified, using default (autonegotiate SSLv3/TLSv1 or newer).\n"), myproto);
 		    myproto = NULL;
+		    avoid_v3 = SSL_OP_NO_SSLv3;
 		}
 	}
 	// do not combine into an else { } as myproto may be nulled
@@ -921,7 +924,7 @@ int SSLOpen(int sock, char *mycert, char *mykey, const char *myproto, int certck
 	}
 
 	// DO NOT REMOVE the next line or the SSL_OP_NO_SSLv2!!
-	SSL_CTX_set_options(_ctx[sock], (SSL_OP_ALL | SSL_OP_NO_SSLv2) & ~SSL_OP_DONT_INSERT_EMPTY_FRAGMENTS);
+	SSL_CTX_set_options(_ctx[sock], (SSL_OP_ALL | SSL_OP_NO_SSLv2 | avoid_v3) & ~SSL_OP_DONT_INSERT_EMPTY_FRAGMENTS);
 	SSL_CTX_set_verify(_ctx[sock], SSL_VERIFY_PEER, SSL_verify_callback);
 
 	// Set/dump supported ciphers

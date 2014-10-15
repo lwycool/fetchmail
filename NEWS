@@ -57,6 +57,8 @@ NOTE THIS IS AN ALPHA RELEASE THAT HAS NOT BEEN THOROUGHLY TESTED!
 * See the REMOVED FEATURES section below for further incompatibilities.
 * fetchmail now requires an OpenSSL version that supports TLS v1.2, i. e.
   OpenSSL 1.0.1 or newer.
+* fetchmail now disables SSLv3 by default. To use it, it must be explicitly
+  requested with --sslprotocolver SSLv3.
 
 # MAJOR CHANGES
 * The UIDL handler code is now much faster, especially noticable with lots of
