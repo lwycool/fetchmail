@@ -1031,13 +1031,17 @@ int SSLOpen(int sock, char *mycert, char *mykey, const char *myproto, int certck
 	    SSL_CIPHER const *sc;
 	    int bitsmax, bitsused;
 
+	    const char *ver;
+
+	    ver = SSL_get_version(_ssl_context[sock]);
+
 	    sc = SSL_get_current_cipher(_ssl_context[sock]);
 	    if (!sc) {
 		report (stderr, GT_("Cannot obtain current SSL/TLS cipher - no session established?\n"));
 	    } else {
 		bitsused = SSL_CIPHER_get_bits(sc, &bitsmax);
-		report(stdout, GT_("SSL/TLS: using cipher %s, %d/%d secret/processed bits\n"),
-			SSL_CIPHER_get_name(sc), bitsused, bitsmax);
+		report(stdout, GT_("SSL/TLS: using protocol %s, cipher %s, %d/%d secret/processed bits\n"),
+			ver, SSL_CIPHER_get_name(sc), bitsused, bitsmax);
 	    }
 	}
 
