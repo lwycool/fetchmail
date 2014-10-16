@@ -15,7 +15,7 @@ cat - <<'_EOF'  | xmllint 2>/dev/null --nonet --postvalid --noout - || exit 77
     <head><title /></head><body><p></p></body></html>
 _EOF
 
-for i in "${srcdir}"/*.html ; do
+for i in *.html ; do
     case "$i" in
 	*/Mailbox-Names-UTF7.html) ;;
 	*)			   continue ;;
