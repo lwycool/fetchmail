@@ -179,7 +179,7 @@ ssl		{ return SSL_; }
 sslkey		{ return SSLKEY; }
 sslcert		{ return SSLCERT; }
 sslmode		{ return SSLMODE; }
-sslprotocolver	{ return SSLPROTOVER; }
+sslproto(col)?ver(sion)?	{ return SSLPROTOVER; }
 sslcertck	{ return SSLCERTCK; }
 sslcertfile	{ return SSLCERTFILE; }
 sslcertpath	{ return SSLCERTPATH; }

@@ -139,7 +139,7 @@ static const struct option longoptions[] = {
   {"sslkey",	required_argument, (int *) 0, LA_SSLKEY },
   {"sslcert",	required_argument, (int *) 0, LA_SSLCERT },
   {"sslmode",	required_argument, (int *) 0, LA_SSLMODE },
-  {"sslprotocolver",	 required_argument, (int *) 0, LA_SSLPROTOVER },
+  {"sslprotocolversion",	 required_argument, (int *) 0, LA_SSLPROTOVER },
   {"sslcertck", no_argument,	   (int *) 0, LA_SSLCERTCK },
   {"nosslcertck", no_argument,	   (int *) 0, LA_NOSSLCERTCK },
   {"sslcertfile",   required_argument, (int *) 0, LA_SSLCERTFILE },
@@ -673,7 +673,7 @@ int parsecmdline (int argc /** argument count */,
 	P(GT_("      --sslcommonname  expect this CommonName from server (discouraged)\n"));
 	P(GT_("      --sslfingerprint fingerprint that must match that of the server's cert.\n"));
 	P(GT_("      --sslmode     force ssl mode (none/wrapped/starttls=may/starttls=must)\n")); // see tls.c
-	P(GT_("      --sslprotocolver  force ssl version (often unneeded, see manual page!)\n"));
+	P(GT_("      --sslprotocolversion  force ssl version (often unneeded, see manual page!)\n"));
 #endif
 
 	P(GT_("      --plugin      specify external command to open connection\n"));
