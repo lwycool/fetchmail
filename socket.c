@@ -745,7 +745,7 @@ static int SSL_verify_callback( int ok_return, X509_STORE_CTX *ctx)
 				return 0;
 			}
 			if (outlevel > O_NORMAL) {
-				const char *algo_sha1 = "SHA1"; /* fixme: support {SHA1} syntax; fixme: support list of fingerprints */
+			    const char *algo_sha1 = "SHA1"; /* fixme: support {SHA1} syntax; fixme: support list of fingerprints */
 			    report(stdout, GT_("%s certificate %s fingerprint: %s\n"), mydata->server_label, algo, text);
 			    char text_sha1[EVP_MAX_MD_SIZE * 3 + 1];
 			    if (getdigest(x509_cert, algo_sha1, text_sha1, sizeof(text_sha1))) {
@@ -899,14 +899,20 @@ int SSLOpen(int sock, char *mycert, char *mykey, const char *myproto, int certck
 	_ssl_context[sock] = NULL;
 	int avoid_v3 = 0;
 	if (myproto) {
-		if(!strcasecmp("ssl3",myproto)) {
+		if(!strcasecmp("ssl3",myproto) || !strcasecmp("ssl3.0",myproto) || !strcasecmp("sslv3",myproto) || !strcasecmp("sslv3.0",myproto)) {
 		    _ctx[sock] = SSL_CTX_new(SSLv3_client_method());
-		} else if(!strcasecmp("tls1",myproto)) {
-		    _ctx[sock] = SSL_CTX_new(TLSv1_client_method());
+		} else if(!strcasecmp("tls1.2",myproto) || !strcasecmp("tlsv1.2",myproto)) {
+		    _ctx[sock] = SSL_CTX_new(TLSv1_2_client_method());
 		    avoid_v3 = SSL_OP_NO_SSLv3;
+		} else if(!strcasecmp("tls1.1",myproto) || !strcasecmp("tlsv1.1",myproto)) {
+		    _ctx[sock] = SSL_CTX_new(TLSv1_1_client_method());
+		    avoid_v3 = SSL_OP_NO_SSLv3;
+		} else if(!strcasecmp("tls1",myproto) || !strcasecmp("tls1.0",myproto) ||!strcasecmp("tlsv1",myproto) || !strcasecmp("tlsv1.0", myproto)) {
+		    _ctx[sock] = SSL_CTX_new(TLSv1_client_method());
+		    avoid_v3 = SSL_OP_NO_SSLv3 | SSL_OP_NO_TLSv1_1;
 		} else {
-		    if (!strcasecmp("auto",myproto))
-			report(stderr,GT_("Invalid SSL protocol '%s' specified, using default (autonegotiate SSLv3/TLSv1 or newer).\n"), myproto);
+		    if (!!strcasecmp("auto",myproto))
+			report(stderr,GT_("Invalid SSL protocol '%s' specified, using default (autonegotiate TLSv1 or newer).\n"), myproto);
 		    myproto = NULL;
 		    avoid_v3 = SSL_OP_NO_SSLv3;
 		}
