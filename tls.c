@@ -11,11 +11,16 @@
 #include "gettext.h"
 
 // FIXME: this needs to be a struct of name and enum value
-static const char *const tlsm_names[] = {
- [TLSM_NONE] = "none",
- [TLSM_WRAPPED] = "wrapped",
- [TLSM_STLS_MAY] = "starttls=may",
- [TLSM_STLS_MUST] = "starttls=must"
+struct tlsm_names {
+    e_sslmode   sslmode;
+    const char *const name;
+};
+
+static const struct tlsm_names tlsm_names[] = {
+    { TLSM_NONE, "none" },
+    { TLSM_WRAPPED, "wrapped" },
+    { TLSM_STLS_MAY, "starttls=may" },
+    { TLSM_STLS_MUST, "starttls=must" },
 };
 const int TLSM_NAMESCOUNT = sizeof(tlsm_names) / sizeof(tlsm_names[0]);
 
@@ -54,17 +59,18 @@ bool must_wrap_tls(const struct query *ctl) {
 }
 
 const char *tlsm_string(const e_sslmode tlsm) {
-    if (tlsm >= 0 && tlsm < TLSM_NAMESCOUNT)
-	return tlsm_names[tlsm];
-    else
-	return GT_("(invalid)");
+    for (int i = 0; i < TLSM_NAMESCOUNT; i++) {
+	if (tlsm == tlsm_names[i].sslmode)
+	    return tlsm_names[i].name;
+    }
+    return GT_("(invalid)");
 }
 
 e_sslmode tlsm_parse(const char *s) {
     for (int i = 0; i < TLSM_NAMESCOUNT; i++) {
-	if (tlsm_names[i] // we may not have names for all options
-		&& 0 == strcasecmp(tlsm_names[i], s))
-	    return (e_sslmode)i;
+	if (tlsm_names[i].name // we may not have names for all options
+		&& 0 == strcasecmp(tlsm_names[i].name, s))
+	    return tlsm_names[i].sslmode;
     }
     return TLSM_INVALID;
 }
