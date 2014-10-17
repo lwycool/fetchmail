@@ -485,12 +485,8 @@ static int pop3_getauth(int sock, struct query *ctl, char *greeting)
 	   if (has_stls
 		   || must_starttls(ctl)) /* if TLS is mandatory, ignore capabilities */
 	   {
-	       /* Use "tls1" rather than ctl->sslproto because tls1 is the only
-		* protocol that will work with STARTTLS.  Don't need to worry
-		* whether TLS is mandatory or opportunistic unless SSLOpen() fails
-		* (see below). */
 	       if (gen_transact(sock, "STLS") == PS_SUCCESS
-		       && (set_timeout(mytimeout), SSLOpen(sock, ctl->sslcert, ctl->sslkey, NULL, ctl->sslcertck,
+		       && (set_timeout(mytimeout), SSLOpen(sock, ctl->sslcert, ctl->sslkey, ctl->sslproto, ctl->sslcertck,
 			   ctl->sslcertfile, ctl->sslcertpath, ctl->sslfingerprint, commonname,
 			   ctl->server.pollname, &ctl->remotename)) != -1)
 	       {
