@@ -8,13 +8,11 @@ The prerequisite packages are:
 
 - GNU autoconf >= 2.60
 - GNU automake >= 1.8
-- GNU gettext >= 0.14.3
+- GNU gettext >= 0.18.3
 - GNU m4
-- bison or yacc
-- flex or lex
-
-On FreeBSD, install the gnu-autoconf and gnu-automake ports
-and add /usr/local/gnu-autotools/bin to your PATH.
+- GNU bison
+- GNU flex
+- A TLSv1.2-capable OpenSSL version (>= 1.0.1)
 
 After you have everything installed, type:
 
@@ -30,4 +28,4 @@ $ make
 (become root)
 # make install-strip
 
--- Matthias Andree, 2010-02-06
+-- Matthias Andree, 2014-10-17
