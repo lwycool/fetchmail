@@ -909,9 +909,9 @@ int SSLOpen(int sock, char *mycert, char *mykey, const char *myproto, int certck
 		    avoid_v3 = SSL_OP_NO_SSLv3;
 		} else if(!strcasecmp("tls1",myproto) || !strcasecmp("tls1.0",myproto) ||!strcasecmp("tlsv1",myproto) || !strcasecmp("tlsv1.0", myproto)) {
 		    _ctx[sock] = SSL_CTX_new(TLSv1_client_method());
-		    avoid_v3 = SSL_OP_NO_SSLv3 | SSL_OP_NO_TLSv1_1;
+		    avoid_v3 = SSL_OP_NO_SSLv3;
 		} else {
-		    if (!!strcasecmp("auto",myproto))
+		    if (0 != strcasecmp("auto",myproto))
 			report(stderr,GT_("Invalid SSL protocol '%s' specified, using default (autonegotiate TLSv1 or newer).\n"), myproto);
 		    myproto = NULL;
 		    avoid_v3 = SSL_OP_NO_SSLv3;
@@ -920,6 +920,9 @@ int SSLOpen(int sock, char *mycert, char *mykey, const char *myproto, int certck
 	// do not combine into an else { } as myproto may be nulled
 	// above!
 	if (!myproto) {
+		// SSLv23 is a misnomer and will in fact use the best
+		// available protocol, subject to SSL_OP_NO*
+		// constraints.
 		_ctx[sock] = SSL_CTX_new(SSLv23_client_method());
 		// Important: clear SSLv2 below!
 	}
@@ -949,7 +952,7 @@ int SSLOpen(int sock, char *mycert, char *mykey, const char *myproto, int certck
 		}
 	    } else {
 		if (outlevel >= O_DEBUG) {
-		    report(stdout, GT_("SSL/TLS: environment variable %s unset, using OpenSSL default ciphers"), envn_ciphers);
+		    report(stdout, GT_("SSL/TLS: environment variable %s unset, using OpenSSL default ciphers.\n"), envn_ciphers);
 		}
 	    }
 	}
