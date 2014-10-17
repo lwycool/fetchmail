@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: fetchmail 7.0.0-alpha5\n"
 "Report-Msgid-Bugs-To: fetchmail-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2014-05-21 23:01+0200\n"
-"PO-Revision-Date: 2014-05-20 22:15+0200\n"
+"POT-Creation-Date: 2014-10-17 02:28+0200\n"
+"PO-Revision-Date: 2014-10-17 02:37+0200\n"
 "Last-Translator: Matthias Andree <matthias.andree@gmx.de>\n"
 "Language-Team: Deutsch <de@li.org>\n"
 "Language: de\n"
@@ -1811,93 +1811,93 @@ msgstr "Protokoll identifiziert als IMAP4 rev 0\n"
 msgid "will idle after poll\n"
 msgstr "werde nach Abfrage untätig sein\n"
 
-#: imap.c:462 pop3.c:518
+#: imap.c:458 pop3.c:514
 #, c-format
 msgid "%s: upgrade to TLS succeeded.\n"
 msgstr "%s: Upgrade auf TLS erfolgreich.\n"
 
-#: imap.c:468 pop3.c:524
+#: imap.c:464 pop3.c:520
 #, c-format
 msgid "%s: upgrade to TLS failed.\n"
 msgstr "%s: Upgrade auf TLS fehlgeschlagen.\n"
 
-#: imap.c:473
+#: imap.c:469
 #, c-format
 msgid "%s: opportunistic upgrade to TLS failed, trying to continue\n"
 msgstr ""
 "%s: opportunistisches Upgrade auf TLS fehlgeschlagen, versuche Fortsetzung.\n"
 
-#: imap.c:571
+#: imap.c:567
 msgid "Required OTP capability not compiled into fetchmail\n"
 msgstr "Benötigte OTP-Fähigkeit nicht in fetchmail einkompiliert\n"
 
-#: imap.c:591 pop3.c:584
+#: imap.c:587 pop3.c:580
 msgid "Required NTLM capability not compiled into fetchmail\n"
 msgstr "Benötigte NTLM-Fähigkeit nicht in fetchmail einkompiliert\n"
 
-#: imap.c:655
+#: imap.c:651
 #, c-format
 msgid "mail expunge mismatch (%d actual != %d expected)\n"
 msgstr "unerwartete Expunge-Bestätigung (%d tatsächlich != %d erwartet)\n"
 
-#: imap.c:782
+#: imap.c:778
 #, c-format
 msgid "%lu is unseen\n"
 msgstr "%lu ist ungesehen\n"
 
-#: imap.c:832 pop3.c:771 pop3.c:783 pop3.c:906 pop3.c:913
+#: imap.c:828 pop3.c:767 pop3.c:779 pop3.c:902 pop3.c:909
 #, c-format
 msgid "%u is unseen\n"
 msgstr "%u ist ungesehen\n"
 
-#: imap.c:867 imap.c:926
+#: imap.c:863 imap.c:922
 msgid "re-poll failed\n"
 msgstr "erneute Abfrage fehlgeschlagen\n"
 
-#: imap.c:875 imap.c:931
+#: imap.c:871 imap.c:927
 #, c-format
 msgid "%d message waiting after re-poll\n"
 msgid_plural "%d messages waiting after re-poll\n"
 msgstr[0] "%d Nachricht wartet nach erneuter Abfrage\n"
 msgstr[1] "%d Nachrichten warten nach erneuter Abfrage\n"
 
-#: imap.c:892
+#: imap.c:888
 msgid "mailbox selection failed\n"
 msgstr "Postfach-Auswahl fehlgeschlagen\n"
 
-#: imap.c:896
+#: imap.c:892
 #, c-format
 msgid "%d message waiting after first poll\n"
 msgid_plural "%d messages waiting after first poll\n"
 msgstr[0] "%d Nachricht wartet nach der ersten Abfrage\n"
 msgstr[1] "%d Nachrichten warten nach der ersten Abfrage\n"
 
-#: imap.c:910
+#: imap.c:906
 msgid "expunge failed\n"
 msgstr "Säubern fehlgeschlagen\n"
 
-#: imap.c:914
+#: imap.c:910
 #, c-format
 msgid "%d message waiting after expunge\n"
 msgid_plural "%d messages waiting after expunge\n"
 msgstr[0] "%d Nachricht wartet nach dem Löschen\n"
 msgstr[1] "%d Nachrichten warten nach dem Löschen\n"
 
-#: imap.c:953
+#: imap.c:949
 msgid "search for unseen messages failed\n"
 msgstr "Suche nach ungesehenen Nachrichten fehlgeschlagen\n"
 
-#: imap.c:958 pop3.c:792
+#: imap.c:954 pop3.c:788
 #, c-format
 msgid "%u is first unseen\n"
 msgstr "%u ist erste ungesehene\n"
 
-#: imap.c:1042
+#: imap.c:1038
 msgid ""
 "Warning: ignoring bogus data for message sizes returned by the server.\n"
 msgstr "Warnung: ignoriere falsche Größendaten vom Server.\n"
 
-#: imap.c:1141 imap.c:1148
+#: imap.c:1137 imap.c:1144
 #, c-format
 msgid "Incorrect FETCH response: %s.\n"
 msgstr "Unpassende Antwort auf FETCH: %s.\n"
@@ -2072,7 +2072,7 @@ msgstr "Server recv fatal\n"
 msgid "Could not decode OTP challenge\n"
 msgstr "Konnte OTP-Herausforderung nicht dekodieren\n"
 
-#: opie.c:62 pop3.c:619
+#: opie.c:62 pop3.c:615
 msgid "Secret pass phrase: "
 msgstr "Geheime Passphrase: "
 
@@ -2285,11 +2285,9 @@ msgstr ""
 
 #: options.c:676
 msgid ""
-"      --sslprotocolver  force ssl version (often unneeded, see manual "
+"      --sslprotocolversion  force ssl version (often unneeded, see manual "
 "page!)\n"
-msgstr ""
-"     --sslmode      TLS-Protokollversion erzwingen (oft nicht nötig, siehe "
-"Handbuch!)\n"
+msgstr "     --sslprotocolversion  TLS-Protokollversion erzwingen (oft nicht nötig, siehe Handbuch!)\n"
 
 #: options.c:679
 msgid "      --plugin      specify external command to open connection\n"
@@ -2495,49 +2493,49 @@ msgstr ""
 msgid "The CAPA command is however necessary for TLS.\n"
 msgstr "Der CAPA-Befehl ist allerdings für TLS erforderlich.\n"
 
-#: pop3.c:536
+#: pop3.c:532
 #, c-format
 msgid "%s: opportunistic upgrade to TLS failed, trying to continue.\n"
 msgstr ""
 "%s: opportunistisches Upgrade auf TLS fehlgeschlagen, versuche Fortsetzung.\n"
 
-#: pop3.c:654
+#: pop3.c:650
 msgid "We've run out of allowed authenticators and cannot continue.\n"
 msgstr ""
 "Keine weiteren Authentifizierungsverfahren verfügbar, Fortsetzung nicht "
 "möglich.\n"
 
-#: pop3.c:662
+#: pop3.c:658
 msgid "Undefined protocol request in POP3_auth\n"
 msgstr "Anfrage nach undefiniertem Protokoll in POP3_auth\n"
 
-#: pop3.c:682
+#: pop3.c:678
 msgid "lock busy!  Is another session active?\n"
 msgstr "Lock beschäftigt!  Ist eine weitere Sitzung aktiv?\n"
 
-#: pop3.c:712
+#: pop3.c:708
 msgid "Cannot handle UIDL response from upstream server.\n"
 msgstr "Kann die UIDL-Antwort des Servers nicht verarbeiten.\n"
 
-#: pop3.c:735
+#: pop3.c:731
 msgid "Server responded with UID for wrong message.\n"
 msgstr "Server hat mit UID der falschen Nachricht geantwortet.\n"
 
-#: pop3.c:762
+#: pop3.c:758
 #, c-format
 msgid "id=%s (num=%u) was deleted, but is still present!\n"
 msgstr "id=%s (num=%u) wurde gelöscht, ist aber immer noch da!\n"
 
-#: pop3.c:866
+#: pop3.c:862
 msgid "protocol error while fetching UIDLs\n"
 msgstr "Protokollfehler beim Holen der UIDL\n"
 
-#: pop3.c:897
+#: pop3.c:893
 #, c-format
 msgid "id=%s (num=%d) was deleted, but is still present!\n"
 msgstr "id=%s (num=%d) wurde gelöscht, ist aber immer noch da!\n"
 
-#: pop3.c:1205
+#: pop3.c:1201
 msgid "Option --folder is not supported with POP3\n"
 msgstr "Option --folder wird mit POP3 nicht unterstützt\n"
 
@@ -3227,53 +3225,50 @@ msgstr ""
 msgid "File descriptor out of range for SSL"
 msgstr "Datei-Deskriptor außerhalb des Bereichs für SSL"
 
-#: socket.c:907
+#: socket.c:915
 #, c-format
 msgid ""
-"Invalid SSL protocol '%s' specified, using default (autonegotiate SSLv3/"
-"TLSv1 or newer).\n"
-msgstr ""
-"Ungültiges SSL-Protokoll „%s“ angegeben, benutze Voreinstellung "
-"(automatische Aushandlung SSLv3/TLSv1 oder neuer).\n"
+"Invalid SSL protocol '%s' specified, using default (autonegotiate TLSv1 or "
+"newer).\n"
+msgstr "Ungültiges SSL-Protokoll „%s“ angegeben, benutze Voreinstellung (automatische Aushandlung TLSv1 oder neuer).\n"
 
-#: socket.c:936
+#: socket.c:948
 #, c-format
 msgid "SSL/TLS: ciphers set from %s to \"%s\"\n"
 msgstr "SSL/TLS: Chiffrierung von %s auf \"%s\" gesetzt\n"
 
-#: socket.c:939
+#: socket.c:951
 #, c-format
 msgid "SSL/TLS: failed to set ciphers from %s to \"%s\"\n"
 msgstr "SSL/TLS: Chiffrierung konnte nicht von %s auf \"%s\" gesetzt werden\n"
 
-#: socket.c:943
+#: socket.c:955
 #, c-format
-msgid "SSL/TLS: environment variable %s unset, using OpenSSL default ciphers"
-msgstr ""
-"SSL/TLS: Umgebungsvariable %s nicht gesetzt, verwende OpenSSL-"
-"Standardchiffrierung"
+msgid ""
+"SSL/TLS: environment variable %s unset, using OpenSSL default ciphers.\n"
+msgstr "SSL/TLS: Umgebungsvariable %s nicht gesetzt, verwende OpenSSL-Standardchiffrierung.\n"
 
-#: socket.c:979
+#: socket.c:991
 #, c-format
 msgid "SSL/TLS: prio %3d cipher is %s\n"
 msgstr "SSL/TLS: Chiffrierung mit Priorität %3d ist %s\n"
 
-#: socket.c:1036
+#: socket.c:1052
 msgid "Cannot obtain current SSL/TLS cipher - no session established?\n"
 msgstr ""
 "Kann aktuelle SSL/TLS-Chiffrierung nicht ermitteln - keine Sitzung "
 "aufgebaut?\n"
 
-#: socket.c:1039
+#: socket.c:1055
 #, c-format
-msgid "SSL/TLS: using cipher %s, %d/%d secret/processed bits\n"
-msgstr "SSL/TLS: verwende Chiffrierung %s, %d/%d geheime/verarbeitete Bits\n"
+msgid "SSL/TLS: using protocol %s, cipher %s, %d/%d secret/processed bits\n"
+msgstr "SSL/TLS: verwende Protokoll %s, Chiffrierung %s, %d/%d geheime/verarbeitete Bits\n"
 
-#: socket.c:1046
+#: socket.c:1062
 msgid "Certificate/fingerprint verification was somehow skipped!\n"
 msgstr "Zertifikat-/Fingerabdruck-Überprüfung wurde irgendwie übersprungen!\n"
 
-#: socket.c:1063
+#: socket.c:1079
 msgid ""
 "Warning: the connection is insecure, continuing anyways. (Better use --"
 "sslcertck!)\n"
@@ -3281,11 +3276,11 @@ msgstr ""
 "Warnung: Die Verbindung ist unsicher, mache trotzdem weiter. (Nehmen Sie "
 "lieber --sslcertck!)\n"
 
-#: socket.c:1105
+#: socket.c:1121
 msgid "Cygwin socket read retry\n"
 msgstr "Cygwin-Socket-Lese-Wiederholung\n"
 
-#: socket.c:1108
+#: socket.c:1124
 msgid "Cygwin socket read retry failed!\n"
 msgstr "Cygwin-Socket-Lese-Wiederholung fehlgeschlagen!\n"
 
