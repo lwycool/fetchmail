@@ -941,19 +941,21 @@ int SSLOpen(int sock, char *mycert, char *mykey, const char *myproto, int certck
 	{
 	    const char *envn_ciphers = "FETCHMAIL_SSL_CIPHERS";
 	    const char *ciphers = getenv(envn_ciphers);
-	    if (ciphers) {
-		int r = SSL_CTX_set_cipher_list(_ctx[sock], ciphers);
-		if (r != 0) {
-		    if (outlevel >= O_DEBUG) {
-			report(stdout, GT_("SSL/TLS: ciphers set from %s to \"%s\"\n"), envn_ciphers, ciphers);
-		    }
-		} else {
-		    report(stderr, GT_("SSL/TLS: failed to set ciphers from %s to \"%s\"\n"), envn_ciphers, ciphers);
+	    if (!ciphers) {
+		const char *default_ciphers = "ALL:!EXPORT:!LOW:+RC4:@STRENGTH";
+		if (outlevel >= O_DEBUG) {
+		    report(stdout, GT_("SSL/TLS: environment variable %s unset, using fetchmail built-in ciphers.\n"), envn_ciphers);
+		}
+		ciphers = default_ciphers;
+		envn_ciphers = GT_("built-in defaults");
+	    }
+	    int r = SSL_CTX_set_cipher_list(_ctx[sock], ciphers);
+	    if (r != 0) {
+		if (outlevel >= O_DEBUG) {
+		    report(stdout, GT_("SSL/TLS: ciphers set from %s to \"%s\"\n"), envn_ciphers, ciphers);
 		}
 	    } else {
-		if (outlevel >= O_DEBUG) {
-		    report(stdout, GT_("SSL/TLS: environment variable %s unset, using OpenSSL default ciphers.\n"), envn_ciphers);
-		}
+		report(stderr, GT_("SSL/TLS: failed to set ciphers from %s to \"%s\"\n"), envn_ciphers, ciphers);
 	    }
 	}
 
