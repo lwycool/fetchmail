@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: fetchmail 7.0.0-alpha5\n"
 "Report-Msgid-Bugs-To: fetchmail-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2014-10-17 02:28+0200\n"
-"PO-Revision-Date: 2014-10-17 02:37+0200\n"
+"POT-Creation-Date: 2014-10-24 22:17+0200\n"
+"PO-Revision-Date: 2014-10-24 22:18+0200\n"
 "Last-Translator: Matthias Andree <matthias.andree@gmx.de>\n"
 "Language-Team: Deutsch <de@li.org>\n"
 "Language: de\n"
@@ -2287,7 +2287,9 @@ msgstr ""
 msgid ""
 "      --sslprotocolversion  force ssl version (often unneeded, see manual "
 "page!)\n"
-msgstr "     --sslprotocolversion  TLS-Protokollversion erzwingen (oft nicht nötig, siehe Handbuch!)\n"
+msgstr ""
+"     --sslprotocolversion  TLS-Protokollversion erzwingen (oft nicht nötig, "
+"siehe Handbuch!)\n"
 
 #: options.c:679
 msgid "      --plugin      specify external command to open connection\n"
@@ -3225,50 +3227,58 @@ msgstr ""
 msgid "File descriptor out of range for SSL"
 msgstr "Datei-Deskriptor außerhalb des Bereichs für SSL"
 
-#: socket.c:915
+#: socket.c:913
 #, c-format
 msgid ""
 "Invalid SSL protocol '%s' specified, using default (autonegotiate TLSv1 or "
 "newer).\n"
-msgstr "Ungültiges SSL-Protokoll „%s“ angegeben, benutze Voreinstellung (automatische Aushandlung TLSv1 oder neuer).\n"
+msgstr ""
+"Ungültiges SSL-Protokoll „%s“ angegeben, benutze Voreinstellung "
+"(automatische Aushandlung TLSv1 oder neuer).\n"
 
-#: socket.c:948
+#: socket.c:944
+#, c-format
+msgid ""
+"SSL/TLS: environment variable %s unset, using fetchmail built-in ciphers.\n"
+msgstr "SSL/TLS: Umgebungsvariable %s nicht gesetzt, verwende fetchmail-Standardchiffrierung.\n"
+
+#: socket.c:947
+msgid "built-in defaults"
+msgstr "eingebauten Voreinstellungen"
+
+#: socket.c:952
 #, c-format
 msgid "SSL/TLS: ciphers set from %s to \"%s\"\n"
 msgstr "SSL/TLS: Chiffrierung von %s auf \"%s\" gesetzt\n"
 
-#: socket.c:951
+#: socket.c:955
 #, c-format
 msgid "SSL/TLS: failed to set ciphers from %s to \"%s\"\n"
 msgstr "SSL/TLS: Chiffrierung konnte nicht von %s auf \"%s\" gesetzt werden\n"
 
-#: socket.c:955
-#, c-format
-msgid ""
-"SSL/TLS: environment variable %s unset, using OpenSSL default ciphers.\n"
-msgstr "SSL/TLS: Umgebungsvariable %s nicht gesetzt, verwende OpenSSL-Standardchiffrierung.\n"
-
-#: socket.c:991
+#: socket.c:990
 #, c-format
 msgid "SSL/TLS: prio %3d cipher is %s\n"
 msgstr "SSL/TLS: Chiffrierung mit Priorität %3d ist %s\n"
 
-#: socket.c:1052
+#: socket.c:1051
 msgid "Cannot obtain current SSL/TLS cipher - no session established?\n"
 msgstr ""
 "Kann aktuelle SSL/TLS-Chiffrierung nicht ermitteln - keine Sitzung "
 "aufgebaut?\n"
 
-#: socket.c:1055
+#: socket.c:1054
 #, c-format
 msgid "SSL/TLS: using protocol %s, cipher %s, %d/%d secret/processed bits\n"
-msgstr "SSL/TLS: verwende Protokoll %s, Chiffrierung %s, %d/%d geheime/verarbeitete Bits\n"
+msgstr ""
+"SSL/TLS: verwende Protokoll %s, Chiffrierung %s, %d/%d geheime/verarbeitete "
+"Bits\n"
 
-#: socket.c:1062
+#: socket.c:1061
 msgid "Certificate/fingerprint verification was somehow skipped!\n"
 msgstr "Zertifikat-/Fingerabdruck-Überprüfung wurde irgendwie übersprungen!\n"
 
-#: socket.c:1079
+#: socket.c:1078
 msgid ""
 "Warning: the connection is insecure, continuing anyways. (Better use --"
 "sslcertck!)\n"
@@ -3276,11 +3286,11 @@ msgstr ""
 "Warnung: Die Verbindung ist unsicher, mache trotzdem weiter. (Nehmen Sie "
 "lieber --sslcertck!)\n"
 
-#: socket.c:1121
+#: socket.c:1120
 msgid "Cygwin socket read retry\n"
 msgstr "Cygwin-Socket-Lese-Wiederholung\n"
 
-#: socket.c:1124
+#: socket.c:1123
 msgid "Cygwin socket read retry failed!\n"
 msgstr "Cygwin-Socket-Lese-Wiederholung fehlgeschlagen!\n"
 
