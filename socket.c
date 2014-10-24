@@ -931,7 +931,7 @@ int SSLOpen(int sock, char *mycert, char *mykey, const char *myproto, int certck
 
 	// DO NOT REMOVE the next line or the SSL_OP_NO_SSLv2!!
 	SSL_CTX_set_options(_ctx[sock], (SSL_OP_ALL | SSL_OP_NO_SSLv2 | avoid_v3) & ~SSL_OP_DONT_INSERT_EMPTY_FRAGMENTS);
-	SSL_CTX_set_verify(_ctx[sock], SSL_VERIFY_PEER, SSL_verify_callback);
+	SSL_CTX_set_verify(_ctx[sock], SSL_VERIFY_PEER | SSL_VERIFY_FAIL_IF_NO_PEER_CERT, SSL_verify_callback);
 
 	// Set/dump supported ciphers
 	// FIXME: turn this into properly supported options
