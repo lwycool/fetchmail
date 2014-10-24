@@ -897,24 +897,21 @@ int SSLOpen(int sock, char *mycert, char *mykey, const char *myproto, int certck
 
 	/* Make sure a connection referring to an older context is not left */
 	_ssl_context[sock] = NULL;
-	int avoid_v3 = 0;
+	int avoid_v3 = SSL_OP_NO_SSLv3;
 	if (myproto) {
 		if(!strcasecmp("ssl3",myproto) || !strcasecmp("ssl3.0",myproto) || !strcasecmp("sslv3",myproto) || !strcasecmp("sslv3.0",myproto)) {
 		    _ctx[sock] = SSL_CTX_new(SSLv3_client_method());
+		    avoid_v3 &= ~SSL_OP_NO_SSLv3;
 		} else if(!strcasecmp("tls1.2",myproto) || !strcasecmp("tlsv1.2",myproto)) {
 		    _ctx[sock] = SSL_CTX_new(TLSv1_2_client_method());
-		    avoid_v3 = SSL_OP_NO_SSLv3;
 		} else if(!strcasecmp("tls1.1",myproto) || !strcasecmp("tlsv1.1",myproto)) {
 		    _ctx[sock] = SSL_CTX_new(TLSv1_1_client_method());
-		    avoid_v3 = SSL_OP_NO_SSLv3;
 		} else if(!strcasecmp("tls1",myproto) || !strcasecmp("tls1.0",myproto) ||!strcasecmp("tlsv1",myproto) || !strcasecmp("tlsv1.0", myproto)) {
 		    _ctx[sock] = SSL_CTX_new(TLSv1_client_method());
-		    avoid_v3 = SSL_OP_NO_SSLv3;
 		} else {
 		    if (0 != strcasecmp("auto",myproto))
 			report(stderr,GT_("Invalid SSL protocol '%s' specified, using default (autonegotiate TLSv1 or newer).\n"), myproto);
 		    myproto = NULL;
-		    avoid_v3 = SSL_OP_NO_SSLv3;
 		}
 	}
 	// do not combine into an else { } as myproto may be nulled
