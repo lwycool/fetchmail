@@ -939,7 +939,7 @@ int SSLOpen(int sock, char *mycert, char *mykey, const char *myproto, int certck
 	    const char *envn_ciphers = "FETCHMAIL_SSL_CIPHERS";
 	    const char *ciphers = getenv(envn_ciphers);
 	    if (!ciphers) {
-		const char *default_ciphers = "ALL:!EXPORT:!LOW:+RC4:@STRENGTH";
+		const char *default_ciphers = "ALL:!EXPORT:!LOW:!aNULL:!eNULL:+RC4:@STRENGTH";
 		if (outlevel >= O_DEBUG) {
 		    report(stdout, GT_("SSL/TLS: environment variable %s unset, using fetchmail built-in ciphers.\n"), envn_ciphers);
 		}
