@@ -144,9 +144,9 @@ the \fBfetchmailconf\fP program edits).  Command-line options override
 \fI~/.fetchmailrc\fP declarations.
 .PP
 Each server name that you specify following the options on the command
-line will be queried.  If you don't specify any servers on the command
+line will be queried.  If you do not specify any servers on the command
 line, each 'poll' entry in your \fI~/.fetchmailrc\fP file will be
-queried.
+queried, unless the idle option is used, which see.
 .PP
 To facilitate the use of \fBfetchmail\fP in scripts and pipelines, it
 returns an appropriate exit code upon termination -- see EXIT CODES
@@ -294,11 +294,12 @@ a static DNS.
 (Keyword: idle, since before 6.0.0)
 .br
 Enable IDLE use (effective only with IMAP). Note that this works with
-only one folder at a given time.  While the idle rcfile keyword had been
-supported for a long time, the \-\-idle command-line option was added in
-version 6.3.3. IDLE use means that fetchmail tells the IMAP server to
-send notice of new messages, so they can be retrieved sooner than would
-be possible with regular polls.
+only one account and one folder at a given time, other folders or
+accounts will not be polled when idle is in effect!  While the idle rcfile
+keyword had been supported for a long time, the \-\-idle command-line
+option was added in version 6.3.3. IDLE use means that fetchmail tells
+the IMAP server to send notice of new messages, so they can be retrieved
+sooner than would be possible with regular polls.
 .TP
 .B \-P <portnumber> | \-\-service <servicename>
 (Keyword: service) Since version 6.3.0.
