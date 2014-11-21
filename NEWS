@@ -68,6 +68,9 @@ fetchmail-6.3.27 (not yet released, if ever):
 * Convert most links from berlios.de to sourceforge.net.
 * Report error to stderr, and exit, if --idle is combined with multiple
   accounts.
+* Point to --idle from GENERAL OPERATION to clarify --idle and multiple
+  mailboxes do not mix.  In response to Jeremy Chadwick's trouble 2014-11-19,
+  fetchmail-users mailing list.
 
 # KNOWN BUGS AND WORKAROUNDS
   (This section floats upwards through the NEWS file so it stays with the
