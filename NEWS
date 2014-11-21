@@ -66,6 +66,8 @@ fetchmail-6.3.27 (not yet released, if ever):
 * Do not translate header tags such as "Subject:".  Reported by Gonzalo Pérez de
   Olaguer Córdoba, Debian Bug#744907.
 * Convert most links from berlios.de to sourceforge.net.
+* Report error to stderr, and exit, if --idle is combined with multiple
+  accounts.
 
 # KNOWN BUGS AND WORKAROUNDS
   (This section floats upwards through the NEWS file so it stays with the

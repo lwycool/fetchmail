@@ -1035,6 +1035,8 @@ static int load_params(int argc, char **argv, int optind)
     struct query def_opts, *ctl;
     struct stat rcstat;
     char *p;
+    unsigned int mboxcount = 0;
+    unsigned int idlecount = 0;
 
     run.bouncemail = TRUE;
     run.softbounce = TRUE;	/* treat permanent errors as temporary */
@@ -1236,7 +1238,7 @@ static int load_params(int argc, char **argv, int optind)
 
 	/*
 	 * We no longer do DNS lookups at startup.
-	 * This is a kluge.  It enables users to edit their
+	 * This is a kludge.  It enables users to edit their
 	 * configurations when DNS isn't available.
 	 */
 	ctl->server.truename = xstrdup(ctl->server.queryname);
@@ -1386,7 +1388,16 @@ static int load_params(int argc, char **argv, int optind)
 		(void) fprintf(stderr,
 			       GT_("Both fetchall and keep on in daemon or idle mode is a mistake!\n"));
 	    }
+
+	    if (ctl->idle) ++idlecount;
+	    mboxcount += count_list(&ctl->mailboxes);
 	}
+    }
+
+    if (idlecount && mboxcount > 1) {
+	fprintf(stderr,
+		GT_("fetchmail: Error: idle mode does not work for multiple folders or accounts!\n"));
+	exit(PS_SYNTAX);
     }
 
     /*
