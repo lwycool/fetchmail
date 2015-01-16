@@ -53,6 +53,8 @@ removed from a 6.4.0 or newer release.)
   fetchmail may switch to a different SSL library.
 * SSLv2 support will be removed from a future fetchmail release. It has been
   obsolete for more than a decade.
+* SSLv3 support may be removed from a future fetchmail release. It has been
+  obsolete for many years and found insecure. Use TLS.
 
 --------------------------------------------------------------------------------
 
@@ -71,6 +73,10 @@ fetchmail-6.3.27 (not yet released, if ever):
 * Point to --idle from GENERAL OPERATION to clarify --idle and multiple
   mailboxes do not mix.  In response to Jeremy Chadwick's trouble 2014-11-19,
   fetchmail-users mailing list.
+* Fix SSL-enabled build on systems that do not declare SSLv3_client_method().
+  Related to Debian Bug#775255.
+* Version report lists -SSLv3 on +SSL builds that omit SSLv3_client_method().
+* Version report lists -SSLv2 on +SSL builds that omit SSLv2_client_method().
 
 # KNOWN BUGS AND WORKAROUNDS
   (This section floats upwards through the NEWS file so it stays with the

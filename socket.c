@@ -910,11 +910,16 @@ int SSLOpen(int sock, char *mycert, char *mykey, const char *myproto, int certck
 #if HAVE_DECL_SSLV2_CLIENT_METHOD + 0 > 0
 			_ctx[sock] = SSL_CTX_new(SSLv2_client_method());
 #else
-			report(stderr, GT_("Your operating system does not support SSLv2.\n"));
+			report(stderr, GT_("Your OpenSSL version does not support SSLv2.\n"));
 			return -1;
 #endif
 		} else if(!strcasecmp("ssl3",myproto)) {
+#if HAVE_DECL_SSLV3_CLIENT_METHOD + 0 > 0
 			_ctx[sock] = SSL_CTX_new(SSLv3_client_method());
+#else
+			report(stderr, GT_("Your OpenSSL version does not support SSLv3.\n"));
+			return -1;
+#endif
 		} else if(!strcasecmp("tls1",myproto)) {
 			_ctx[sock] = SSL_CTX_new(TLSv1_client_method());
 		} else if (!strcasecmp("ssl23",myproto)) {

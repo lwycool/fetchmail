@@ -263,6 +263,12 @@ int main(int argc, char **argv)
 #ifdef SSL_ENABLE
 	"+SSL"
 #endif
+#if HAVE_DECL_SSLV2_CLIENT_METHOD + 0 == 0
+	"-SSLv2"
+#endif
+#if HAVE_DECL_SSLV3_CLIENT_METHOD + 0 == 0
+	"-SSLv3"
+#endif
 #ifdef OPIE_ENABLE
 	"+OPIE"
 #endif /* OPIE_ENABLE */
