@@ -54,6 +54,10 @@
 #define ENETUNREACH   128       /* Interactive doesn't know this */
 #endif /* ENETUNREACH */
 
+#ifdef SSL_ENABLE
+#include <openssl/ssl.h>	/* for OPENSSL_NO_SSL2 and ..._SSL3 checks */
+#endif
+
 /* prototypes for internal functions */
 static int load_params(int, char **, int);
 static void dump_params (struct runctl *runp, struct query *, flag implicit);
@@ -262,12 +266,12 @@ int main(int argc, char **argv)
 #endif /* ODMR_ENABLE */
 #ifdef SSL_ENABLE
 	"+SSL"
-#endif
-#if HAVE_DECL_SSLV2_CLIENT_METHOD + 0 == 0
+#if (HAVE_DECL_SSLV2_CLIENT_METHOD + 0 == 0) || defined(OPENSSL_NO_SSL2)
 	"-SSLv2"
 #endif
-#if HAVE_DECL_SSLV3_CLIENT_METHOD + 0 == 0
+#if (HAVE_DECL_SSLV3_CLIENT_METHOD + 0 == 0) || defined(OPENSSL_NO_SSL3)
 	"-SSLv3"
+#endif
 #endif
 #ifdef OPIE_ENABLE
 	"+OPIE"

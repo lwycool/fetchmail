@@ -73,10 +73,13 @@ fetchmail-6.3.27 (not yet released, if ever):
 * Point to --idle from GENERAL OPERATION to clarify --idle and multiple
   mailboxes do not mix.  In response to Jeremy Chadwick's trouble 2014-11-19,
   fetchmail-users mailing list.
-* Fix SSL-enabled build on systems that do not declare SSLv3_client_method().
-  Related to Debian Bug#775255.
+* Fix SSL-enabled build on systems that do not declare SSLv3_client_method(),
+  or that #define OPENSSL_NO_SSL3 inside #include <openssl/ssl.h>, the canonical
+  way that OpenSSL communicates this.  Related to Debian Bug#775255.
 * Version report lists -SSLv3 on +SSL builds that omit SSLv3_client_method().
 * Version report lists -SSLv2 on +SSL builds that omit SSLv2_client_method().
+* Also recognize SSLv2 as unsupported if #include <openssl/ssl.h>
+  defines the OPENSSL_NO_SSL2 macro.
 
 # KNOWN BUGS AND WORKAROUNDS
   (This section floats upwards through the NEWS file so it stays with the
