@@ -667,8 +667,8 @@ because there is not currently a standard way to do this; fetchmail
 also uses this method, so the two will interoperate happily. They
 better, because this is how Craig gets his mail ;-)</p>
 
-<p>Finally, you can use <a href="#K5">SSL</a> for complete
-end-to-end encryption if you have an SSL-enabled mailserver.</p>
+<p>Finally, you can use <a href="#K5">SSL or TLS</a> for complete
+end-to-end encryption if you have a TLS-enabled mailserver.</p>
 
 <h2><a id="G11" name="G11">G11. Is any special configuration needed
 to use a dynamic IP address?</a></h2>
@@ -2120,7 +2120,7 @@ SSL?</a></h2>
 
 <p>You'll need to have the <a
 href="http://www.openssl.org/">OpenSSL</a> libraries installed, and they
-should at least be version 0.9.7.
+should at least be version 0.9.8, with 1.0.1 preferred.
 Configure with --with-ssl. If you have the OpenSSL libraries
 installed in commonly-used default locations, this will
 suffice. If you have them installed in a non-default location,
@@ -2130,7 +2130,7 @@ to --with-ssl after an equal sign.</p>
 <p>Fetchmail binaries built this way support <code>ssl</code>,
 <code>sslkey</code>, and <code>sslcert</code> options that control
 SSL encryption, and will automatically use <code>tls</code> if the
-server offers it. You will need to have an SSL-enabled mailserver to
+server offers it. You will need to have an SSL/TLS-enabled mailserver to
 use these options. See the manual page for details and some words
 of care on the limited security provided.</p>
 
@@ -2155,13 +2155,14 @@ poll MYSERVER port 993 plugin "openssl s_client -connect %h:%p"
         protocol imap username MYUSERNAME password MYPASSWORD
 </pre>
 
-<p>You should note that SSL is only secure against a "man-in-the-middle"
-attack if the client is able to verify that the peer's public key is the
-correct one, and has not been substituted by an attacker. fetchmail can do
-this in one of two ways: by verifying the SSL certificate, or by checking
-the fingerprint of the peer's public key.</p>
+<p>You should note that SSL or TLS are only secure against a
+"man-in-the-middle" attack if the client is able to verify that the
+peer's public key is the correct one, and has not been substituted by an
+attacker. fetchmail can do this in one of two ways: by verifying the SSL
+certificate, or by checking the fingerprint of the peer's public
+key.</p>
 
-<p>There are three parts to SSL certificate verification: checking that the
+<p>There are three parts to TLS certificate verification: checking that the
 domain name in the certificate matches the hostname you asked to connect to;
 checking that the certificate expiry date has not passed; and checking that
 the certificate has been signed by a known Certificate Authority (CA). This
@@ -2227,8 +2228,12 @@ will automatically attempt TLS negotiation if SSL was enabled at compile
 time.  This can however cause problems if the upstream didn't configure
 his certificates properly.</p>
 
-<p>In order to prevent fetchmail from trying TLS (STLS, STARTTLS)
-negotiation, add this option:</p>
+<p>In order to prevent fetchmail 6.4.0 and newer versions from trying
+STLS or STARTTLS negotiation, add this option:</p>
+<pre>sslproto ''</pre>
+
+<p>In order to prevent older fetchmail versions from trying TLS (STLS, STARTTLS)
+negotiation where the above does not work, try this option:</p>
 
 <pre>sslproto ssl23</pre>
 

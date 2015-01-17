@@ -10,7 +10,7 @@
 .\" Load www macros to process .URL requests, this requires groff:
 .mso www.tmac
 .\"
-.TH fetchmail 1 "fetchmail 6.3.27" "fetchmail" "fetchmail reference manual"
+.TH fetchmail 1 "fetchmail 6.4.0" "fetchmail" "fetchmail reference manual"
 
 .SH NAME
 fetchmail \- fetch mail from a POP, IMAP, ETRN, or ODMR-capable server
@@ -413,23 +413,22 @@ from. The folder information is written only since version 6.3.4.
 .B \-\-ssl
 (Keyword: ssl)
 .br
-Causes the connection to the mail server to be encrypted
-via SSL.  Connect to the server using the specified base protocol over a
-connection secured by SSL. This option defeats opportunistic starttls
-negotiation. It is highly recommended to use \-\-sslproto 'SSL3'
-\-\-sslcertck to validate the certificates presented by the server and
-defeat the obsolete SSLv2 negotiation. More information is available in
-the \fIREADME.SSL\fP file that ships with fetchmail.
+Causes the connection to the mail server to be encrypted via SSL, by
+negotiating SSL directly after connecting (SSL-wrapped mode).  It is
+highly recommended to use \-\-sslcertck to validate the certificates
+presented by the server.  Please see the description of \-\-sslproto
+below!  More information is available in the \fIREADME.SSL\fP file that
+ships with fetchmail.
 .IP
-Note that fetchmail may still try to negotiate SSL through starttls even
-if this option is omitted. You can use the \-\-sslproto option to defeat
-this behavior or tell fetchmail to negotiate a particular SSL protocol.
+Note that even if this option is omitted, fetchmail may still negotiate
+SSL in-band for POP3 or IMAP, through the STLS or STARTTLS feature.  You
+can use the \-\-sslproto option to modify that behavior.
 .IP
 If no port is specified, the connection is attempted to the well known
 port of the SSL version of the base protocol.  This is generally a
 different port than the port used by the base protocol.  For IMAP, this
 is port 143 for the clear protocol and port 993 for the SSL secured
-protocol, for POP3, it is port 110 for the clear text and port 995 for
+protocol; for POP3, it is port 110 for the clear text and port 995 for
 the encrypted variant.
 .IP
 If your system lacks the corresponding entries from /etc/services, see
@@ -471,39 +470,61 @@ cause some complications in daemon mode.
 .IP
 Also see \-\-sslcert above.
 .TP
-.B \-\-sslproto <name>
-(Keyword: sslproto)
+.B \-\-sslproto <value>
+(Keyword: sslproto, NOTE: semantic changes since v6.4.0)
 .br
-Forces an SSL/TLS protocol. Possible values are \fB''\fP,
-\&'\fBSSL2\fP' (not supported on all systems),
-\&'\fBSSL23\fP', (use of these two values is discouraged
-and should only be used as a last resort) \&'\fBSSL3\fP', and
-\&'\fBTLS1\fP'.  The default behaviour if this option is unset is: for
-connections without \-\-ssl, use \&'\fBTLS1\fP' so that fetchmail will
-opportunistically try STARTTLS negotiation with TLS1. You can configure
-this option explicitly if the default handshake (TLS1 if \-\-ssl is not
-used) does not work for your server.
+This option has a dual use, out of historic fetchmail behaviour. It
+controls both the SSL/TLS protocol version and, if \-\-ssl is not
+specified, the STARTTLS behaviour (upgrading the protocol to an SSL or
+TLS connection in-band). Some other options may however make TLS
+mandatory.
+.PP
+Only if this option and \-\-ssl are both missing for a poll, there will
+be opportunistic TLS for POP3 and IMAP, where fetchmail will attempt to
+upgrade to TLSv1 or newer.
+.PP
+Recognized values for \-\-sslproto are:
+.RS
+.IP "\fB''\fP, the empty string"
+Disable STARTTLS. If \-\-ssl is given for the same server, log an error
+and pretend that '\fBauto\fP' had been used instead.
+.IP '\fBauto\fP'
+Since v6.4.0 Require TLS. Auto-negotiate TLSv1 or newer, disable SSLv3 downgrade.
+(fetchmail 6.3.26 and older have auto-negotiated all protocols that
+their OpenSSL library supported, including the broken SSLv3).
+.IP "\&'\fBSSL23\fP'
+see '\fBauto\fP'.
+.IP \&'\fBSSL3\fP'
+Require SSLv3. SSLv3 is broken, not supported on all systems, avoid it
+if possible.  This will make fetchmail negotiate SSLv3 only, and is the
+only way to have fetchmail 6.4.0 or newer permit SSLv3.
+.IP \&'\fBTLS1\fP'
+Require TLSv1. This does not negotiate TLSv1.1 or newer, and is
+discouraged. Replace by TLS1+.
+.IP \&'\fBTLS1+\fP'
+Since v6.4.0. See 'fBauto\fP'.
+.IP \&'\fBTLS1.1+\fP'
+Since v6.4.0. Require TLS. Auto-negotiate TLSv1.1 or newer. 
+.IP '\fBTLS1.2+\fP'
+Since v6.4.0. Require TLS. Auto-negotiate TLSv1.2 or newer.
+.IP "Unrecognized parameters"
+are treated the same as '\fBauto\fP'.
+.RE
 .IP
-Use this option with '\fBTLS1\fP' value to enforce a STARTTLS
-connection. In this mode, it is highly recommended to also use
-\-\-sslcertck (see below).  Note that this will then cause fetchmail
-v6.3.19 to force STARTTLS negotiation even if it is not advertised by
-the server.
-.IP
-To defeat opportunistic TLSv1 negotiation when the server advertises
-STARTTLS or STLS, and use a cleartext connection use \fB''\fP.  This
-option, even if the argument is the empty string, will also suppress the
-diagnostic 'SERVER: opportunistic upgrade to TLS.' message in verbose
-mode. The default is to try appropriate protocols depending on context.
+NOTE: you should hardly ever need to use anything other than '' (to
+force an unencrypted connection) or 'auto' (to force it).
 .TP
 .B \-\-sslcertck
 (Keyword: sslcertck)
 .br
-Causes fetchmail to strictly check the server certificate against a set of
-local trusted certificates (see the \fBsslcertfile\fP and \fBsslcertpath\fP
-options). If the server certificate cannot be obtained or is not signed by one
-of the trusted ones (directly or indirectly), the SSL connection will fail,
-regardless of the \fBsslfingerprint\fP option.
+Causes fetchmail to require that SSL/TLS be used and disconnect if it
+can not successfully negotiate SSL or TLS, or if it cannot successfully
+verify and validate the certificate and follow it to a trust anchor (or
+trusted root certificate). The trust anchors are given as a set of local
+trusted certificates (see the \fBsslcertfile\fP and \fBsslcertpath\fP
+options). If the server certificate cannot be obtained or is not signed
+by one of the trusted ones (directly or indirectly), fetchmail will
+disconnect, regardless of the \fBsslfingerprint\fP option.
 .IP
 Note that CRL (certificate revocation lists) are only supported in
 OpenSSL 0.9.7 and newer! Your system clock should also be reasonably
@@ -1203,31 +1224,33 @@ capability response. Specify a user option value that looks like
 username and the part to the right as the NTLM domain.
 
 .SS Secure Socket Layers (SSL) and Transport Layer Security (TLS)
+.PP All retrieval protocols can use SSL or TLS wrapping for the
+transport. Additionally, POP3 and IMAP retrival can also negotiate
+SSL/TLS by means of STARTTLS (or STLS).
 .PP
 Note that fetchmail currently uses the OpenSSL library, which is
 severely underdocumented, so failures may occur just because the
 programmers are not aware of OpenSSL's requirement of the day.
 For instance, since v6.3.16, fetchmail calls
 OpenSSL_add_all_algorithms(), which is necessary to support certificates
-using SHA256 on OpenSSL 0.9.8 -- this information is deeply hidden in the
-documentation and not at all obvious.  Please do not hesitate to report
-subtle SSL failures.
+using SHA256 on OpenSSL 0.9.8 -- this information is deeply hidden in
+the documentation and not at all obvious.  Please do not hesitate to
+report subtle SSL failures.
 .PP
-You can access SSL encrypted services by specifying the \-\-ssl option.
-You can also do this using the "ssl" user option in the .fetchmailrc
-file. With SSL encryption enabled, queries are initiated over a
-connection after negotiating an SSL session, and the connection fails if
-SSL cannot be negotiated.  Some services, such as POP3 and IMAP, have
+You can access SSL encrypted services by specifying the options starting
+with \-\-ssl, such as \-\-ssl, \-\-sslproto, \-\-sslcertck, and others.
+You can also do this using the corresponding user options in the .fetchmailrc
+file.  Some services, such as POP3 and IMAP, have
 different well known ports defined for the SSL encrypted services.  The
 encrypted ports will be selected automatically when SSL is enabled and
-no explicit port is specified. The \-\-sslproto 'SSL3' option should be
-used to select the SSLv3 protocol (default if unset: v2 or v3).  Also,
-the \-\-sslcertck command line or sslcertck run control file option
-should be used to force strict certificate checking - see below.
+no explicit port is specified.   Also, the \-\-sslcertck command line or
+sslcertck run control file option should be used to force strict
+certificate checking - see below.
 .PP
 If SSL is not configured, fetchmail will usually opportunistically try to use
-STARTTLS. STARTTLS can be enforced by using \-\-sslproto "TLS1". TLS
-connections use the same port as the unencrypted version of the
+STARTTLS. STARTTLS can be enforced by using \-\-sslproto\~auto and
+defeated by using \-\-sslproto\~''.
+TLS connections use the same port as the unencrypted version of the
 protocol and negotiate TLS via special command. The \-\-sslcertck
 command line or sslcertck run control file option should be used to
 force strict certificate checking - see below.

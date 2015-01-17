@@ -51,17 +51,40 @@ removed from a 6.4.0 or newer release.)
 * The --bsmtp - mode of operation may be removed in a future release.
 * Given that OpenSSL is severely underdocumented, and needs license exceptions,
   fetchmail may switch to a different SSL library.
-* SSLv2 support will be removed from a future fetchmail release. It has been
-  obsolete for more than a decade.
 * SSLv3 support may be removed from a future fetchmail release. It has been
   obsolete for many years and found insecure. Use TLS.
 
 --------------------------------------------------------------------------------
 
-fetchmail-6.3.27 (not yet released, if ever):
+fetchmail-6.4.0 (not yet released):
 
 # NOTE THAT FETCHMAIL IS NO LONGER PUBLISHED THROUGH IBIBLIO.
 * They have stopped accepting submissions and consider themselves an archive.
+
+## SECURITY FIXES THAT AFFECT BEHAVIOUR AND MAY WANT RECONFIGURATION
+* Fetchmail no longer supports SSLv2.
+* Fetchmail no longer attempts to negotiate SSLv3 by default,
+  even with --sslproto ssl23. Fetchmail can now use SSLv3, or TLSv1.1 or a newer
+  TLS version, with STLS/STARTTLS (it would previously force TLSv1.0).  If the
+  OpenSSL version used at build and run-time supports these versions, --sslproto
+  ssl3 can be used to enable this specific version.  Doing so is discouraged
+  because these protocols are broken.
+
+  Along the lines suggested - as patch - by Kurt Roeckx, Debian Bug #768843.
+
+  While this change is supposed to be compatible with common configurations,
+  users are advised to change all explicit --sslproto ssl2, --sslproto
+  ssl3, --sslproto tls1 to --sslproto auto, so that they can enable TLSv1.1 and
+  TLSv1.2 on systems with OpenSSL 1.0.1 or newer.
+
+  The --sslproto option now understands the values auto, tls1+, tls1.1+,
+  tls1.2+ (case insensitively).
+
+## CHANGES
+* Fetchmail now supports --sslproto auto and --sslproto tls1+ (same as ssl23).
+* --sslproto tls1.1+ and tls1.2+ are now supported for auto-negotiation with a
+  minimum specified TLS protocol version.
+* fetchmail 6.3.X is unsupported.
 
 ## FIXES
 * Fix a typo in the FAQ. Submitted by David Lawyer, Debian Bug#706776.
@@ -74,12 +97,9 @@ fetchmail-6.3.27 (not yet released, if ever):
   mailboxes do not mix.  In response to Jeremy Chadwick's trouble 2014-11-19,
   fetchmail-users mailing list.
 * Fix SSL-enabled build on systems that do not declare SSLv3_client_method(),
-  or that #define OPENSSL_NO_SSL3 inside #include <openssl/ssl.h>, the canonical
-  way that OpenSSL communicates this.  Related to Debian Bug#775255.
-* Version report lists -SSLv3 on +SSL builds that omit SSLv3_client_method().
-* Version report lists -SSLv2 on +SSL builds that omit SSLv2_client_method().
-* Also recognize SSLv2 as unsupported if #include <openssl/ssl.h>
-  defines the OPENSSL_NO_SSL2 macro.
+  or that #define OPENSSL_NO_SSL3 inside #include <openssl/ssl.h>
+  Related to Debian Bug#775255.
+* Version report lists -SSLv3 on SSL-enabled no-ssl3 builds.
 
 # KNOWN BUGS AND WORKAROUNDS
   (This section floats upwards through the NEWS file so it stays with the

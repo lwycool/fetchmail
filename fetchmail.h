@@ -774,9 +774,9 @@ int servport(const char *service);
 int fm_getaddrinfo(const char *node, const char *serv, const struct addrinfo *hints, struct addrinfo **res);
 void fm_freeaddrinfo(struct addrinfo *ai);
 
-/* prototypes from tls.c */
-int maybe_tls(struct query *ctl);
-int must_tls(struct query *ctl);
+/* prototypes from starttls.c */
+int maybe_starttls(struct query *ctl);
+int must_starttls(struct query *ctl);
 
 /* prototype from rfc822valid.c */
 int rfc822_valid_msgid(const unsigned char *);

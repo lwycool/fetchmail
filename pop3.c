@@ -281,6 +281,7 @@ static int pop3_getauth(int sock, struct query *ctl, char *greeting)
 #endif /* OPIE_ENABLE */
 #ifdef SSL_ENABLE
     flag connection_may_have_tls_errors = FALSE;
+    char *commonname;
 #endif /* SSL_ENABLE */
 
     done_capa = FALSE;
@@ -393,7 +394,7 @@ static int pop3_getauth(int sock, struct query *ctl, char *greeting)
 		(ctl->server.authenticate == A_KERBEROS_V5) ||
 		(ctl->server.authenticate == A_OTP) ||
 		(ctl->server.authenticate == A_CRAM_MD5) ||
-		maybe_tls(ctl))
+		maybe_starttls(ctl))
 	{
 	    if ((ok = capa_probe(sock)) != PS_SUCCESS)
 		/* we are in STAGE_GETAUTH => failure is PS_AUTHFAIL! */
@@ -406,12 +407,12 @@ static int pop3_getauth(int sock, struct query *ctl, char *greeting)
 		    (ok == PS_SOCKET && !ctl->wehaveauthed))
 		{
 #ifdef SSL_ENABLE
-		    if (must_tls(ctl)) {
+		    if (must_starttls(ctl)) {
 			/* fail with mandatory STLS without repoll */
 			report(stderr, GT_("TLS is mandatory for this session, but server refused CAPA command.\n"));
 			report(stderr, GT_("The CAPA command is however necessary for TLS.\n"));
 			return ok;
-		    } else if (maybe_tls(ctl)) {
+		    } else if (maybe_starttls(ctl)) {
 			/* defeat opportunistic STLS */
 			xfree(ctl->sslproto);
 			ctl->sslproto = xstrdup("");
@@ -431,24 +432,19 @@ static int pop3_getauth(int sock, struct query *ctl, char *greeting)
 	}
 
 #ifdef SSL_ENABLE
-	if (maybe_tls(ctl)) {
-	    char *commonname;
+	commonname = ctl->server.pollname;
+	if (ctl->server.via)
+	    commonname = ctl->server.via;
+	if (ctl->sslcommonname)
+	    commonname = ctl->sslcommonname;
 
-	    commonname = ctl->server.pollname;
-	    if (ctl->server.via)
-		commonname = ctl->server.via;
-	    if (ctl->sslcommonname)
-		commonname = ctl->sslcommonname;
-
-	   if (has_stls
-		   || must_tls(ctl)) /* if TLS is mandatory, ignore capabilities */
+	if (maybe_starttls(ctl)) {
+	   if (has_stls || must_starttls(ctl)) /* if TLS is mandatory, ignore capabilities */
 	   {
-	       /* Use "tls1" rather than ctl->sslproto because tls1 is the only
-		* protocol that will work with STARTTLS.  Don't need to worry
-		* whether TLS is mandatory or opportunistic unless SSLOpen() fails
-		* (see below). */
+	       /* Don't need to worry whether TLS is mandatory or
+		* opportunistic unless SSLOpen() fails (see below). */
 	       if (gen_transact(sock, "STLS") == PS_SUCCESS
-		       && (set_timeout(mytimeout), SSLOpen(sock, ctl->sslcert, ctl->sslkey, "tls1", ctl->sslcertck,
+		       && (set_timeout(mytimeout), SSLOpen(sock, ctl->sslcert, ctl->sslkey, ctl->sslproto, ctl->sslcertck,
 			   ctl->sslcertfile, ctl->sslcertpath, ctl->sslfingerprint, commonname,
 			   ctl->server.pollname, &ctl->remotename)) != -1)
 	       {
@@ -475,7 +471,7 @@ static int pop3_getauth(int sock, struct query *ctl, char *greeting)
 		   {
 		       report(stdout, GT_("%s: upgrade to TLS succeeded.\n"), commonname);
 		   }
-	       } else if (must_tls(ctl)) {
+	       } else if (must_starttls(ctl)) {
 		   /* Config required TLS but we couldn't guarantee it, so we must
 		    * stop. */
 		   set_timeout(0);
@@ -495,7 +491,11 @@ static int pop3_getauth(int sock, struct query *ctl, char *greeting)
 		   }
 	       }
 	   }
-	} /* maybe_tls() */
+	} else { /* maybe_starttls() */
+	    if (has_stls && outlevel >= O_VERBOSE) {
+		report(stdout, GT_("%s: WARNING: server offered STLS, but sslproto '' given.\n"), commonname);
+	    }
+	} /* maybe_starttls() */
 #endif /* SSL_ENABLE */
 
 	/*
