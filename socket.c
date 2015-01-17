@@ -876,6 +876,7 @@ int SSLOpen(int sock, char *mycert, char *mykey, const char *myproto, int certck
 {
         struct stat randstat;
         int i;
+	int avoid_ssl_versions = SSL_OP_NO_SSLv2 | SSL_OP_NO_SSLv3;
 	long sslopts = SSL_OP_ALL;
 
 	SSL_load_error_strings();
@@ -906,26 +907,31 @@ int SSLOpen(int sock, char *mycert, char *mykey, const char *myproto, int certck
 	/* Make sure a connection referring to an older context is not left */
 	_ssl_context[sock] = NULL;
 	if(myproto) {
-		if(!strcasecmp("ssl2",myproto)) {
-#if (HAVE_DECL_SSLV2_CLIENT_METHOD + 0 > 0) && (0 == OPENSSL_NO_SSL2 + 0)
-			_ctx[sock] = SSL_CTX_new(SSLv2_client_method());
-#else
-			report(stderr, GT_("Your OpenSSL version does not support SSLv2.\n"));
-			return -1;
-#endif
-		} else if(!strcasecmp("ssl3",myproto)) {
+		if(!strcasecmp("ssl3",myproto)) {
 #if (HAVE_DECL_SSLV3_CLIENT_METHOD + 0 > 0) && (0 == OPENSSL_NO_SSL3 + 0)
 			_ctx[sock] = SSL_CTX_new(SSLv3_client_method());
+			avoid_ssl_versions &= ~SSL_OP_NO_SSLv2;
 #else
 			report(stderr, GT_("Your OpenSSL version does not support SSLv3.\n"));
 			return -1;
 #endif
 		} else if(!strcasecmp("tls1",myproto)) {
 			_ctx[sock] = SSL_CTX_new(TLSv1_client_method());
-		} else if (!strcasecmp("ssl23",myproto)) {
+		} else if(!strcasecmp("tls1+",myproto)) {
+			myproto = NULL;
+		} else if(!strcasecmp("tls1.1+",myproto)) {
+			myproto = NULL;
+			avoid_ssl_versions |= SSL_OP_NO_TLSv1;
+		} else if(!strcasecmp("tls1.2+",myproto)) {
+			myproto = NULL;
+			avoid_ssl_versions |= SSL_OP_NO_TLSv1;
+#ifdef SSL_OP_NO_TLSv1_1
+			avoid_ssl_versions |= SSL_OP_NO_TLSv1_1;
+#endif
+		} else if (!strcasecmp("ssl23",myproto) || 0 == strcasecmp("auto",myproto)) {
 			myproto = NULL;
 		} else {
-			report(stderr,GT_("Invalid SSL protocol '%s' specified, using default (SSLv23).\n"), myproto);
+			report(stderr,GT_("Invalid SSL protocol '%s' specified, using default autoselect (SSL23).\n"), myproto);
 			myproto = NULL;
 		}
 	}
@@ -943,7 +949,7 @@ int SSLOpen(int sock, char *mycert, char *mykey, const char *myproto, int certck
 		sslopts &= ~ SSL_OP_DONT_INSERT_EMPTY_FRAGMENTS;
 	}
 
-	SSL_CTX_set_options(_ctx[sock], sslopts);
+	SSL_CTX_set_options(_ctx[sock], sslopts | avoid_ssl_versions);
 
 	if (certck) {
 		SSL_CTX_set_verify(_ctx[sock], SSL_VERIFY_PEER, SSL_ck_verify_callback);
