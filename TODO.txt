@@ -1,5 +1,9 @@
 Note that there is a separate todo.html with different content than this.
 
+6.4 MUST:
++ multiple certs
++ make sslcertck mandatory
+
 soon - MUST:
 - blacklist DigiNotar/Comodo/Türktrust hacks/certs, possibly with Chrome's serial#
   list?
