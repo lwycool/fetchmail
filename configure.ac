@@ -14,6 +14,13 @@ AC_CONFIG_SRCDIR([fetchmail.h])
 AC_CONFIG_HEADERS([config.h])
 AC_CONFIG_LIBOBJ_DIR([.])
 
+AC_MSG_ERROR([[
+=================================================
+fetchmail 6.3.x is no longer maintained.
+Use fetchmail 6.4.x instead, Git branch legacy_64
+=================================================
+]])
+
 AC_CANONICAL_HOST
 
 dnl automake options are in Makefile.am
