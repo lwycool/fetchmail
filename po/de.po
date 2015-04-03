@@ -758,7 +758,7 @@ msgstr "fetchmail: kein weiteres fetchmail läuft\n"
 #, c-format
 msgid "fetchmail: error killing %s fetchmail at %ld; bailing out.\n"
 msgstr ""
-"fetchmail: Fehler beim Abschießen von %s-fetchmail mit Kennung %ld; "
+"fetchmail: Fehler beim Beenden von %s-fetchmail mit Kennung %ld; "
 "Abbruch.\n"
 
 #: fetchmail.c:485 fetchmail.c:494
@@ -772,7 +772,7 @@ msgstr "Vordergrund"
 #: fetchmail.c:493
 #, c-format
 msgid "fetchmail: %s fetchmail at %ld killed.\n"
-msgstr "fetchmail: %s-fetchmail mit Kennung %ld abgeschossen.\n"
+msgstr "fetchmail: %s-fetchmail mit Kennung %ld beendet.\n"
 
 #: fetchmail.c:516
 msgid ""
@@ -2187,7 +2187,7 @@ msgstr "  -N, --nodetach    nicht von Dämon-Prozess ablösen\n"
 
 #: options.c:630
 msgid "  -q, --quit        kill daemon process\n"
-msgstr "  -q, --quit        Dämon-Prozess abschießen\n"
+msgstr "  -q, --quit        Dämon-Prozess beenden\n"
 
 #: options.c:631
 msgid "  -L, --logfile     specify logfile name\n"
