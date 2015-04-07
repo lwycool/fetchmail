@@ -153,6 +153,9 @@ NOTE THIS IS AN ALPHA RELEASE THAT HAS NOT BEEN THOROUGHLY TESTED!
   it, use protocol POP3 auth APOP, or on the commandline, -p pop3 --auth apop.
   If no authentication method is specified, APOP is automatically tried if
   offered by the server before we resort to sending the password as clear text.
+* Fetchmail now detects if the server hangs up prematurely during SSL_connect()
+  and reports this condition as such, and not just as SSL connection failure.
+  (OpenSSL 1.0.2 reported incompatible with pop3.live.com by Jerry Seibert).
 
 # KNOWN BUGS AND WORKAROUNDS
   (This section floats upwards through the NEWS file so it stays with the
@@ -177,9 +180,6 @@ NOTE THIS IS AN ALPHA RELEASE THAT HAS NOT BEEN THOROUGHLY TESTED!
 --------------------------------------------------------------------------------
 
 fetchmail-6.3.27 (not yet released, if ever):
-
-# NOTE THAT FETCHMAIL IS NO LONGER PUBLISHED THROUGH IBIBLIO.
-* They have stopped accepting submissions and consider themselves an archive.
 
 ## FIXES
 * Fix a typo in the FAQ. Submitted by David Lawyer, Debian Bug#706776.
