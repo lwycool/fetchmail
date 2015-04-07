@@ -878,6 +878,7 @@ int SSLOpen(int sock, char *mycert, char *mykey, const char *myproto, int certck
         int i;
 	int avoid_ssl_versions = SSL_OP_NO_SSLv2 | SSL_OP_NO_SSLv3;
 	long sslopts = SSL_OP_ALL;
+	int ssle_connect = 0;
 
 	SSL_load_error_strings();
 	SSL_library_init();
@@ -1019,8 +1020,18 @@ int SSLOpen(int sock, char *mycert, char *mykey, const char *myproto, int certck
 	}
 
 	if (SSL_set_fd(_ssl_context[sock], sock) == 0 
-	    || SSL_connect(_ssl_context[sock]) < 1) {
+	    || (ssle_connect = SSL_connect(_ssl_context[sock])) < 1) {
+		int e = errno;
+		unsigned long ssle_err_from_queue = ERR_peek_error();
+		unsigned long ssle_err_from_get_error = SSL_get_error(_ssl_context[sock], ssle_connect);
 		ERR_print_errors_fp(stderr);
+		if (SSL_ERROR_SYSCALL == ssle_err_from_get_error && 0 == ssle_err_from_queue) {
+		    if (0 == ssle_connect) {
+			report(stderr, GT_("Server shut down connection prematurely during SSL_connect().\n"));
+		    } else if (ssle_connect < 0) {
+			report(stderr, GT_("System error during SSL_connect(): %s\n"), strerror(e));
+		    }
+		}
 		SSL_free( _ssl_context[sock] );
 		_ssl_context[sock] = NULL;
 		SSL_CTX_free(_ctx[sock]);

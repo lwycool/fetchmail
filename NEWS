@@ -81,10 +81,13 @@ fetchmail-6.4.0 (not yet released):
   tls1.2+ (case insensitively).
 
 ## CHANGES
+* fetchmail 6.3.X is unsupported.
 * Fetchmail now supports --sslproto auto and --sslproto tls1+ (same as ssl23).
 * --sslproto tls1.1+ and tls1.2+ are now supported for auto-negotiation with a
   minimum specified TLS protocol version.
-* fetchmail 6.3.X is unsupported.
+* Fetchmail now detects if the server hangs up prematurely during SSL_connect()
+  and reports this condition as such, and not just as SSL connection failure.
+  (OpenSSL 1.0.2 reported incompatible with pop3.live.com by Jerry Seibert).
 
 ## FIXES
 * Fix a typo in the FAQ. Submitted by David Lawyer, Debian Bug#706776.
