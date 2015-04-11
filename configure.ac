@@ -802,7 +802,6 @@ else
 fi
 
 case "$LIBS" in *-lssl*)
-	AC_CHECK_DECLS([SSLv2_client_method],,,[#include <openssl/ssl.h>])
 	AC_CHECK_DECLS([SSLv3_client_method],,,[#include <openssl/ssl.h>])
 	;;
 esac
