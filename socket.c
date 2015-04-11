@@ -328,6 +328,9 @@ int SockPrintf(int sock, const char* format, ...)
 }
 
 #ifdef SSL_ENABLE
+/* OPENSSL_NO_SSL_INTERN: 
+   transitional feature for OpenSSL 1.0.1 up to and excluding 1.1.0 
+   to make sure we do not access internal structures! */
 #define OPENSSL_NO_SSL_INTERN 1
 #include <openssl/ssl.h>
 #include <openssl/err.h>
