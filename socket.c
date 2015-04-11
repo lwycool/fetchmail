@@ -909,25 +909,42 @@ int SSLOpen(int sock, char *mycert, char *mykey, const char *myproto, int certck
 	_ssl_context[sock] = NULL;
 	if(myproto) {
 		if(!strcasecmp("ssl3",myproto)) {
-#if (HAVE_DECL_SSLV3_CLIENT_METHOD + 0 > 0) && (0 == OPENSSL_NO_SSL3 + 0)
+#if (HAVE_DECL_SSLV3_CLIENT_METHOD > 0) && (0 == OPENSSL_NO_SSL3 + 0)
 			_ctx[sock] = SSL_CTX_new(SSLv3_client_method());
 			avoid_ssl_versions &= ~SSL_OP_NO_SSLv3;
 #else
 			report(stderr, GT_("Your OpenSSL version does not support SSLv3.\n"));
 			return -1;
 #endif
+		} else if(!strcasecmp("ssl3+",myproto)) {
+			avoid_ssl_versions &= ~SSL_OP_NO_SSLv3;
+			myproto = NULL;
 		} else if(!strcasecmp("tls1",myproto)) {
 			_ctx[sock] = SSL_CTX_new(TLSv1_client_method());
 		} else if(!strcasecmp("tls1+",myproto)) {
 			myproto = NULL;
+#if defined(TLS1_1_VERSION) && TLS_MAX_VERSION >= TLS1_1_VERSION
+		} else if(!strcasecmp("tls1.1",myproto)) {
+			_ctx[sock] = SSL_CTX_new(TLSv1_1_client_method());
 		} else if(!strcasecmp("tls1.1+",myproto)) {
 			myproto = NULL;
 			avoid_ssl_versions |= SSL_OP_NO_TLSv1;
+#else
+		} else if(!strcasecmp("tls1.1",myproto) || !strcasecmp("tls1.1+", myproto)) {
+			report(stderr, GT_("Your OpenSSL version does not support TLS v1.1.\n"));
+			return -1;
+#endif
+#if defined(TLS1_2_VERSION) && TLS_MAX_VERSION >= TLS1_2_VERSION
+		} else if(!strcasecmp("tls1.2",myproto)) {
+			_ctx[sock] = SSL_CTX_new(TLSv1_2_client_method());
 		} else if(!strcasecmp("tls1.2+",myproto)) {
 			myproto = NULL;
 			avoid_ssl_versions |= SSL_OP_NO_TLSv1;
-#ifdef SSL_OP_NO_TLSv1_1
 			avoid_ssl_versions |= SSL_OP_NO_TLSv1_1;
+#else
+		} else if(!strcasecmp("tls1.2",myproto) || !strcasecmp("tls1.2+", myproto)) {
+			report(stderr, GT_("Your OpenSSL version does not support TLS v1.2.\n"));
+			return -1;
 #endif
 		} else if (!strcasecmp("ssl23",myproto) || 0 == strcasecmp("auto",myproto)) {
 			myproto = NULL;
