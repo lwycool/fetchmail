@@ -911,7 +911,7 @@ int SSLOpen(int sock, char *mycert, char *mykey, const char *myproto, int certck
 		if(!strcasecmp("ssl3",myproto)) {
 #if (HAVE_DECL_SSLV3_CLIENT_METHOD + 0 > 0) && (0 == OPENSSL_NO_SSL3 + 0)
 			_ctx[sock] = SSL_CTX_new(SSLv3_client_method());
-			avoid_ssl_versions &= ~SSL_OP_NO_SSLv2;
+			avoid_ssl_versions &= ~SSL_OP_NO_SSLv3;
 #else
 			report(stderr, GT_("Your OpenSSL version does not support SSLv3.\n"));
 			return -1;
@@ -936,7 +936,12 @@ int SSLOpen(int sock, char *mycert, char *mykey, const char *myproto, int certck
 			myproto = NULL;
 		}
 	}
-	if(!myproto) {
+	// do not combine into an else { } as myproto may be nulled
+	// above!
+	if (!myproto) {
+		// SSLv23 is a misnomer and will in fact use the best
+		// available protocol, subject to SSL_OP_NO*
+		// constraints.
 		_ctx[sock] = SSL_CTX_new(SSLv23_client_method());
 	}
 	if(_ctx[sock] == NULL) {
