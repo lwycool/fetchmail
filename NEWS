@@ -285,7 +285,7 @@ fetchmail-6.3.22 (released 2012-08-29, 26077 LoC):
 * On systems where SSLv2_client_method isn't defined in OpenSSL (such as
   newer Debian, and Ubuntu starting with 11.10 oneiric ocelot), don't
   reference it (to fix the build) and if configured, print a run-time error 
-  that the OS does not support SSLv2. Fixes Debian Bug #622054, 
+  that the OS does not support SSLv2. Fixes Debian Bug #622054,
   but note that that bug report has a more thorough patch that does away with
   SSLv2 altogether.
 

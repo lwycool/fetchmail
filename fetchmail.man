@@ -483,28 +483,40 @@ Only if this option and \-\-ssl are both missing for a poll, there will
 be opportunistic TLS for POP3 and IMAP, where fetchmail will attempt to
 upgrade to TLSv1 or newer.
 .PP
-Recognized values for \-\-sslproto are:
+Recognized values for \-\-sslproto are given below. You should normally
+chose one of the auto-negotiating options, i. e. '\fBauto\fP' or one of
+the options ending in a plus (\fB+\fP) character. Note that depending
+on OpenSSL library version and configuration, some options cause
+run-time errors because the requested SSL or TLS versions are not
+supported by the particular installed OpenSSL library.
 .RS
 .IP "\fB''\fP, the empty string"
 Disable STARTTLS. If \-\-ssl is given for the same server, log an error
 and pretend that '\fBauto\fP' had been used instead.
 .IP '\fBauto\fP'
-Since v6.4.0 Require TLS. Auto-negotiate TLSv1 or newer, disable SSLv3 downgrade.
+(default). Since v6.4.0. Require TLS. Auto-negotiate TLSv1 or newer, disable SSLv3 downgrade.
 (fetchmail 6.3.26 and older have auto-negotiated all protocols that
 their OpenSSL library supported, including the broken SSLv3).
 .IP "\&'\fBSSL23\fP'
 see '\fBauto\fP'.
 .IP \&'\fBSSL3\fP'
-Require SSLv3. SSLv3 is broken, not supported on all systems, avoid it
+Require SSLv3 exactly. SSLv3 is broken, not supported on all systems, avoid it
 if possible.  This will make fetchmail negotiate SSLv3 only, and is the
-only way to have fetchmail 6.4.0 or newer permit SSLv3.
+only way besides '\fBSSL3+\fP' to have fetchmail 6.4.0 or newer permit SSLv3.
+.IP \&'\fBSSL3+\fP'
+same as '\fBauto\fP', but permit SSLv3 as well. This is the only way
+besides '\fBSSL3\fP' to have fetchmail 6.4.0 or newer permit SSLv3.
 .IP \&'\fBTLS1\fP'
 Require TLSv1. This does not negotiate TLSv1.1 or newer, and is
-discouraged. Replace by TLS1+.
+discouraged. Replace by TLS1+ unless the latter chokes your server.
 .IP \&'\fBTLS1+\fP'
 Since v6.4.0. See 'fBauto\fP'.
+.IP \&'\fBTLS1.1\fP'
+Since v6.4.0. Require TLS v1.1 exactly.
 .IP \&'\fBTLS1.1+\fP'
-Since v6.4.0. Require TLS. Auto-negotiate TLSv1.1 or newer. 
+Since v6.4.0. Require TLS. Auto-negotiate TLSv1.1 or newer.
+.IP \&'\fBTLS1.2\fP'
+Since v6.4.0. Require TLS v1.2 exactly.
 .IP '\fBTLS1.2+\fP'
 Since v6.4.0. Require TLS. Auto-negotiate TLSv1.2 or newer.
 .IP "Unrecognized parameters"
@@ -512,7 +524,7 @@ are treated the same as '\fBauto\fP'.
 .RE
 .IP
 NOTE: you should hardly ever need to use anything other than '' (to
-force an unencrypted connection) or 'auto' (to force it).
+force an unencrypted connection) or 'auto' (to enforce TLS).
 .TP
 .B \-\-sslcertck
 (Keyword: sslcertck)
