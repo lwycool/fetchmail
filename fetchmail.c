@@ -266,9 +266,7 @@ int main(int argc, char **argv)
 #endif /* ODMR_ENABLE */
 #ifdef SSL_ENABLE
 	"+SSL"
-#if (HAVE_DECL_SSLV2_CLIENT_METHOD + 0 == 0) || defined(OPENSSL_NO_SSL2)
 	"-SSLv2"
-#endif
 #if (HAVE_DECL_SSLV3_CLIENT_METHOD + 0 == 0) || defined(OPENSSL_NO_SSL3)
 	"-SSLv3"
 #endif
