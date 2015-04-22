@@ -50,7 +50,7 @@ use pwmc which is included with libpwmd, or use QPwmc[3] which has a Qt
 graphical interface. The QPwmc client can use a form to create the required
 elements by doing:
 
-	 qpwmc -t /usr/local/share/qpwmc/mail.xml
+	 qpwmc -t /usr/local/share/qpwmc/mail.xml -e datafile
 
 after qpwmc installation.
 
