@@ -115,7 +115,7 @@ static int dump_saved_uid(struct uid_db_record *rec, void *unused)
     (void)unused;
 
     t = sdump(rec->id, rec->id_len);
-    report_build(stdout, " %s", t);
+    report_build(stdout, " %s\n", t);
     free(t);
 
     return 0;
@@ -259,20 +259,20 @@ void initialize_saved_lists(struct query *hostlist, const char *idfile)
 
 	for (ctl = hostlist; ctl; ctl = ctl->next)
 	    {
-		report_build(stdout, GT_("Old UID list from %s:"),
+		report_build(stdout, GT_("Old UID list from %s:\n"),
 			     ctl->server.pollname);
 
 		if (!uid_db_n_records(&ctl->oldsaved))
-		    report_build(stdout, GT_(" <empty>"));
+		    report_build(stdout, "%s\n", GT_(" <empty>"));
 		else
 		    traverse_uid_db(&ctl->oldsaved, dump_saved_uid, NULL);
 
 		report_complete(stdout, "\n");
 	    }
 
-	report_build(stdout, GT_("Scratch list of UIDs:"));
+	report_build(stdout, GT_("Scratch list of UIDs:\n"));
 	if (!scratchlist)
-		report_build(stdout, GT_(" <empty>"));
+		report_build(stdout, "%s\n", GT_(" <empty>"));
 	else for (idp = scratchlist; idp; idp = idp->next) {
 		char *t = sdump(idp->id, strlen(idp->id)-1);
 		report_build(stdout, " %s\n", t);
@@ -328,7 +328,7 @@ static int dump_uid_db_record(struct uid_db_record *rec, void *arg)
 	--*n_recs;
 
 	t = sdump(rec->id, rec->id_len);
-	report_build(stdout, " %s = %s%s", t, str_uidmark(rec->status), *n_recs ? "," : "");
+	report_build(stdout, " %s = %s\n", t, str_uidmark(rec->status));
 	free(t);
 
 	return 0;
@@ -354,10 +354,10 @@ void uid_swap_lists(struct query *ctl)
     if (outlevel >= O_DEBUG)
     {
 	if (dofastuidl) {
-	    report_build(stdout, GT_("Merged UID list from %s:"), ctl->server.pollname);
+	    report_build(stdout, GT_("Merged UID list from %s:\n"), ctl->server.pollname);
 	    dump_uid_db(&ctl->oldsaved);
 	} else {
-	    report_build(stdout, GT_("New UID list from %s:"), ctl->server.pollname);
+	    report_build(stdout, GT_("New UID list from %s:\n"), ctl->server.pollname);
 	    dump_uid_db(&ctl->newsaved);
 	}
 	report_complete(stdout, "\n");
@@ -398,7 +398,7 @@ void uid_discard_new_list(struct query *ctl)
     {
 	/* this is now a merged list! the mails which were seen in this
 	 * poll are marked here. */
-	report_build(stdout, GT_("Merged UID list from %s:"), ctl->server.pollname);
+	report_build(stdout, GT_("Merged UID list from %s:\n"), ctl->server.pollname);
 	dump_uid_db(&ctl->oldsaved);
 	report_complete(stdout, "\n");
     }
