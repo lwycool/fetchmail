@@ -2881,15 +2881,22 @@ need to say something like '<code>envelope 1 Received</code>' or
 
 <pre>
 Received: from send103.yahoomail.com (send103.yahoomail.com [205.180.60.92])
-    by iserv.ttns.net (8.8.5/8.8.5) with SMTP id RAA10088
-    for &lt;ksturgeon@fbceg.org&gt;; Wed, 9 Sep 1998 17:01:59 -0700
+    by iserv.example.net (8.8.5/8.8.5) with SMTP id RAA10088
+    for &lt;ksturgeon@fbceg.example.org&gt;; Wed, 9 Sep 1998 17:01:59 -0700
 </pre>
 
-<p>it checks to see if 'iserv.ttns.net' is a DNS alias of your
-mailserver before accepting 'ksturgeon@fbceg.org' as an envelope
+<p>it checks to see if 'iserv.example.net' is a DNS alias of your
+mailserver before accepting 'ksturgeon@fbceg.example.org' as an envelope
 address. This check might fail if your DNS were misconfigured, or
-if you were using 'no dns' and had failed to declare iserv.ttns.net
-as an alias of your server.</p>
+if you were using 'no dns' and had failed to declare iserv.example.net
+as an alias of your server. The typical hint is logging similar to:
+<code>line rejected, iserv.example.net is not an alias of the mailserver</code>,
+if you use fetchmail in verbose mode.</p>
+
+<p><strong>Workaround:</strong> You can specify the alias explicitly, with <code>aka
+    <em>iserv.example.net</em></code> statements in the rcfile. Replace
+<em>iserv.example.net</em> by the name you find in <strong>your</strong>
+'by' part of the 'Received:' line.</p>
 
 <h2><a id="M8" name="M8">M8. Users are getting multiple copies of
 messages.</a></h2>
