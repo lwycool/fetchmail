@@ -510,7 +510,7 @@ besides '\fBSSL3\fP' to have fetchmail 6.4.0 or newer permit SSLv3.
 Require TLSv1. This does not negotiate TLSv1.1 or newer, and is
 discouraged. Replace by TLS1+ unless the latter chokes your server.
 .IP \&'\fBTLS1+\fP'
-Since v6.4.0. See 'fBauto\fP'.
+Since v6.4.0. See '\fBauto\fP'.
 .IP \&'\fBTLS1.1\fP'
 Since v6.4.0. Require TLS v1.1 exactly.
 .IP \&'\fBTLS1.1+\fP'
