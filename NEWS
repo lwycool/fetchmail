@@ -101,7 +101,7 @@ fetchmail-6.4.0 (not yet released):
   fetchmail-users mailing list.
 * Fix SSL-enabled build on systems that do not declare SSLv3_client_method(),
   or that #define OPENSSL_NO_SSL3 inside #include <openssl/ssl.h>
-  Related to Debian Bug#775255.
+  Related to Debian Bug#775255. Fixes Debian Bug #804604.
 * Version report lists -SSLv3 on SSL-enabled no-ssl3 builds.
 
 # KNOWN BUGS AND WORKAROUNDS
