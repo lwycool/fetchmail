@@ -45,6 +45,7 @@ enum {
     LA_SSLCERT,
     LA_SSLPROTO,
     LA_SSLCERTCK,
+    LA_NOSSLCERTCK,
     LA_SSLCERTFILE,
     LA_SSLCERTPATH,
     LA_SSLCOMMONNAME,
@@ -132,6 +133,7 @@ static const struct option longoptions[] = {
   {"sslcert",	required_argument, (int *) 0, LA_SSLCERT },
   {"sslproto",	 required_argument, (int *) 0, LA_SSLPROTO },
   {"sslcertck", no_argument,	   (int *) 0, LA_SSLCERTCK },
+  {"nosslcertck", no_argument,	   (int *) 0, LA_NOSSLCERTCK },
   {"sslcertfile",   required_argument, (int *) 0, LA_SSLCERTFILE },
   {"sslcertpath",   required_argument, (int *) 0, LA_SSLCERTPATH },
   {"sslcommonname",    required_argument, (int *) 0, LA_SSLCOMMONNAME },
@@ -562,6 +564,10 @@ int parsecmdline (int argc /** argument count */,
 	    ctl->sslcertck = FLAG_TRUE;
 	    break;
 
+	case LA_NOSSLCERTCK:
+	    ctl->sslcertck = FLAG_FALSE;
+	    break;
+
 	case LA_SSLCERTFILE:
 	    ctl->sslcertfile = prependdir(optarg, currentwd);
 	    break;
@@ -647,6 +653,7 @@ int parsecmdline (int argc /** argument count */,
 	P(GT_("      --sslkey      ssl private key file\n"));
 	P(GT_("      --sslcert     ssl client certificate\n"));
 	P(GT_("      --sslcertck   do strict server certificate check (recommended)\n"));
+	P(GT_("      --nosslcertck skip strict server certificate check (insecure)\n"));
 	P(GT_("      --sslcertfile path to trusted-CA ssl certificate file\n"));
 	P(GT_("      --sslcertpath path to trusted-CA ssl certificate directory\n"));
 	P(GT_("      --sslcommonname  expect this CommonName from server (discouraged)\n"));

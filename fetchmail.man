@@ -414,11 +414,9 @@ from. The folder information is written only since version 6.3.4.
 (Keyword: ssl)
 .br
 Causes the connection to the mail server to be encrypted via SSL, by
-negotiating SSL directly after connecting (SSL-wrapped mode).  It is
-highly recommended to use \-\-sslcertck to validate the certificates
-presented by the server.  Please see the description of \-\-sslproto
-below!  More information is available in the \fIREADME.SSL\fP file that
-ships with fetchmail.
+negotiating SSL directly after connecting (SSL-wrapped mode).
+Please see the description of \-\-sslproto below!  More information is
+available in the \fIREADME.SSL\fP file that ships with fetchmail.
 .IP
 Note that even if this option is omitted, fetchmail may still negotiate
 SSL in-band for POP3 or IMAP, through the STLS or STARTTLS feature.  You
@@ -527,16 +525,17 @@ NOTE: you should hardly ever need to use anything other than '' (to
 force an unencrypted connection) or 'auto' (to enforce TLS).
 .TP
 .B \-\-sslcertck
-(Keyword: sslcertck)
+(Keyword: sslcertck, default enabled since v6.4.0)
 .br
-Causes fetchmail to require that SSL/TLS be used and disconnect if it
-can not successfully negotiate SSL or TLS, or if it cannot successfully
-verify and validate the certificate and follow it to a trust anchor (or
-trusted root certificate). The trust anchors are given as a set of local
-trusted certificates (see the \fBsslcertfile\fP and \fBsslcertpath\fP
-options). If the server certificate cannot be obtained or is not signed
-by one of the trusted ones (directly or indirectly), fetchmail will
-disconnect, regardless of the \fBsslfingerprint\fP option.
+.B \-\-sslcertck causes fetchmail to require that SSL/TLS be used and
+disconnect if it can not successfully negotiate SSL or TLS, or if it
+cannot successfully verify and validate the certificate and follow it to
+a trust anchor (or trusted root certificate). The trust anchors are
+given as a set of local trusted certificates (see the \fBsslcertfile\fP
+and \fBsslcertpath\fP options). If the server certificate cannot be
+obtained or is not signed by one of the trusted ones (directly or
+indirectly), fetchmail will disconnect, regardless of the
+\fBsslfingerprint\fP option.
 .IP
 Note that CRL (certificate revocation lists) are only supported in
 OpenSSL 0.9.7 and newer! Your system clock should also be reasonably
@@ -545,6 +544,13 @@ accurate when using this option.
 Note that this optional behavior may become default behavior in future
 fetchmail versions.
 .TP
+.B \-\-nosslcertck
+(Keyword: no sslcertck, only in v6.4.X)
+.br
+The opposite of \-\-sslcertck, this is a disouraged option. It permits
+fetchmail to continue connecting even if the server certificate failed
+the verification checks.  Should only be used together with
+\-\-sslfingerprint.
 .B \-\-sslcertfile <file>
 (Keyword: sslcertfile, since v6.3.17)
 .br
@@ -603,12 +609,12 @@ fingerprint with the given one, and the connection will fail if they do not
 match, regardless of the \fBsslcertck\fP setting. The connection will
 also fail if fetchmail cannot obtain an SSL certificate from the server.
 This can be used to prevent man-in-the-middle attacks, but the finger
-print from the server needs to be obtained or verified over a secure
+print from the server must be obtained or verified over a secure
 channel, and certainly not over the same Internet connection that
 fetchmail would use.
 .IP
 Using this option will prevent printing certificate verification errors
-as long as \-\-sslcertck is unset.
+as long as \-\-nosslcertck is in effect.
 .IP
 To obtain the fingerprint of a certificate stored in the file cert.pem,
 try:
@@ -1281,7 +1287,7 @@ control file option is used, fetchmail will instead abort if any of
 these checks fail, because it must assume that there is a
 man-in-the-middle attack in this scenario, hence fetchmail must not
 expose cleartext passwords. Use of the sslcertck or \-\-sslcertck option
-is therefore advised.
+is therefore advised; it has become the default in fetchmail 6.4.0.
 .PP
 Some SSL encrypted servers may request a client side certificate.  A client
 side public SSL certificate and private SSL key may be specified.  If
@@ -1880,11 +1886,23 @@ T}
 sslcert 	\&	\&	T{
 Specify file for \fBclient side\fP public SSL certificate
 T}
+sslcertck	\&	\&	T{
+Enable strict certificate checking and abort connection on failure.
+T}
+no sslcertck	\&	\&	T{
+Disable strict certificate checking and permit connections to continue
+on failed verification. Discouraged. Should only be used together with
+sslfingerprint.
+T}
 sslcertfile	\&	\&	T{
 Specify file with trusted CA certificates
 T}
 sslcertpath	\&	\&	T{
 Specify c_rehash-ed directory with trusted CA certificates.
+T}
+sslfingerprint	<HASH> \&	\&	T{
+Specify the expected server certificat finger print. Fetchmail will
+disconnect and log an error if it does not match.
 T}
 sslkey  	\&	\&	T{
 Specify file for \fBclient side\fP private SSL key

@@ -61,14 +61,15 @@ fetchmail-6.4.0 (not yet released):
 # NOTE THAT FETCHMAIL IS NO LONGER PUBLISHED THROUGH IBIBLIO.
 * They have stopped accepting submissions and consider themselves an archive.
 
-## SECURITY FIXES THAT AFFECT BEHAVIOUR AND MAY WANT RECONFIGURATION
+## SECURITY FIXES THAT AFFECT BEHAVIOUR AND MAY REQUIRE RECONFIGURATION
 * Fetchmail no longer supports SSLv2.
+
 * Fetchmail no longer attempts to negotiate SSLv3 by default,
   even with --sslproto ssl23. Fetchmail can now use SSLv3, or TLSv1.1 or a newer
-  TLS version, with STLS/STARTTLS (it would previously force TLSv1.0).  If the
-  OpenSSL version used at build and run-time supports these versions, --sslproto
-  ssl3 can be used to enable this specific version.  Doing so is discouraged
-  because these protocols are broken.
+  TLS version, with STLS/STARTTLS (it would previously force TLSv1.0 with
+  STARTTLS).  If the OpenSSL version used at build and run-time supports these
+  versions, --sslproto ssl3 and --sslproto ssl3+ can be used to re-enable SSLv3.
+  Doing so is discouraged because these SSLv3 protocol is broken.
 
   Along the lines suggested - as patch - by Kurt Roeckx, Debian Bug #768843.
 
@@ -77,14 +78,20 @@ fetchmail-6.4.0 (not yet released):
   ssl3, --sslproto tls1 to --sslproto auto, so that they can enable TLSv1.1 and
   TLSv1.2 on systems with OpenSSL 1.0.1 or newer.
 
-  The --sslproto option now understands the values auto, tls1+, tls1.1+,
-  tls1.2+ (case insensitively).
+  The --sslproto option now understands the values auto, ssl3+, tls1+, tls1.1, 
+  tls1.1+, tls1.2, tls1.2+ (case insensitively).
+
+* Fetchmail defaults to --sslcertck behaviour. A new option --nosslcertck to
+  override this has been added, but may be removed in future fetchmail versions
+  in favour of another configuration option that makes the insecurity in using
+  this option clearer.
 
 ## CHANGES
 * fetchmail 6.3.X is unsupported.
 * Fetchmail now supports --sslproto auto and --sslproto tls1+ (same as ssl23).
 * --sslproto tls1.1+ and tls1.2+ are now supported for auto-negotiation with a
-  minimum specified TLS protocol version.
+  minimum specified TLS protocol version, and --sslproto tls1.1 and --sslproto
+  tls1.2 to force the specified TLS protocol version.
 * Fetchmail now detects if the server hangs up prematurely during SSL_connect()
   and reports this condition as such, and not just as SSL connection failure.
   (OpenSSL 1.0.2 reported incompatible with pop3.live.com by Jerry Seibert).

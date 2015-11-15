@@ -1268,7 +1268,7 @@ static int load_params(int argc, char **argv, int optind)
 	    DEFAULT(ctl->server.dns, TRUE);
 	    DEFAULT(ctl->server.uidl, FALSE);
 	    DEFAULT(ctl->use_ssl, FALSE);
-	    DEFAULT(ctl->sslcertck, FALSE);
+	    DEFAULT(ctl->sslcertck, TRUE);
 	    DEFAULT(ctl->server.checkalias, FALSE);
 #ifndef SSL_ENABLE
 	    /*
@@ -1720,6 +1720,8 @@ static void dump_params (struct runctl *runp,
 	    printf(GT_("  SSL protocol: %s.\n"), ctl->sslproto);
 	if (ctl->sslcertck) {
 	    printf(GT_("  SSL server certificate checking enabled.\n"));
+	} else {
+	    printf(GT_("  SSL server certificate checking disabled.\n"));
 	}
 	if (ctl->sslcertfile != NULL)
 		printf(GT_("  SSL trusted certificate file: %s\n"), ctl->sslcertfile);
