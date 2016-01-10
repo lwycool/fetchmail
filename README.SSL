@@ -19,10 +19,10 @@ reasons, this cannot be fixed in a bugfix or minor release.
 Also, fetchmail 6.4.0 and newer releases changed some of the semantics
 as the result of a bug-fix, and will auto-negotiate TLSv1 or newer only.
 If your server does not support this, you may have to specify --sslproto
-ssl3.  This is in order to prefer the newer TLS protocols, because SSLv2
+ssl3+.  This is in order to prefer the newer TLS protocols, because SSLv2
 and v3 are broken.
 
-	-- Matthias Andree, 2015-01-16
+	-- Matthias Andree, 2016-01-10
 
 
 Quickstart
