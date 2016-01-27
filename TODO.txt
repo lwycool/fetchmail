@@ -1,6 +1,7 @@
 Note that there is a separate todo.html with different content than this.
 
 6.4 MUST:
++ mandate minimum supported OpenSSL version 1.0.1
 + multiple certs
 + make sslcertck mandatory (or alternative passed checks, fingerprints...)
 
