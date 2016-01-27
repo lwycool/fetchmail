@@ -18,6 +18,7 @@ soon - MUST:
 - virtual domain DOCUMENTATION (rewriting @example.com to
   @virtual.example.com possible? Joost Roeleveld, thread "Fetchmail with
   Postfix virtual users" around 2009-09-23 on fetchmail-users@).
++ mandate minimum supported OpenSSL version 1.0.1
 
 soon - SHOULD:
 - support NIL and strings where they are alternatives to literals
