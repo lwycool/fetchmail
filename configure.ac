@@ -725,8 +725,7 @@ AM_CONDITIONAL(KERBEROS_V4_ENABLE, test "$KERBEROS_V4" = 1)
 AC_ARG_WITH(ssl,
 	[  --with-ssl=[DIR]        enable SSL support using libraries in DIR],
 	[with_ssl=$withval],
-	[with_ssl=no])
-test "$with_ssl" != "no" && AC_DEFINE(SSL_ENABLE,1,Define if you want SSL support compiled in)
+	[with_ssl=yes])
 
 if test "$with_ssl" = "yes"
 then
@@ -795,7 +794,7 @@ then
   if test "$i" = "" ; then i="(none)" ; fi
   AC_MSG_RESULT($i)
   dnl XXX FIXME: use pkg-config if available!
-  AC_DEFINE(SSL_ENABLE)
+  AC_DEFINE(SSL_ENABLE, 1, [Define if you want SSL support compiled in])
 else
   AC_MSG_WARN(Disabling SSL support.)
   AC_MSG_WARN(Consider re-running configure --with-ssl.)

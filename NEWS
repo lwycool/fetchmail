@@ -89,6 +89,7 @@ fetchmail-6.4.0 (not yet released):
 ## CHANGES
 * fetchmail 6.3.X is unsupported.
 * fetchmail now requires OpenSSL v1.0.1 or newer.
+* fetchmail now configures OpenSSL support by default.
 * Fetchmail now supports --sslproto auto and --sslproto tls1+ (same as ssl23).
 * --sslproto tls1.1+ and tls1.2+ are now supported for auto-negotiation with a
   minimum specified TLS protocol version, and --sslproto tls1.1 and --sslproto
