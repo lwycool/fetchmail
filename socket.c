@@ -378,6 +378,18 @@ va_dcl {
 #include <openssl/x509v3.h>
 #include <openssl/rand.h>
 
+#define fm_MIN_OPENSSL_VER 0x1000100fL
+
+#if OPENSSL_VERSION_NUMBER < fm_MIN_OPENSSL_VER
+#error Your OpenSSL version must be at least 1.0.1 release. Older OpenSSL versions are unsupported.
+#else
+/*
+#define __fm_ossl_ver(x) #x
+#define _fm_ossl_ver(x) __fm_ossl_ver(x)
+#pragma message "Building with OpenSSL headers version " _fm_ossl_ver(OPENSSL_VERSION_NUMBER) ", " OPENSSL_VERSION_TEXT
+*/
+#endif
+
 static void report_SSL_errors(FILE *stream)
 {
     unsigned long err;
@@ -877,12 +889,23 @@ int SSLOpen(int sock, char *mycert, char *mykey, const char *myproto, int certck
         struct stat randstat;
         int i;
 	int avoid_ssl_versions = SSL_OP_NO_SSLv2 | SSL_OP_NO_SSLv3;
-	long sslopts = SSL_OP_ALL;
+	long sslopts = SSL_OP_ALL | SSL_OP_SINGLE_DH_USE;
 	int ssle_connect = 0;
+	long ver;
 
 	SSL_load_error_strings();
 	SSL_library_init();
 	OpenSSL_add_all_algorithms(); /* see Debian Bug#576430 and manpage */
+
+	if ((ver = SSLeay()) < OPENSSL_VERSION_NUMBER) {
+	    report(stderr, GT_("Loaded OpenSSL library %#lx older than headers %#lx, refusing to work.\n"), (long)ver, (long)(OPENSSL_VERSION_NUMBER));
+	    return -1;
+	}
+
+	if (ver > OPENSSL_VERSION_NUMBER && outlevel >= O_VERBOSE) {
+	    report(stdout, GT_("Loaded OpenSSL library %#lx newer than headers %#lx, trying to continue.\n"), (long)ver, (long)(OPENSSL_VERSION_NUMBER));
+	    return -1;
+	}
 
         if (stat("/dev/random", &randstat)  &&
             stat("/dev/urandom", &randstat)) {
