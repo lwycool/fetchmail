@@ -978,9 +978,8 @@ int SSLOpen(int sock, char *mycert, char *mykey, const char *myproto, int certck
 	}
 	/* do not combine into an else { } as myproto may be nulled above! */
 	if (!myproto) {
-		// SSLv23 is a misnomer and will in fact use the best
-		// available protocol, subject to SSL_OP_NO*
-		// constraints.
+		/* SSLv23 is a misnomer and will in fact use the best
+		 available protocol, subject to SSL_OP_NO* constraints. */
 		_ctx[sock] = SSL_CTX_new(SSLv23_client_method());
 	}
 	if(_ctx[sock] == NULL) {
