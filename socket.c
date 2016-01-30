@@ -976,8 +976,7 @@ int SSLOpen(int sock, char *mycert, char *mykey, const char *myproto, int certck
 			myproto = NULL;
 		}
 	}
-	// do not combine into an else { } as myproto may be nulled
-	// above!
+	/* do not combine into an else { } as myproto may be nulled above! */
 	if (!myproto) {
 		// SSLv23 is a misnomer and will in fact use the best
 		// available protocol, subject to SSL_OP_NO*
