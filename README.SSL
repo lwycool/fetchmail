@@ -29,7 +29,8 @@ Quickstart
 ----------
 
 Use an up-to-date release of OpenSSL 1.0.1 or newer, so as to get
-TLSv1.2 support.
+TLSv1.2 support.  Older OpenSSL versions are unsupported upstream, and
+fetchmail rejects them.
 
 For use of SSL or TLS with in-band negotiation on the regular service's port, 
 i. e. with STLS or STARTTLS, use these command line options
