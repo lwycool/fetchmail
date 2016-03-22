@@ -675,7 +675,11 @@ The default user is the current local user.
 Specifies the list of numeric SMTP errors that are to be interpreted
 as a spam-block response from the listener.  A value of \-1 disables
 this option.  For the command-line option, the list values should
-be comma-separated.
+be comma-separated.  Note that the antispam values only apply to "MAIL
+FROM" responses in the SMTP/LMTP dialogue, but several MTAs (Postfix in
+its default configuration, qmail) defer the anti-spam response code
+until after the RCPT TO. \-\-antispam does not work in these
+circumstances.  Also see \-\-softbounce (default) and its inverse.
 .TP
 .B \-m <command> | \-\-mda <command>
 (Keyword: mda)
