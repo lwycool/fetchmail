@@ -13,8 +13,8 @@ The prerequisite packages are:
 - bison or yacc
 - flex or lex
 
-On FreeBSD, install the gnu-autoconf and gnu-automake ports
-and add /usr/local/gnu-autotools/bin to your PATH.
+On FreeBSD, install the autoconf, automake and gettext-tools ports (all
+from the devel/ category).
 
 After you have everything installed, type:
 
@@ -25,9 +25,9 @@ This will take a while and may print a lot of messages containing
 
 After that, build as usual, with
 
-$ ./configure --with-ssl           # pick options as needed
+$ ./configure --with-ssl           # add more options as needed
 $ make
 (become root)
 # make install-strip
 
--- Matthias Andree, 2010-02-06
+-- Matthias Andree, 2016-04-16
