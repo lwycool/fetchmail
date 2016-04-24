@@ -904,7 +904,6 @@ int SSLOpen(int sock, char *mycert, char *mykey, const char *myproto, int certck
 
 	if (ver > OPENSSL_VERSION_NUMBER && outlevel >= O_VERBOSE) {
 	    report(stdout, GT_("Loaded OpenSSL library %#lx newer than headers %#lx, trying to continue.\n"), (long)ver, (long)(OPENSSL_VERSION_NUMBER));
-	    return -1;
 	}
 
         if (stat("/dev/random", &randstat)  &&
