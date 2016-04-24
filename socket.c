@@ -946,7 +946,7 @@ int SSLOpen(int sock, char *mycert, char *mykey, const char *myproto, int certck
 			_ctx[sock] = SSL_CTX_new(TLSv1_client_method());
 		} else if(!strcasecmp("tls1+",myproto)) {
 			myproto = NULL;
-#if defined(TLS1_1_VERSION) && TLS_MAX_VERSION >= TLS1_1_VERSION
+#if defined(TLS1_1_VERSION)
 		} else if(!strcasecmp("tls1.1",myproto)) {
 			_ctx[sock] = SSL_CTX_new(TLSv1_1_client_method());
 		} else if(!strcasecmp("tls1.1+",myproto)) {
@@ -957,7 +957,7 @@ int SSLOpen(int sock, char *mycert, char *mykey, const char *myproto, int certck
 			report(stderr, GT_("Your OpenSSL version does not support TLS v1.1.\n"));
 			return -1;
 #endif
-#if defined(TLS1_2_VERSION) && TLS_MAX_VERSION >= TLS1_2_VERSION
+#if defined(TLS1_2_VERSION)
 		} else if(!strcasecmp("tls1.2",myproto)) {
 			_ctx[sock] = SSL_CTX_new(TLSv1_2_client_method());
 		} else if(!strcasecmp("tls1.2+",myproto)) {
