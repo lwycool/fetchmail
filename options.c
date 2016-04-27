@@ -59,9 +59,9 @@ enum {
     LA_BADHEADER
 };
 
-/* options still left: CgGhHjJoORTWxXYz */
+/* options still left: ACgGhHjJoORTWxXYz */
 static const char *shortoptions = 
-	"?Vcsvd:NqL:f:i:p:UP:A:t:E:Q:u:akKFnl:r:S:Z:b:B:e:m:I:M:yw:D:";
+	"?Vcsvd:NqL:f:i:p:UP:t:E:Q:u:akKFnl:r:S:Z:b:B:e:m:I:M:yw:D:";
 
 static const struct option longoptions[] = {
 /* this can be const because all flag fields are 0 and will never get set */
@@ -636,6 +636,7 @@ int parsecmdline (int argc /** argument count */,
 	P(GT_("  -q, --quit        kill daemon process\n"));
 	P(GT_("  -L, --logfile     specify logfile name\n"));
 	P(GT_("      --syslog      use syslog(3) for most messages when running as a daemon\n"));
+	P(GT_("      --nosyslog    turns off use of syslog(3)\n"));
 	P(GT_("      --invisible   don't write Received & enable host spoofing\n"));
 	P(GT_("  -f, --fetchmailrc specify alternate run control file\n"));
 	P(GT_("  -i, --idfile      specify alternate UIDs file\n"));
@@ -665,8 +666,9 @@ int parsecmdline (int argc /** argument count */,
 	P(GT_("      --bad-header {reject|accept}\n"
 	      "                    specify policy for handling messages with bad headers\n"));
 
-	P(GT_("  -p, --protocol    specify retrieval protocol (see man page)\n"));
+	P(GT_("  -p, --proto[col]  specify retrieval protocol (see man page)\n"));
 	P(GT_("  -U, --uidl        force the use of UIDLs (pop3 only)\n"));
+	P(GT_("      --idle        tells the IMAP server to send notice of new messages\n"));
 	P(GT_("      --port        TCP port to connect to (obsolete, use --service)\n"));
 	P(GT_("  -P, --service     TCP service to connect to (can be numeric TCP port)\n"));
 	P(GT_("      --auth        authentication type (password/kerberos/ssh/otp)\n"));
@@ -676,7 +678,7 @@ int parsecmdline (int argc /** argument count */,
 	P(GT_("      --principal   mail service principal\n"));
 	P(GT_("      --tracepolls  add poll-tracing information to Received header\n"));
 
-	P(GT_("  -u, --username    specify users's login on server\n"));
+	P(GT_("  -u, --user[name]  specify users's login on server\n"));
 	P(GT_("  -a, --[fetch]all  retrieve old and new messages\n"));
 	P(GT_("  -K, --nokeep      delete new messages after retrieval\n"));
 	P(GT_("  -k, --keep        save new messages after retrieval\n"));

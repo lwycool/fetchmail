@@ -164,6 +164,9 @@ Some special options are not covered here, but are documented instead
 in sections on AUTHENTICATION and DAEMON MODE which follow.
 .SS General Options
 .TP
+.B \-? | \-\-help
+Displays option help.
+.TP
 .B \-V | \-\-version
 Displays the version information for your copy of \fBfetchmail\fP.  No mail
 fetch is performed.  Instead, for each server specified, all the option
@@ -1068,7 +1071,7 @@ sent to 'username\&@\&userhost.userdom.dom.com' having a
 \fIDelivered\-To:\fR line of the form:
 .IP
 Delivered\-To: mbox\-userstr\-username\&@\&userhost.example.com
-.PP
+.IP
 The ISP can make the 'mbox\-userstr\-' prefix anything they choose
 but a string matching the user host name is likely.
 By using the option 'envelope Delivered\-To:' you can make fetchmail reliably
@@ -1082,6 +1085,10 @@ specified, and dump a configuration report to standard output.  The
 configuration report is a data structure assignment in the language
 Python.  This option is meant to be used with an interactive
 \fI~/.fetchmailrc\fP editor like \fBfetchmailconf\fP, written in Python.
+.TP
+.B \-y | \-\-yydebug
+Enables parser debugging, this option is meant to be used by developers
+only.
 
 .SS Removed Options
 .TP
@@ -1367,6 +1374,8 @@ authentication or multiple timeouts.
 .SS Terminating the background daemon
 .PP
 The option
+.B \-q
+or
 .B \-\-quit
 will kill a running daemon process instead of waking it up (if there
 is no such process, \fBfetchmail\fP will notify you).
@@ -1935,7 +1944,7 @@ T}
 mda     	\-m	\&	T{
 Specify MDA for local delivery
 T}
-bsmtp   	\-o	\&	T{
+bsmtp   	\&	\&	T{
 Specify BSMTP batch file to append to
 T}
 preconnect	\&	\&	T{
