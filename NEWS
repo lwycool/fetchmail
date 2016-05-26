@@ -69,17 +69,18 @@ fetchmail-6.4.0 (not yet released):
   TLS version, with STLS/STARTTLS (it would previously force TLSv1.0 with
   STARTTLS).  If the OpenSSL version used at build and run-time supports these
   versions, --sslproto ssl3 and --sslproto ssl3+ can be used to re-enable SSLv3.
-  Doing so is discouraged because these SSLv3 protocol is broken.
+  Doing so is discouraged because the SSLv3 protocol is broken.
 
   Along the lines suggested - as patch - by Kurt Roeckx, Debian Bug #768843.
 
   While this change is supposed to be compatible with common configurations,
-  users are advised to change all explicit --sslproto ssl2, --sslproto
-  ssl3, --sslproto tls1 to --sslproto auto, so that they can enable TLSv1.1 and
-  TLSv1.2 on systems with OpenSSL 1.0.1 or newer.
+  users may have to and are advised to change all explicit --sslproto ssl2
+  (change to newer protocols required), --sslproto ssl3, --sslproto tls1 to
+  --sslproto auto, so that they can benefit from TLSv1.1 and TLSv1.2 where
+  supported by the server.
 
   The --sslproto option now understands the values auto, ssl3+, tls1+, tls1.1, 
-  tls1.1+, tls1.2, tls1.2+ (case insensitively).
+  tls1.1+, tls1.2, tls1.2+ (case insensitively), see CHANGES below for details.
 
 * Fetchmail defaults to --sslcertck behaviour. A new option --nosslcertck to
   override this has been added, but may be removed in future fetchmail versions
