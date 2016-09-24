@@ -11,8 +11,8 @@ The prerequisite packages are:
 - GNU gettext >= 0.18.3
 - GNU m4
 - GNU bison
-- GNU flex
-- A TLSv1.2-capable OpenSSL version (>= 1.0.1)
+- GNU flex >= 2.5.30
+- A TLSv1.2-capable OpenSSL version (>= 1.0.2)
 
 After you have everything installed, type:
 
@@ -28,4 +28,4 @@ $ make
 (become root)
 # make install-strip
 
--- Matthias Andree, 2014-10-17
+-- Matthias Andree, 2016-09-24
