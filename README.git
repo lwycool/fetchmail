@@ -10,11 +10,8 @@ The prerequisite packages are:
 - GNU automake >= 1.8
 - GNU gettext >= 0.14.3
 - GNU m4
-- bison or yacc
-- flex or lex
-
-On FreeBSD, install the autoconf, automake and gettext-tools ports (all
-from the devel/ category).
+- GNU bison
+- GNU flex >= 2.5.30
 
 After you have everything installed, type:
 
@@ -30,4 +27,4 @@ $ make
 (become root)
 # make install-strip
 
--- Matthias Andree, 2016-04-16
+-- Matthias Andree, 2016-09-24
