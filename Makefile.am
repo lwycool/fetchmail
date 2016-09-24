@@ -16,11 +16,6 @@ dist_man1_MANS=		fetchmail.man
 pys=			fetchmailconf.py
 pym=			fetchmailconf.man
 
-if HAVE_LIBPWMD
-CFLAGS += @libpwmd_CFLAGS@
-LDFLAGS += @libpwmd_LIBS@
-endif
-
 nodist_bin_SCRIPTS=	fetchmailconf
 python_PYTHON=		$(pys)
 dist_man1_MANS+=	$(pym)
@@ -87,7 +82,7 @@ fetchmail_SOURCES += libesmtp/getaddrinfo.h libesmtp/getaddrinfo.c
 endif
 if HAVE_LIBPWMD
 CFLAGS += @libpwmd_CFLAGS@
-LDFLAGS += @libpwmd_LIBS@
+LDADD += @libpwmd_LIBS@
 fetchmail_SOURCES += pwmd.c pwmd.h
 endif
 
