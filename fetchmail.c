@@ -660,11 +660,6 @@ int main(int argc, char **argv)
 	 * leaks...
 	 */
 	struct stat rcstat;
-#ifdef HAVE_LIBPWMD
-	time_t now;
-
-	time(&now);
-#endif
 
 	if (strcmp(rcfile, "-") == 0) {
 	    /* do nothing */
@@ -679,7 +674,7 @@ int main(int argc, char **argv)
 	 * isatty() to make sure this is a background process since the
 	 * lockfile is removed after each invokation.
 	 */
-	else if (!isatty(1) && rcstat.st_mtime > parsetime)
+	else if (!isatty(STDOUT_FILENO) && rcstat.st_mtime > parsetime)
 #else
 	else if (rcstat.st_mtime > parsetime)
 #endif

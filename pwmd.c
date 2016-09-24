@@ -26,30 +26,13 @@ static void exit_with_pwmd_error(gpg_error_t rc)
     }
 
     /* Don't exit if daemonized. There may be other active accounts. */
-    if (isatty(1))
+    if (isatty(STDOUT_FILENO))
 	exit(PS_UNDEFINED);
 }
 
-static gpg_error_t knownhost_cb(void *data, const char *host, const char *key,
-	size_t len)
+static gpg_error_t status_cb(void *data, const char *line)
 {
-    gpg_error_t rc;
-    char *buf = pwmd_strdup_printf(GT_("Password Manager Daemon: fetchmail\n\nWhile attempting an SSH connection to %s there was a problem verifying it's hostkey against the known and trusted hosts file because it's hostkey was not found.\n\nWould you like to treat this connection as trusted for this and future connections by adding %s's hostkey to the known hosts file?"), host, host);
-
-    rc = pwmd_setopt(pwm, PWMD_OPTION_PINENTRY_DESC, buf);
-    pwmd_free(buf);
-    if (rc)
-	return rc;
-
-    rc = pwmd_getpin(pwm, NULL, NULL, NULL, PWMD_PINENTRY_CONFIRM);
-    if (!rc || rc == GPG_ERR_CANCELED)
-	pwmd_getpin(pwm, NULL, NULL, NULL, PWMD_PINENTRY_CLOSE);
-
-    return rc;
-}
-
-static gpg_error_t status_cb(void *user, const char *line)
-{
+    (void)data;
     if (!strncmp(line, "LOCKED", 6))
 	report(stderr, "pwmd(%s): %s\n", pwmd_file, line);
 
@@ -132,9 +115,6 @@ int connect_to_pwmd(const char *socketname, const char *socket_args,
 
 	rc = pwmd_setopt (pwm, PWMD_OPTION_SOCKET_TIMEOUT, 120);
 	if (!rc)
-	    rc = pwmd_setopt(pwm, PWMD_OPTION_KNOWNHOST_CB, knownhost_cb);
-
-	if (!rc)
 	    rc = pwmd_setopt(pwm, PWMD_OPTION_STATUS_CB, status_cb);
 
 	if (rc) {
@@ -142,7 +122,7 @@ int connect_to_pwmd(const char *socketname, const char *socket_args,
 	    return 1;
 	}
 
-	if (!rc && socket_args) {
+	if (socket_args) {
 	    char **args = NULL;
 	    int n;
 
@@ -155,8 +135,8 @@ int connect_to_pwmd(const char *socketname, const char *socket_args,
 		    xfree(args[n]);
 	    }
 	}
-	else if (!rc)
-	  rc = pwmd_connect(pwm, socketname, NULL);
+	else
+            rc = pwmd_connect(pwm, socketname, NULL);
 
 	if (rc) {
 	    exit_with_pwmd_error(rc);
@@ -230,7 +210,7 @@ static int get_element(char **result, int required, const char *fmt, ...)
 	    pwmd_close(pwm);
 	    pwm = NULL;
 
-	    if (isatty(1))
+	    if (isatty(STDOUT_FILENO))
 		exit(PS_SYNTAX);
 
 	    return 1;
@@ -267,15 +247,13 @@ int get_pwmd_elements(const char *account, int protocol, struct query *ctl)
     if (ctl->server.pollname != ctl->server.via)
 	xfree(ctl->server.via);
     ctl->server.via = xstrdup(result);
+    pwmd_free(result);
 
-    if (ctl->server.queryname)
-	xfree(ctl->server.queryname);
+    xfree(ctl->server.queryname);
     ctl->server.queryname = xstrdup(ctl->server.via);
 
-    if (ctl->server.truename)
-	xfree(ctl->server.truename);
+    xfree(ctl->server.truename);
     ctl->server.truename = xstrdup(ctl->server.queryname);
-    pwmd_free(result);
 
     /*
      * Server port. Fetchmail tries standard ports for known services so it
@@ -286,12 +264,11 @@ int get_pwmd_elements(const char *account, int protocol, struct query *ctl)
     if (i)
 	goto done;
 
-    if (ctl->server.service)
-	xfree(ctl->server.service);
+    xfree(ctl->server.service);
     ctl->server.service = result ? xstrdup(result) : NULL;
     pwmd_free(result);
 
-    i = get_element(&result, !isatty(1), "%s\tusername", tmp);
+    i = get_element(&result, !isatty(STDOUT_FILENO), "%s\tusername", tmp);
     if (i)
 	goto done;
 
@@ -303,12 +280,11 @@ int get_pwmd_elements(const char *account, int protocol, struct query *ctl)
     ctl->server.esmtp_name = result ? xstrdup(result) : NULL;
     pwmd_free(result);
 
-    i = get_element(&result, !isatty(1), "%s\tpassword", tmp);
+    i = get_element(&result, !isatty(STDOUT_FILENO), "%s\tpassword", tmp);
     if (i)
 	goto done;
 
-    if (ctl->password)
-	xfree(ctl->password);
+    xfree(ctl->password);
     ctl->password = result ? xstrdup(result) : NULL;
     pwmd_free(result);
 
@@ -319,8 +295,7 @@ int get_pwmd_elements(const char *account, int protocol, struct query *ctl)
     if (i)
 	goto done;
 
-    if (ctl->sslfingerprint)
-	xfree(ctl->sslfingerprint);
+    xfree(ctl->sslfingerprint);
     ctl->sslfingerprint = result ? xstrdup(result) : NULL;
     pwmd_free(result);
 #endif

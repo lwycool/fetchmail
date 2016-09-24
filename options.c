@@ -246,7 +246,7 @@ int parsecmdline (int argc /** argument count */,
 	switch (c) {
 #ifdef HAVE_LIBPWMD
 	case LA_PWMD_SOCKET:
-	    ctl->pwmd_socket = prependdir(optarg, currentwd);
+	    ctl->pwmd_socket = xstrdup (optarg);
 	    break;
 	case LA_PWMD_SOCKET_ARGS:
 	    ctl->pwmd_socket_args = xstrdup (optarg);
@@ -693,8 +693,8 @@ int parsecmdline (int argc /** argument count */,
 	P(GT_("  -p, --protocol    specify retrieval protocol (see man page)\n"));
 #ifdef HAVE_LIBPWMD
         P(GT_("      --pwmd-socket pwmd socket path (~/.pwmd/socket)\n"));
-        P(GT_("      --pwmd-socket-args {arg1,arg2,arg3,...}\n"
-	      "                          see libpwmd(3) for details\n"));
+        P(GT_("      --pwmd-socket-args arg1[,arg2,..]\n"
+	      "                         see libpwmd(3) for details\n"));
         P(GT_("      --pwmd-file   filename to use on the pwmd server\n"));
         P(GT_("      --pinentry-timeout   seconds until pinentry is canceled\n"));
 #endif
