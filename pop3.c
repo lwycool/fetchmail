@@ -816,7 +816,6 @@ static int pop3_fastuidl( int sock,  struct query *ctl, unsigned int count, int 
     int ok;
     unsigned int first_nr, last_nr, try_nr;
     char id [IDLEN+1];
-    struct idlist *savep = NULL; /** pointer to cache save_str result, speeds up saves */
 
     first_nr = 0;
     last_nr = count + 1;

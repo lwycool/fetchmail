@@ -10,12 +10,13 @@
 
 /* Have Solaris expose ffs() from strings.h: */
 #define __EXTENSIONS__
+#define _XOPEN_SOURCE 700
 
 /*  includes */
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <strings.h>  // ffs() lives here - needs #define on Solaris.
+#include <strings.h>  /* ffs() lives here - needs #define on Solaris. */
 
 #include "xmalloc.h"
 #include "uid_db.h"
@@ -94,8 +95,8 @@ static struct pat_node *walk_down(struct uid_db *db, struct uid_db_record *rec,
     *parentp =
 	(struct pat_node *)
 	((unsigned char *)edge - (v & bit_mask(bit_ndx) ?
-				  offsetof(struct pat_node, ptrs_[2])
-				  : offsetof(struct pat_node, ptrs_[0])));
+				  offsetof(struct pat_node, ptrs_) + 2 * sizeof(struct pat_node *)
+				  : offsetof(struct pat_node, ptrs_)));
     *edgep = edge;
     return cur;
 }

@@ -103,6 +103,7 @@ AC_CHECK_DECLS([h_errno],,,[
 ])
 
 AC_C_CONST			dnl getopt needs this.
+AC_C_INLINE			dnl uid_db.? need this.
 
 AM_PROG_LEX
 AC_PROG_MAKE_SET
