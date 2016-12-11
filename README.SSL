@@ -28,7 +28,7 @@ and v3 are broken.
 Quickstart
 ----------
 
-Use an up-to-date release of OpenSSL 1.0.1 or newer, so as to get
+Use an up-to-date release of OpenSSL 1.0.2 or newer, so as to get
 TLSv1.2 support.  Older OpenSSL versions are unsupported upstream, and
 fetchmail rejects them.
 

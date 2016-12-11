@@ -378,10 +378,10 @@ va_dcl {
 #include <openssl/x509v3.h>
 #include <openssl/rand.h>
 
-#define fm_MIN_OPENSSL_VER 0x1000100fL
+#define fm_MIN_OPENSSL_VER 0x1000200fL
 
 #if OPENSSL_VERSION_NUMBER < fm_MIN_OPENSSL_VER
-#error Your OpenSSL version must be at least 1.0.1 release. Older OpenSSL versions are unsupported.
+#error Your OpenSSL version must be at least 1.0.2 release. Older OpenSSL versions are unsupported.
 #else
 /*
 #define __fm_ossl_ver(x) #x
