@@ -6,7 +6,10 @@ AUTOMAKE_OPTIONS=	1.11 foreign no-dist-gzip dist-bzip2 dist-xz subdir-objects
 AM_CPPFLAGS=		-I$(srcdir)/libesmtp
 ACLOCAL_AMFLAGS=	-I m4 -I m4-local
 AM_YFLAGS=		-d
-BUILT_SOURCES=		rcfile_y.h
+# listing socket.$(OBJEXT) here is a hack to compile socket.c pretty
+# early in order to fail it early on outdated OpenSSL libraries,
+# without building a few dozen other files first.
+BUILT_SOURCES=		rcfile_y.h socket.$(OBJEXT)
 
 bin_PROGRAMS=		fetchmail
 
