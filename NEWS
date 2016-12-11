@@ -100,6 +100,14 @@ fetchmail-6.4.0 (not yet released):
   (OpenSSL 1.0.2 reported incompatible with pop3.live.com by Jerry Seibert).
 * A foreground fetchmail can now accept a few more options while another copy is
   running in the background.
+* fetchmail now handles POP3 --keep UID lists more efficiently, by using Rainer
+  Weikusat's P-Tree implementation. This reduces the complexity for handling
+  a large UIDL from O(n^2) to O(n log n) and becomes noticably faster with
+  thousands of kept messages. (IMAP does not track UIDs and is unaffected.)
+  At the same time, the UIDL emulation code for deficient servers has been
+  removed. It never worked really well.  Servers that do not implement the
+  optional UIDL command only work with --fetchall option set, which in itself is
+  incompatible with the --keep option (it would cause message duplication).
 
 ## FIXES
 * Fix a typo in the FAQ. Submitted by David Lawyer, Debian Bug#706776.
