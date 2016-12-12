@@ -1064,7 +1064,11 @@ int SSLOpen(int sock, char *mycert, char *mykey, const char *myproto, int certck
 		_ctx[sock] = SSL_CTX_new(SSLv23_client_method());
 	}
 	if(_ctx[sock] == NULL) {
+		unsigned long ec = ERR_peek_last_error();
 		ERR_print_errors_fp(stderr);
+		if (ERR_GET_REASON(ec) == SSL_R_NULL_SSL_METHOD_PASSED) {
+		    report(stderr, GT_("Note that some distributions disable older protocol versions in weird non-standard ways. Try a newer protocol version.\n"));
+		}
 		return(-1);
 	}
 
