@@ -372,6 +372,7 @@ va_dcl {
 }
 
 #ifdef SSL_ENABLE
+#define OPENSSL_NO_DEPRECATED 23
 #include <openssl/ssl.h>
 #include <openssl/err.h>
 #include <openssl/pem.h>
@@ -379,6 +380,10 @@ va_dcl {
 #include <openssl/rand.h>
 
 #define fm_MIN_OPENSSL_VER 0x1000200fL
+
+#ifdef LIBRESSL_VERSION_NUMBER
+#pragma message "WARNING - LibreSSL is unsupported. Use at your own risk."
+#endif
 
 #if OPENSSL_VERSION_NUMBER < fm_MIN_OPENSSL_VER
 #error Your OpenSSL version must be at least 1.0.2 release. Older OpenSSL versions are unsupported.
@@ -878,7 +883,9 @@ static const char *SSLCertGetCN(const char *mycert,
 	return ret;
 }
 
-static int OSSL10_proto_version_logic(int sock, const char **myproto, int *avoid_ssl_versions)
+#if defined(LIBRESSL_VERSION_NUMBER) || OPENSSL_VERSION_NUMBER < 0x1010000fL
+/* OSSL_proto_version_logic for OpenSSL 1.0.x and LibreSSL */
+static int OSSL10X_proto_version_logic(int sock, const char **myproto, int *avoid_ssl_versions)
 {
 	if (!strcasecmp("ssl3", *myproto)) {
 #if (HAVE_DECL_SSLV3_CLIENT_METHOD > 0) && (0 == OPENSSL_NO_SSL3 + 0)
@@ -923,12 +930,77 @@ static int OSSL10_proto_version_logic(int sock, const char **myproto, int *avoid
 		*myproto = NULL;
 	} else {
 		report(stderr,
-		        GT_("Invalid SSL protocol '%s' specified, using default autoselect (SSL23).\n"),
+		        GT_("Invalid SSL protocol '%s' specified, using default autoselect (auto).\n"),
 		        *myproto);
 		*myproto = NULL;
 	}
 	return 0;
 }
+#define OSSL_proto_version_logic(a,b,c) OSSL10X_proto_version_logic((a),(b),(c))
+#else
+/* implementation for OpenSSL 1.1.0 */
+static int OSSL110_proto_version_logic(int sock, const char **myproto,
+        int *avoid_ssl_versions)
+{
+	_ctx[sock] = SSL_CTX_new(TLS_client_method());
+	SSL_CTX_set_min_proto_version(_ctx[sock], TLS1_VERSION);
+
+	if (!*myproto) {
+	    *myproto = "auto";
+	}
+
+	if (!strcasecmp("ssl3", *myproto)) {
+#if (0 == OPENSSL_NO_SSL3 + 0)
+		SSL_CTX_set_min_proto_version(_ctx[sock], SSL3_VERSION);
+		SSL_CTX_set_max_proto_version(_ctx[sock], SSL3_VERSION);
+		*avoid_ssl_versions &= ~SSL_OP_NO_SSLv3;
+#else
+		report(stderr, GT_("Your OpenSSL version does not support SSLv3.\n"));
+		return -1;
+#endif
+	} else if (!strcasecmp("ssl3+", *myproto)) {
+		SSL_CTX_set_min_proto_version(_ctx[sock], SSL3_VERSION);
+		*avoid_ssl_versions &= ~SSL_OP_NO_SSLv3;
+	} else if (!strcasecmp("tls1", *myproto)) {
+		SSL_CTX_set_max_proto_version(_ctx[sock], TLS1_VERSION);
+	} else if (!strcasecmp("tls1+", *myproto)) {
+		/* do nothing, min_proto_version is already at TLS1_VERSION */
+#if defined(TLS1_1_VERSION)
+	} else if (!strcasecmp("tls1.1", *myproto)) {
+		SSL_CTX_set_min_proto_version(_ctx[sock], TLS1_1_VERSION);
+		SSL_CTX_set_max_proto_version(_ctx[sock], TLS1_1_VERSION);
+	} else if (!strcasecmp("tls1.1+", *myproto)) {
+		SSL_CTX_set_min_proto_version(_ctx[sock], TLS1_1_VERSION);
+#else
+	} else if(!strcasecmp("tls1.1",*myproto) || !strcasecmp("tls1.1+", *myproto)) {
+		report(stderr, GT_("Your OpenSSL version does not support TLS v1.1.\n"));
+		return -1;
+#endif
+#if defined(TLS1_2_VERSION)
+	} else if (!strcasecmp("tls1.2", *myproto)) {
+		SSL_CTX_set_min_proto_version(_ctx[sock], TLS1_2_VERSION);
+		SSL_CTX_set_max_proto_version(_ctx[sock], TLS1_2_VERSION);
+	} else if (!strcasecmp("tls1.2+", *myproto)) {
+		SSL_CTX_set_min_proto_version(_ctx[sock], TLS1_2_VERSION);
+		*myproto = NULL;
+#else
+	} else if(!strcasecmp("tls1.2",*myproto) || !strcasecmp("tls1.2+", *myproto)) {
+		report(stderr, GT_("Your OpenSSL version does not support TLS v1.2.\n"));
+		return -1;
+#endif
+	} else if (!strcasecmp("ssl23", *myproto)
+	        || 0 == strcasecmp("auto", *myproto))
+	{
+		/* do nothing */
+	} else {
+		report(stderr,
+		        GT_("Invalid SSL protocol '%s' specified, using default autoselect (auto).\n"),
+		        *myproto);
+	}
+	return 0;
+}
+#define OSSL_proto_version_logic(a,b,c) OSSL110_proto_version_logic((a),(b),(c))
+#endif
 
 /* performs initial SSL handshake over the connected socket
  * uses SSL *ssl global variable, which is currently defined
@@ -981,8 +1053,8 @@ int SSLOpen(int sock, char *mycert, char *mykey, const char *myproto, int certck
 
 	/* Make sure a connection referring to an older context is not left */
 	_ssl_context[sock] = NULL;
-	if(myproto) {
-		int rc = OSSL10_proto_version_logic(sock, &myproto, &avoid_ssl_versions);
+	{
+		int rc = OSSL_proto_version_logic(sock, &myproto, &avoid_ssl_versions);
 		if (rc) return rc;
 	}
 	/* do not combine into an else { } as myproto may be nulled above! */
