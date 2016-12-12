@@ -887,6 +887,10 @@ static const char *SSLCertGetCN(const char *mycert,
 /* OSSL_proto_version_logic for OpenSSL 1.0.x and LibreSSL */
 static int OSSL10X_proto_version_logic(int sock, const char **myproto, int *avoid_ssl_versions)
 {
+	if (!*myproto) {
+	    *myproto = "auto";
+	}
+
 	if (!strcasecmp("ssl3", *myproto)) {
 #if (HAVE_DECL_SSLV3_CLIENT_METHOD > 0) && (0 == OPENSSL_NO_SSL3 + 0)
 		_ctx[sock] = SSL_CTX_new(SSLv3_client_method());
