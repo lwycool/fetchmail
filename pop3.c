@@ -1066,7 +1066,6 @@ static int pop3_getrange(int sock,
 	    {
 		/* UIDL worked - parse reply */
 		unsigned long unum;
-		struct idlist *newl = NULL;
 
 		*newp = 0;
 		while (gen_recv(sock, buf, sizeof(buf)) == PS_SUCCESS)
