@@ -878,6 +878,58 @@ static const char *SSLCertGetCN(const char *mycert,
 	return ret;
 }
 
+static int OSSL10_proto_version_logic(int sock, const char **myproto, int *avoid_ssl_versions)
+{
+	if (!strcasecmp("ssl3", *myproto)) {
+#if (HAVE_DECL_SSLV3_CLIENT_METHOD > 0) && (0 == OPENSSL_NO_SSL3 + 0)
+		_ctx[sock] = SSL_CTX_new(SSLv3_client_method());
+		*avoid_ssl_versions &= ~SSL_OP_NO_SSLv3;
+#else
+		report(stderr, GT_("Your OpenSSL version does not support SSLv3.\n"));
+		return -1;
+#endif
+	} else if (!strcasecmp("ssl3+", *myproto)) {
+		*avoid_ssl_versions &= ~SSL_OP_NO_SSLv3;
+		*myproto = NULL;
+	} else if (!strcasecmp("tls1", *myproto)) {
+		_ctx[sock] = SSL_CTX_new(TLSv1_client_method());
+	} else if (!strcasecmp("tls1+", *myproto)) {
+		*myproto = NULL;
+#if defined(TLS1_1_VERSION)
+	} else if (!strcasecmp("tls1.1", *myproto)) {
+		_ctx[sock] = SSL_CTX_new(TLSv1_1_client_method());
+	} else if (!strcasecmp("tls1.1+", *myproto)) {
+		*myproto = NULL;
+		*avoid_ssl_versions |= SSL_OP_NO_TLSv1;
+#else
+	} else if(!strcasecmp("tls1.1",*myproto) || !strcasecmp("tls1.1+", *myproto)) {
+		report(stderr, GT_("Your OpenSSL version does not support TLS v1.1.\n"));
+		return -1;
+#endif
+#if defined(TLS1_2_VERSION)
+	} else if (!strcasecmp("tls1.2", *myproto)) {
+		_ctx[sock] = SSL_CTX_new(TLSv1_2_client_method());
+	} else if (!strcasecmp("tls1.2+", *myproto)) {
+		*myproto = NULL;
+		*avoid_ssl_versions |= SSL_OP_NO_TLSv1 | SSL_OP_NO_TLSv1_1;
+#else
+	} else if(!strcasecmp("tls1.2",*myproto) || !strcasecmp("tls1.2+", *myproto)) {
+		report(stderr, GT_("Your OpenSSL version does not support TLS v1.2.\n"));
+		return -1;
+#endif
+	} else if (!strcasecmp("ssl23", *myproto)
+	        || 0 == strcasecmp("auto", *myproto))
+	{
+		*myproto = NULL;
+	} else {
+		report(stderr,
+		        GT_("Invalid SSL protocol '%s' specified, using default autoselect (SSL23).\n"),
+		        *myproto);
+		*myproto = NULL;
+	}
+	return 0;
+}
+
 /* performs initial SSL handshake over the connected socket
  * uses SSL *ssl global variable, which is currently defined
  * in this file
@@ -930,50 +982,8 @@ int SSLOpen(int sock, char *mycert, char *mykey, const char *myproto, int certck
 	/* Make sure a connection referring to an older context is not left */
 	_ssl_context[sock] = NULL;
 	if(myproto) {
-		if(!strcasecmp("ssl3",myproto)) {
-#if (HAVE_DECL_SSLV3_CLIENT_METHOD > 0) && (0 == OPENSSL_NO_SSL3 + 0)
-			_ctx[sock] = SSL_CTX_new(SSLv3_client_method());
-			avoid_ssl_versions &= ~SSL_OP_NO_SSLv3;
-#else
-			report(stderr, GT_("Your OpenSSL version does not support SSLv3.\n"));
-			return -1;
-#endif
-		} else if(!strcasecmp("ssl3+",myproto)) {
-			avoid_ssl_versions &= ~SSL_OP_NO_SSLv3;
-			myproto = NULL;
-		} else if(!strcasecmp("tls1",myproto)) {
-			_ctx[sock] = SSL_CTX_new(TLSv1_client_method());
-		} else if(!strcasecmp("tls1+",myproto)) {
-			myproto = NULL;
-#if defined(TLS1_1_VERSION)
-		} else if(!strcasecmp("tls1.1",myproto)) {
-			_ctx[sock] = SSL_CTX_new(TLSv1_1_client_method());
-		} else if(!strcasecmp("tls1.1+",myproto)) {
-			myproto = NULL;
-			avoid_ssl_versions |= SSL_OP_NO_TLSv1;
-#else
-		} else if(!strcasecmp("tls1.1",myproto) || !strcasecmp("tls1.1+", myproto)) {
-			report(stderr, GT_("Your OpenSSL version does not support TLS v1.1.\n"));
-			return -1;
-#endif
-#if defined(TLS1_2_VERSION)
-		} else if(!strcasecmp("tls1.2",myproto)) {
-			_ctx[sock] = SSL_CTX_new(TLSv1_2_client_method());
-		} else if(!strcasecmp("tls1.2+",myproto)) {
-			myproto = NULL;
-			avoid_ssl_versions |= SSL_OP_NO_TLSv1;
-			avoid_ssl_versions |= SSL_OP_NO_TLSv1_1;
-#else
-		} else if(!strcasecmp("tls1.2",myproto) || !strcasecmp("tls1.2+", myproto)) {
-			report(stderr, GT_("Your OpenSSL version does not support TLS v1.2.\n"));
-			return -1;
-#endif
-		} else if (!strcasecmp("ssl23",myproto) || 0 == strcasecmp("auto",myproto)) {
-			myproto = NULL;
-		} else {
-			report(stderr,GT_("Invalid SSL protocol '%s' specified, using default autoselect (SSL23).\n"), myproto);
-			myproto = NULL;
-		}
+		int rc = OSSL10_proto_version_logic(sock, &myproto, &avoid_ssl_versions);
+		if (rc) return rc;
 	}
 	/* do not combine into an else { } as myproto may be nulled above! */
 	if (!myproto) {
