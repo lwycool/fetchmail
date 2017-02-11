@@ -27,13 +27,15 @@ int prc_lineno = 1;
 
 #define YY_NO_INPUT
 
+int yywrap(void) { return 1; }
+
 %}
 
-%option nounput noyywrap
-%option warn nodefault
-%option 8bit batch
+%option nounput yywrap warn nodefault 8bit batch
 
 %s NAME AUTH
+
+
 
 %%
 
