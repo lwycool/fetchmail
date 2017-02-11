@@ -1187,8 +1187,8 @@ int SSLOpen(int sock, char *mycert, char *mykey, const char *myproto, int certck
 			free(*remotename);
 			*remotename = xstrdup(buffer);
 		}
-        	SSL_use_certificate_file(_ssl_context[sock], mycert, SSL_FILETYPE_PEM);
-        	SSL_use_RSAPrivateKey_file(_ssl_context[sock], mykey, SSL_FILETYPE_PEM);
+		SSL_use_certificate_file(_ssl_context[sock], mycert, SSL_FILETYPE_PEM);
+		SSL_use_RSAPrivateKey_file(_ssl_context[sock], mykey, SSL_FILETYPE_PEM);
 	}
 
 	if (SSL_set_fd(_ssl_context[sock], sock) == 0 
