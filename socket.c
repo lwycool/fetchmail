@@ -1156,6 +1156,20 @@ int SSLOpen(int sock, char *mycert, char *mykey, const char *myproto, int certck
 	_verify_ok = 1;
 	_prev_err = -1;
 
+	/*
+	 * Support SNI, some servers (googlemail) appear to require it.
+	 */
+	{
+	    long r;
+	    r = SSL_set_tlsext_host_name(_ssl_context[sock], servercname);
+
+	    if (0 == r) {
+		/* handle error */
+		report(stderr, GT_("Warning: SSL_set_tlsext_host_name(%p, \"%s\") failed (code %#lx), trying to continue.\n"), _ssl_context[sock], servercname, r);
+		ERR_print_errors_fp(stderr);
+	    }
+	}
+
 	if( mycert || mykey ) {
 
 	/* Ok...  He has a certificate file defined, so lets declare it.  If
