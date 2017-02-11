@@ -79,8 +79,9 @@ fetchmail-6.4.0 (not yet released):
   --sslproto auto, so that they can benefit from TLSv1.1 and TLSv1.2 where
   supported by the server.
 
-  The --sslproto option now understands the values auto, ssl3+, tls1+, tls1.1, 
-  tls1.1+, tls1.2, tls1.2+ (case insensitively), see CHANGES below for details.
+  The --sslproto option now understands the values auto, ssl3+, tls1+, tls1.1,
+  tls1.1+, tls1.2, tls1.2+, tls1.3, tls1.3+ (case insensitively), see CHANGES
+  below for details.
 
 * Fetchmail defaults to --sslcertck behaviour. A new option --nosslcertck to
   override this has been added, but may be removed in future fetchmail versions
