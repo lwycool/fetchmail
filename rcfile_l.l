@@ -27,6 +27,9 @@ int prc_lineno = 1;
 
 #define YY_NO_INPUT
 
+#ifdef __cplusplus
+extern "C"
+#endif
 int yywrap(void) { return 1; }
 
 %}
