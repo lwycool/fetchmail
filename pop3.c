@@ -811,6 +811,8 @@ static int pop3_getuidl(int sock, int num, char *id /** output */, size_t idsize
     return(PS_SUCCESS);
 }
 
+/** Do a binary search with single UIDL commands to find the first
+ * unseen message. */
 static int pop3_fastuidl( int sock,  struct query *ctl, unsigned int count, int *newp)
 {
     int ok;
