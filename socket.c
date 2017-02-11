@@ -928,6 +928,17 @@ static int OSSL10X_proto_version_logic(int sock, const char **myproto, int *avoi
 		report(stderr, GT_("Your OpenSSL version does not support TLS v1.2.\n"));
 		return -1;
 #endif
+#if defined(TLS1_3_VERSION)
+	} else if (!strcasecmp("tls1.3", *myproto)) {
+		_ctx[sock] = SSL_CTX_new(TLSv1_3_client_method());
+	} else if (!strcasecmp("tls1.3+", *myproto)) {
+		*myproto = NULL;
+		*avoid_ssl_versions |= SSL_OP_NO_TLSv1 | SSL_OP_NO_TLSv1_1 | SSL_OP_NO_TLSv1_2;
+#else
+	} else if(!strcasecmp("tls1.3",*myproto) || !strcasecmp("tls1.3+", *myproto)) {
+		report(stderr, GT_("Your OpenSSL version does not support TLS v1.3.\n"));
+		return -1;
+#endif
 	} else if (!strcasecmp("ssl23", *myproto)
 	        || 0 == strcasecmp("auto", *myproto))
 	{
@@ -946,6 +957,8 @@ static int OSSL10X_proto_version_logic(int sock, const char **myproto, int *avoi
 static int OSSL110_proto_version_logic(int sock, const char **myproto,
         int *avoid_ssl_versions)
 {
+	/* NOTE - this code MUST NOT set myproto to NULL, else the
+	 * SSL_...set_..._proto_version() call becomes ineffective. */
 	_ctx[sock] = SSL_CTX_new(TLS_client_method());
 	SSL_CTX_set_min_proto_version(_ctx[sock], TLS1_VERSION);
 
@@ -986,10 +999,20 @@ static int OSSL110_proto_version_logic(int sock, const char **myproto,
 		SSL_CTX_set_max_proto_version(_ctx[sock], TLS1_2_VERSION);
 	} else if (!strcasecmp("tls1.2+", *myproto)) {
 		SSL_CTX_set_min_proto_version(_ctx[sock], TLS1_2_VERSION);
-		*myproto = NULL;
 #else
 	} else if(!strcasecmp("tls1.2",*myproto) || !strcasecmp("tls1.2+", *myproto)) {
 		report(stderr, GT_("Your OpenSSL version does not support TLS v1.2.\n"));
+		return -1;
+#endif
+#if defined(TLS1_3_VERSION)
+	} else if (!strcasecmp("tls1.3", *myproto)) {
+		SSL_CTX_set_min_proto_version(_ctx[sock], TLS1_3_VERSION);
+		SSL_CTX_set_max_proto_version(_ctx[sock], TLS1_3_VERSION);
+	} else if (!strcasecmp("tls1.3+", *myproto)) {
+		SSL_CTX_set_min_proto_version(_ctx[sock], TLS1_3_VERSION);
+#else
+	} else if(!strcasecmp("tls1.3",*myproto) || !strcasecmp("tls1.3+", *myproto)) {
+		report(stderr, GT_("Your OpenSSL version does not support TLS v1.3.\n"));
 		return -1;
 #endif
 	} else if (!strcasecmp("ssl23", *myproto)
@@ -997,9 +1020,12 @@ static int OSSL110_proto_version_logic(int sock, const char **myproto,
 	{
 		/* do nothing */
 	} else {
+		/* This should not happen. */
 		report(stderr,
 		        GT_("Invalid SSL protocol '%s' specified, using default autoselect (auto).\n"),
 		        *myproto);
+		report(stderr, "fetchmail internal error in OSSL110_proto_version_logic\n");
+		abort();
 	}
 	return 0;
 }
