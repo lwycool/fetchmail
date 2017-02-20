@@ -4,6 +4,9 @@ Note that there is a separate todo.html with different content than this.
 + multiple certs
 + check alternative passed checks, fingerprints... for interactions
 + do we support CRLs?
++ optionally spawn a shell out with a pre-set environment so that users
+can check their finger prints or certificates in arbitrary ways
+(grarpamp)
 
 soon - MUST:
 - blacklist DigiNotar/Comodo/Türktrust hacks/certs, possibly with Chrome's serial#
