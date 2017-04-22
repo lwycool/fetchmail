@@ -169,7 +169,7 @@ char *host_fqdn(int required)
 	if (e) {
 	    /* exit with error message */
 	    fprintf(stderr,
-		    GT_("gethostbyname failed for %s\n"), tmpbuf);
+		    GT_("getaddrinfo failed for %s\n"), tmpbuf);
 	    fprintf(stderr, "%s", gai_strerror(e));
 	    fprintf(stderr, GT_("Cannot find my own host in hosts database to qualify it!\n"));
 	    if (required)
