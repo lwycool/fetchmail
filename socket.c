@@ -1165,7 +1165,7 @@ int SSLOpen(int sock, char *mycert, char *mykey, const char *myproto, int certck
 
 	    if (0 == r) {
 		/* handle error */
-		report(stderr, GT_("Warning: SSL_set_tlsext_host_name(%p, \"%s\") failed (code %#lx), trying to continue.\n"), _ssl_context[sock], servercname, r);
+		report(stderr, GT_("Warning: SSL_set_tlsext_host_name(%p, \"%s\") failed (code %#lx), trying to continue.\n"), (void *)_ssl_context[sock], servercname, r);
 		ERR_print_errors_fp(stderr);
 	    }
 	}
