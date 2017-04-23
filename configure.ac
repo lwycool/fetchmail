@@ -31,14 +31,15 @@ dnl python is optional
 AM_PATH_PYTHON(2.0,,AC_MSG_WARN([Disabling fetchmailconf: python 2.0 or greater not found]))
 AM_CONDITIONAL([HAVE_PYTHON], [test "$PYTHON" != :])
 
+AC_USE_SYSTEM_EXTENSIONS
 AC_PROG_AWK
 AC_PROG_CC
 AM_PROG_CC_C_O
 AC_PROG_INSTALL
 AC_PROG_CPP			dnl Later checks need this.
+AM_PROG_AR
 AC_PROG_RANLIB
 AM_PROG_CC_C_O
-AC_USE_SYSTEM_EXTENSIONS
 
 AC_ISC_POSIX
 dnl AC_ISC_POSIX: - XXX FIXME: remove in fetchmail 6.4.
