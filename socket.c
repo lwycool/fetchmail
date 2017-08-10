@@ -111,7 +111,7 @@ static char *const *parse_plugin(const char *plugin, const char *host, const cha
 		return NULL;
 	}
 
-	while (plugin_copy_offset < plugin_copy_len)
+	while (plugin_offset < plugin_len && plugin_copy_offset < plugin_copy_len)
 	{	if ((plugin[plugin_offset] == '%') && (plugin[plugin_offset + 1] == 'h'))
 		{	strcpy(plugin_copy + plugin_copy_offset, host);
 			plugin_offset += 2;
