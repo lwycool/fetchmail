@@ -149,6 +149,12 @@ int connect_to_pwmd(const char *socketname, const char *socket_args,
 	    exit_with_pwmd_error(rc);
 	    return 1;
 	}
+
+	rc = pwmd_setopt(pwm, PWMD_OPTION_LOCK_ON_OPEN, 0);
+	if (rc) {
+	    exit_with_pwmd_error(rc);
+	    return 1;
+	}
     }
 
     if (run.pinentry_timeout > 0) {
