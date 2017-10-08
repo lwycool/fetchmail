@@ -779,8 +779,15 @@ int main(int argc, char **argv)
 		      if (connect_to_pwmd(ctl->pwmd_socket, ctl->pwmd_socket_args, ctl->pwmd_file))
 			    continue;
 
-			if (get_pwmd_elements(ctl->server.pollname, ctl->server.protocol, ctl))
+			if (get_pwmd_elements(ctl->server.pollname,
+                                              ctl->server.protocol, ctl))
 			    continue;
+
+                        if (ctl->idle) {
+                            pwmd_close (pwm);
+                            pwm = NULL;
+                            pwmd_file = pwmd_socket = pwmd_socket_args = NULL;
+                        }
 		    }
 #endif
 		    querystatus = query_host(ctl);
@@ -851,17 +858,16 @@ int main(int argc, char **argv)
 		}
 	    }
 
-#ifdef HAVE_LIBPWMD
-	if (pwm) {
-	    pwmd_close(pwm);
-	    pwm = NULL;
-	}
-
-	pwmd_file = NULL;
-	pwmd_socket = NULL;
-#endif
 	/* close connections cleanly */
 	terminate_poll(0);
+
+#ifdef HAVE_LIBPWMD
+        if (pwm) {
+            pwmd_close (pwm);
+            pwm = NULL;
+        }
+        pwmd_file = pwmd_socket = pwmd_socket_args = NULL;
+#endif
 
 	/*
 	 * OK, we've polled.  Now sleep.
@@ -1129,8 +1135,8 @@ static int load_params(int argc, char **argv, int optind)
 		if (connect_to_pwmd(ctl->pwmd_socket, ctl->pwmd_socket_args, ctl->pwmd_file))
 		    continue;
 
-		if (get_pwmd_elements(ctl->server.pollname, ctl->server.protocol,
-			    ctl))
+		if (get_pwmd_elements(ctl->server.pollname,
+                                      ctl->server.protocol, ctl))
 		    continue;
 
 		time(&rcstat.st_mtime);
@@ -1203,8 +1209,8 @@ static int load_params(int argc, char **argv, int optind)
 		    if (connect_to_pwmd(cmd_opts.pwmd_socket, cmd_opts.pwmd_socket_args, cmd_opts.pwmd_file))
 			continue;
 
-		    if (get_pwmd_elements(argv[optind], cmd_opts.server.protocol,
-			    ctl))
+		    if (get_pwmd_elements(argv[optind],
+                                          cmd_opts.server.protocol, ctl))
 			continue;
 		}
 		else

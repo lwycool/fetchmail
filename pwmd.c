@@ -103,9 +103,16 @@ int connect_to_pwmd(const char *socketname, const char *socket_args,
 
     pwmd_init();
 
-    if (!pwm || (pwm && socketname && !pwmd_socket)
-	    || (pwm && !socketname && pwmd_socket) || (pwm && socketname
-		&& pwmd_socket && strcmp(socketname, pwmd_socket))) {
+    /* Try to reuse an existing connection for another account on the same pwmd
+     * server. If the socket name or any socket arguments have changed then
+     * reopen the connection. */
+    if (!pwm || (socketname && !pwmd_socket)
+	    || (!socketname && pwmd_socket) ||
+            (socketname && pwmd_socket && strcmp(socketname, pwmd_socket))
+            || (socket_args && !pwmd_socket_args)
+            || (!socket_args && pwmd_socket_args)
+            || (socket_args && pwmd_socket_args
+                && strcmp (socket_args, pwmd_socket_args))) {
 	pwmd_close(pwm);
 	rc = pwmd_new("fetchmail", &pwm);
 	if (rc) {
